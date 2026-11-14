@@ -1,0 +1,163 @@
+/* Client document uploads, staff review, document requests, shipment requests. */
+/* Design tokens for this feature. Shared colours point at the staff.css palette; the rest are status tints. */
+:root {
+    --cd-text: var(--text, #343d4d);
+    --cd-heading: var(--navy, #1e2f4d);
+    --cd-text-soft: var(--muted, #4f5f78);
+    --cd-link: var(--blue, #395886);
+    --cd-link-strong: #334e76;
+    --cd-link-soft: #8aaee0;
+    --cd-surface: var(--card, #fff);
+    --cd-tint: var(--bg, #f0f3fa);
+    --cd-line: var(--line, #e9edf8);
+    --cd-border: #d4ddec;
+    --cd-warn-text: #8a5a00;
+    --cd-warn-bg: #fff4dc;
+    --cd-warn-bg-soft: #fffaf0;
+    --cd-warn-line: #f3d38b;
+    --cd-danger-text: #a84348;
+    --cd-danger-bg: #fdebec;
+    --cd-danger-bg-soft: #fff6f6;
+    --cd-ok-text: #2b7b4a;
+    --cd-ok-bg: #e3f3e9;
+    --cd-ok: var(--green, #2e9e5b);
+    --cd-violet: #4b4fa3;
+    --cd-shadow: rgba(29, 46, 76, .18);
+}
+.cd-pill { display: inline-flex; align-items: center; margin-left: 6px; padding: 2px 8px; border-radius: 999px; font-size: 12px; font-weight: 600; white-space: nowrap; vertical-align: middle; }
+.cd-pill-pending { background: var(--cd-warn-bg); color: var(--cd-warn-text); }
+.cd-pill-request { background: var(--cd-line); color: var(--cd-link-strong); }
+.cd-pill-request.is-overdue { background: var(--cd-danger-bg); color: var(--cd-danger-text); }
+.cd-pill-client { background: var(--cd-tint); color: var(--cd-violet); }
+
+.cd-status { display: inline-flex; padding: 3px 9px; border-radius: 999px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+.cd-status-pending { background: var(--cd-warn-bg); color: var(--cd-warn-text); }
+.cd-status-accepted { background: var(--cd-ok-bg); color: var(--cd-ok-text); }
+.cd-status-rejected { background: var(--cd-danger-bg); color: var(--cd-danger-text); }
+
+.cd-muted { display: block; margin-top: 3px; color: var(--cd-text-soft); font-size: 12px; }
+.cd-link-muted { color: var(--cd-text-soft) !important; }
+.cd-ai { margin-top: 5px; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.cd-ai-ok { color: var(--cd-ok-text); font-size: 12px; }
+.cd-ai-warn { display: block; color: var(--cd-danger-text); font-size: 12px; }
+.cd-ai-run { font-size: 12px; }
+
+.cd-row-pending td, li.cd-row-pending { background: var(--cd-warn-bg-soft); }
+li.cd-row-rejected { background: var(--cd-danger-bg-soft); }
+.cd-inline-form { display: inline; margin: 0; }
+.cd-accept { background: var(--cd-ok) !important; border-color: var(--cd-ok) !important; color: var(--cd-surface) !important; }
+.cd-reject { display: inline-block; position: relative; }
+.cd-reject-btn { cursor: pointer; list-style: none; color: var(--cd-danger-text) !important; }
+.cd-reject-btn::-webkit-details-marker { display: none; }
+.cd-reject[open] form { position: absolute; right: 0; z-index: 20; display: grid; gap: 8px; width: 260px; margin-top: 6px; padding: 12px; border: 1px solid var(--cd-line); border-radius: 10px; background: var(--cd-surface); box-shadow: 0 12px 30px var(--cd-shadow); }
+.cd-reject label, .cd-request-dialog label, .cd-upload-dialog label:not(.cd-drop):not(.cd-camera) { display: grid; gap: 5px; color: var(--cd-text-soft); font-size: 13px; font-weight: 500; }
+.cd-reject input, .cd-request-dialog input, .cd-request-dialog select, .cd-request-dialog textarea, .cd-upload-dialog input[type=text], .cd-upload-dialog select { width: 100%; min-height: 40px; padding: 8px 10px; border: 1px solid var(--cd-border); border-radius: 8px; font: inherit; }
+
+.cd-history { margin-top: 12px; padding: 10px 14px; border: 1px dashed var(--cd-border); border-radius: 10px; color: var(--cd-text-soft); font-size: 13px; }
+.cd-history summary { cursor: pointer; font-weight: 600; }
+.cd-history ul { display: grid; gap: 8px; margin: 10px 0 0; padding: 0; list-style: none; }
+.cd-history li { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+
+.cd-requests { margin-bottom: 14px; padding: 12px 14px; border: 1px solid var(--cd-warn-line); border-radius: 10px; background: var(--cd-warn-bg-soft); }
+.cd-requests > strong { color: var(--cd-warn-text); }
+.cd-requests ul { display: grid; gap: 8px; margin: 8px 0 0; padding: 0; list-style: none; }
+.cd-requests li { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.cd-requests li small { display: block; color: var(--cd-text-soft); }
+.cd-requests li.is-overdue b { color: var(--cd-danger-text); }
+
+.cd-upload-dialog, .cd-request-dialog { width: min(520px, calc(100vw - 28px)); }
+.cd-upload-dialog form, .cd-request-dialog form { display: flex; flex-direction: column; gap: 14px; padding: 22px; }
+.cd-file-pick { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: stretch; }
+.cd-drop { display: grid; place-items: center; gap: 4px; padding: 18px 12px; border: 2px dashed var(--cd-border); border-radius: 12px; background: var(--cd-tint); color: var(--cd-text-soft); text-align: center; cursor: pointer; }
+.cd-drop.is-over { border-color: var(--cd-link); background: var(--cd-line); }
+.cd-drop input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.cd-drop span { font-size: 12px; color: var(--cd-text-soft); }
+.cd-camera { position: relative; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
+.cd-camera input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.cd-drop:focus-within, .cd-camera:focus-within { outline: 2px solid var(--cd-link); outline-offset: 2px; }
+.cd-photos p { margin: 0 0 6px; font-size: 13px; }
+.cd-thumbs { display: flex; flex-wrap: wrap; gap: 6px; }
+.cd-thumbs img { width: 64px; height: 64px; object-fit: cover; border-radius: 6px; border: 1px solid var(--cd-line); }
+.cd-chosen { margin: 0; color: var(--cd-heading); font-size: 13px; font-weight: 600; }
+.cd-message { margin: 0; padding: 10px 12px; border-radius: 8px; font-size: 13px; background: var(--cd-danger-bg); color: var(--cd-danger-text); }
+.cd-message[data-tone=info] { background: var(--cd-line); color: var(--cd-link-strong); }
+.cd-message[data-tone=ok] { background: var(--cd-ok-bg); color: var(--cd-ok-text); }
+.cd-message[data-tone=warn] { background: var(--cd-warn-bg); color: var(--cd-warn-text); }
+.cd-progress { height: 6px; border-radius: 999px; background: var(--cd-tint); overflow: hidden; }
+.cd-progress span { display: block; height: 100%; width: 0; background: var(--cd-link); transition: width .2s; }
+
+/* Add Shipment: converting a client request */
+.request-banner { display: grid; gap: 4px; margin: 0 0 16px; padding: 12px 16px; border: 1px solid var(--cd-border); border-radius: 12px; background: var(--cd-tint); color: var(--cd-heading); font-size: 14px; }
+.request-banner-notes { color: var(--cd-text-soft); font-style: italic; }
+.request-banner a { color: var(--cd-link); font-weight: 600; }
+
+/* Shipment requests (client + staff pages) */
+.sr-page { display: flex; flex-direction: column; gap: 18px; }
+.sr-form { display: grid; gap: 14px; padding: 22px; }
+.sr-form label { display: grid; gap: 6px; color: var(--cd-text-soft); font-size: 13px; font-weight: 500; }
+.sr-form textarea { padding: 10px; border: 1px solid var(--cd-border); border-radius: 8px; font: inherit; }
+.sr-form .cd-drop { position: relative; }
+.sr-form .cd-message { margin: 0; }
+.sr-steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 0; padding: 0; list-style: none; }
+.sr-steps li { padding: 12px 14px; border-radius: 10px; background: var(--cd-tint); color: var(--cd-text-soft); font-size: 13px; }
+.sr-steps b { display: block; color: var(--cd-heading); }
+.sr-table { width: 100%; border-collapse: collapse; }
+.sr-table th { padding: 11px 12px; background: var(--cd-tint); color: var(--cd-text-soft); font-size: 12px; font-weight: 600; text-align: left; white-space: nowrap; }
+.sr-table td { padding: 12px; border-bottom: 1px solid var(--cd-tint); color: var(--cd-text); font-size: 13px; vertical-align: top; }
+.sr-table td small { display: block; color: var(--cd-text-soft); }
+.sr-status { display: inline-flex; padding: 3px 9px; border-radius: 999px; font-size: 12px; font-weight: 600; }
+.sr-status-pending { background: var(--cd-warn-bg); color: var(--cd-warn-text); }
+.sr-status-converted { background: var(--cd-ok-bg); color: var(--cd-ok-text); }
+.sr-status-declined, .sr-status-cancelled { background: var(--cd-line); color: var(--cd-text-soft); }
+.sr-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-start; }
+.sr-tabs { display: flex; flex-wrap: wrap; gap: 8px; }
+.sr-tabs a { padding: 7px 14px; border-radius: 999px; background: var(--cd-tint); color: var(--cd-text-soft); font-size: 13px; font-weight: 600; }
+.sr-tabs a.active { background: var(--cd-heading); color: var(--cd-surface); }
+
+/* Client dashboard: documents card. Each row is one link to the shipment's documents:
+   [document + shipment] ........ [status pill, when there is one] [Upload] */
+.cd-dash-list { display: grid; gap: 8px; margin: 4px 0 0; padding: 0; list-style: none; }
+.cd-dash-list li a { display: flex; align-items: center; gap: 12px; min-height: 60px; box-sizing: border-box; padding: 10px 12px 10px 16px; border: 1px solid var(--cd-border); border-radius: 12px; background: var(--cd-surface); color: var(--cd-heading); text-decoration: none; transition: border-color .15s ease, background-color .15s ease; }
+.cd-dash-list li a:hover { border-color: var(--cd-link-soft); background: var(--cd-tint); }
+.cd-dash-list li a:focus-visible { outline: 2px solid var(--cd-link); outline-offset: 2px; }
+.cd-dash-doc { display: grid; gap: 2px; min-width: 0; margin-right: auto; }
+.cd-dash-doc strong { font-size: 14px; font-weight: 600; line-height: 1.35; }
+.cd-dash-doc span { color: var(--cd-text-soft); font-size: 13px; line-height: 1.35; }
+.cd-dash-flag { flex: none; padding: 3px 10px; border-radius: 999px; background: var(--cd-warn-bg); color: var(--cd-warn-text); font-size: 12px; font-weight: 600; white-space: nowrap; }
+.cd-dash-list li.is-overdue .cd-dash-flag, .cd-dash-list li.is-rejected .cd-dash-flag { background: var(--cd-danger-bg); color: var(--cd-danger-text); }
+.cd-dash-action { flex: none; display: inline-flex; align-items: center; min-height: 34px; padding: 0 14px; border: 1px solid var(--cd-border); border-radius: 8px; background: var(--cd-surface); color: var(--cd-link); font-size: 13px; font-weight: 600; white-space: nowrap; }
+.cd-dash-list li a:hover .cd-dash-action { border-color: var(--cd-link); }
+.cd-dash-card > .soft-text:last-child { margin: 14px 0 0; }
+.cd-dash-card { margin-bottom: 20px; }   /* same 20px gap the other dashboard sections use */
+@media (max-width: 480px) {
+    .cd-dash-list li a { flex-wrap: wrap; row-gap: 8px; }
+    .cd-dash-doc { flex: 1 1 100%; }
+}
+
+@media (max-width: 640px) {
+    .cd-file-pick, .sr-steps { grid-template-columns: 1fr; }
+    .cd-reject[open] form { position: static; width: auto; }
+}
+
+/* Shipment Requests: auto-read result (live region next to the button) */
+.sr-extract-note { display: block; margin-top: 4px; font-size: 12.5px; line-height: 1.4; color: var(--cd-text-soft); }
+.sr-extract-note[data-tone="ok"] { color: var(--cd-ok-text); }
+.sr-extract-note[data-tone="error"] { color: var(--cd-danger-text); font-weight: 600; }
+.sr-extract-note:empty { display: none; }
+
+/* Text-style buttons in the request tables: at least 24px tall (WCAG 2.5.8) */
+.sr-table .link, .sr-table .cd-reject-btn, .sr-table .btn-sm { display: inline-flex; align-items: center; min-height: 28px; }
+.sr-table button.link { padding: 0; border: 0; background: none; font: inherit; color: var(--cd-link); font-weight: 600; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+.sr-table button.link:hover { color: var(--cd-link-strong); }
+.sr-table button.link:disabled { color: var(--cd-text-soft); text-decoration: none; cursor: progress; }
+
+/* Phones: staff.css turns rows into cards using each cell's data-label */
+@media (max-width: 640px) {
+    /* cells hold several lines (B/L, route, checks), so the label sits above the value */
+    .sr-table tbody td { display: block; text-align: left; }
+    .sr-table tbody td::before { display: block; margin-bottom: 2px; font-size: 12px; }
+    .sr-table tbody td small { display: block; }
+    .sr-table tbody td.sr-actions { display: flex; flex-wrap: wrap; gap: 8px; padding-top: 10px; }
+    .sr-table tbody td.sr-actions::before { content: none; }
+    .sr-table .link, .sr-table .cd-reject-btn, .sr-table .btn-sm { min-height: 40px; }
+}

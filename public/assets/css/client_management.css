@@ -1,0 +1,118 @@
+.cm-page { gap: 20px; }
+.cm-head { align-items: flex-end; }
+.cm-head h1 { margin: 6px 0 0; }
+.cm-head .sub { margin-top: 4px; }
+.cm-notice { color: var(--muted); font-size: 13px; }
+.cm-add { display: inline-flex; align-items: center; min-height: 46px; }
+.cm-stats { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 18px; }
+.cm-stat { display: flex; flex-direction: column; gap: 6px; padding: 20px 22px; }
+.cm-stat > span { color: #465369; }
+.cm-stat strong { color: var(--navy); font-size: 30px; line-height: 1.15; font-weight: 700; }
+.cm-stat small { color: var(--muted); font-size: 12.5px; }
+.cm-list-card,.cm-record-card,.cm-info-card { padding: 0; overflow: hidden; }
+.cm-filters { display: flex; align-items: center; gap: 12px; padding: 18px; border-bottom: 1px solid var(--line); }
+.cm-search { display: flex; min-width: 180px; flex: 1; }
+.cm-search input,.cm-filters select,.cm-dialog input,.cm-dialog select { min-height: 44px; width: 100%; padding: 0 14px; border: 1px solid #d4ddec; border-radius: 8px; background: #fff; color: var(--text); font: inherit; }
+.cm-filters select { width: 170px; }
+.cm-filters .btn { min-height: 44px; }
+.cm-table-wrap { width: 100%; overflow-x: auto; }
+.cm-table { width: 100%; min-width: 1020px; border-collapse: separate; border-spacing: 0; }
+.cm-table th { padding: 13px 14px; background: #f0f3fa; color: #4d5c73; font-size: 12px; text-align: left; font-weight: 600; white-space: nowrap; }
+.cm-table td { padding: 15px 14px; color: #343d4d; border-bottom: 1px solid #ebeff8; vertical-align: middle; }
+.cm-table tr:last-child td { border-bottom: 0; }
+.cm-company { color: var(--blue); font-weight: 600; }
+.cm-company:hover,.cm-actions a:hover,.cm-actions button:hover,.cm-table td > a:not(.cm-company):hover { text-decoration: underline; }
+.cm-status { display: inline-flex; align-items: center; gap: 6px; padding: 4px 11px; border-radius: 999px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+.cm-status::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.cm-status-active { background: #e2f3e9; color: #287a49; }
+.cm-status-inactive { background: #e5eaf6; color: #4f5f78; }
+.cm-actions { display: flex; align-items: center; gap: 10px; white-space: nowrap; }
+.cm-actions a,.cm-actions button,.cm-table td > a:not(.cm-company) { color: var(--blue); font: inherit; }
+.cm-actions form { display: inline; }
+.cm-actions button { border: 0; padding: 0; background: transparent; }
+.cm-empty { padding: 38px 20px !important; text-align: center; }
+.cm-empty strong,.cm-empty span { display: block; }
+.cm-empty strong { color: var(--navy); }
+.cm-empty span { margin-top: 5px; color: var(--muted); }
+.cm-table-foot { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 18px; color: var(--muted); }
+.cm-pager { display: flex; align-items: center; gap: 6px; }
+.cm-pager a { display: inline-grid; min-width: 32px; height: 32px; padding: 0 8px; place-items: center; border-radius: 6px; color: var(--blue); }
+.cm-pager a:hover { background: #ebeff8; }
+.cm-pager a.current { background: var(--navy); color: #fff; }
+.cm-footnote,.cm-muted { color: var(--muted); font-size: 12.5px; }
+.cm-flash { border-radius: 9px; padding: 12px 16px; }
+.cm-flash-success { background: #e6f4eb; color: #236b40; }
+.cm-flash-error { background: #fff0ef; color: #aa302b; }
+
+/* Company profile */
+.cm-profile-head { display: flex; align-items: center; gap: 16px; }
+.cm-avatar { display: grid; width: 64px; height: 64px; place-items: center; border-radius: 13px; background: #e4e9f6; color: var(--navy); font-size: 24px; font-weight: 700; }
+.cm-profile-title { flex: 1; min-width: 0; }
+.cm-profile-title h1 { color: var(--navy); font-family: "Libre Franklin",sans-serif; font-size: 26px; font-weight: 600; }
+.cm-profile-title > div { display: flex; align-items: center; gap: 12px; margin-top: 4px; color: var(--muted); }
+.cm-profile-head > .btn { display: inline-flex; align-items: center; min-height: 44px; }
+.cm-tabs { display: flex; gap: 28px; border-bottom: 1px solid var(--line); }
+.cm-tabs a { padding: 12px 3px; color: var(--muted); border-bottom: 2px solid transparent; }
+.cm-tabs a.active { border-color: var(--blue); color: var(--blue); font-weight: 600; }
+.cm-info-card { padding: 22px; }
+.cm-info-card h2,.cm-record-card h2 { color: var(--navy); font-size: 19px; font-weight: 600; }
+.cm-info-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 22px; margin-top: 22px; }
+.cm-info-grid dt { color: var(--muted); font-size: 12.5px; }
+.cm-info-grid dd { margin-top: 7px; overflow-wrap: anywhere; color: #343d4d; }
+.cm-callout { padding: 16px 18px; border-radius: 9px; background: #e7ecf7; color: #24385c; }
+.cm-callout p { margin-top: 5px; line-height: 1.55; }
+.cm-record-card > header { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 20px 22px; }
+.cm-record-card > header p { margin-top: 4px; color: var(--muted); }
+.cm-record-card > header .btn { white-space: nowrap; }
+.cm-record-card .cm-filters { padding: 0 22px 18px; }
+.cm-record-card .cm-table { min-width: 820px; }
+.cm-record-card .cm-table th:first-child,.cm-record-card .cm-table td:first-child { padding-left: 22px; }
+.cm-record-card .cm-table td small { display: block; margin-top: 4px; }
+.cm-shipment-filter .cm-search { flex: 1; }
+.cm-shipment-filter select { width: 190px; }
+
+/* Add/edit dialog */
+.cm-dialog { width: min(690px,calc(100vw - 32px)); max-width: none; max-height: calc(100dvh - 32px); margin: auto; padding: 0; border: 0; border-radius: 15px; color: var(--text); box-shadow: 0 24px 70px rgba(18,29,47,.28); }
+.cm-dialog[open] { display: block; }
+.cm-dialog::backdrop { background: rgba(20,31,51,.48); }
+.cm-dialog-form > header { display: flex; justify-content: space-between; gap: 14px; padding: 22px 26px 18px; border-bottom: 1px solid var(--line); }
+.cm-dialog-form > header h2 { color: var(--navy); font: 600 22px "Libre Franklin",sans-serif; }
+.cm-dialog-form > header p { margin-top: 5px; color: var(--muted); }
+.cm-dialog-form > header > a { color: var(--muted); font-size: 26px; line-height: 1; }
+.cm-dialog-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 16px 20px; padding: 20px 26px; }
+.cm-dialog-grid label { display: grid; gap: 7px; color: #364051; font-size: 13px; font-weight: 500; }
+.cm-dialog .cm-callout { margin: 0 26px 20px; }
+.cm-dialog-form > footer { display: flex; justify-content: flex-end; gap: 10px; padding: 16px 26px; background: #f4f6fb; border-top: 1px solid var(--line); }
+.cm-dialog-form > footer .btn { display: inline-flex; align-items: center; min-height: 42px; }
+.cm-dialog-form > footer a { padding: 9px 18px; border: 1px solid #c9d4ea; border-radius: 8px; }
+
+@media(max-width:900px) {
+    .cm-stats { gap: 12px; }
+    .cm-stat { padding: 17px; }
+    .cm-info-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+}
+@media(max-width:640px) {
+    .cm-head { align-items: flex-start; }
+    .cm-head .cm-add { width: 100%; justify-content: center; }
+    .cm-stats { grid-template-columns: 1fr; gap: 10px; }
+    .cm-stat { padding: 16px 18px; }
+    .cm-stat strong { font-size: 26px; }
+    .cm-filters { flex-wrap: wrap; padding: 14px; }
+    .cm-filters .cm-search { flex-basis: 100%; }
+    .cm-filters select { flex: 1; min-width: 0; }
+    .cm-filters .btn { flex: 0 0 auto; }
+    .cm-profile-head { flex-wrap: wrap; }
+    .cm-profile-head > .btn { width: 100%; justify-content: center; }
+    .cm-profile-title h1 { font-size: 21px; }
+    .cm-tabs { gap: 18px; overflow-x: auto; }
+    .cm-info-grid { grid-template-columns: 1fr; gap: 16px; }
+    .cm-record-card > header { align-items: flex-start; flex-direction: column; padding: 18px; }
+    .cm-record-card .cm-filters { padding: 0 14px 14px; }
+    .cm-table-foot { align-items: flex-start; flex-direction: column; padding: 14px; }
+    .cm-dialog-grid { grid-template-columns: 1fr; padding: 16px 20px; }
+    .cm-dialog-form > header { padding: 18px 20px; }
+    .cm-dialog .cm-callout { margin: 0 20px 16px; }
+    .cm-dialog-form > footer { padding: 14px 20px; }
+}
+
+.cm-field-hint { color: #5b6678; font-size: 12px; font-weight: 400; }

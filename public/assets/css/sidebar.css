@@ -1,0 +1,133 @@
+/* Shared sidebar skin loaded last on dashboard and workflow pages. */
+:root { --sidebar-w: 264px; --sidebar-navy: #1e2f4d; --sidebar-blue: #395886; }
+.layout { display: flex; min-height: 100vh; }
+.sidebar {
+    box-sizing: border-box; width: var(--sidebar-w); min-width: var(--sidebar-w); flex: 0 0 var(--sidebar-w);
+    display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh; height: 100dvh;
+    padding: 24px 16px 20px; overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain;
+    background: var(--sidebar-navy); color: #e3e9f6;
+    scrollbar-width: thin; scrollbar-color: rgba(227,233,246,.35) transparent;
+}
+.sidebar .brand { display: flex; flex-direction: row; align-items: center; justify-content: flex-start; gap: 10px; padding: 0 0 28px 10px; min-height: 64px; text-align: left; }
+.sidebar .brand-image { box-sizing: border-box; width: 44px; height: 44px; flex: 0 0 44px; object-fit: contain; padding: 3px; background: #fff; border-radius: 6px; }
+.sidebar .brand-name { color: #fff; font-size: 13px; font-weight: 700; line-height: 1.1; white-space: nowrap; }
+.sidebar .brand-name span { display: block; color: #8aaee0; font-size: 12px; font-weight: 500; }
+.sidebar .menu-title { margin: 0; padding: 0 12px 10px; color: #b4c3dd; font-size: 12px; font-weight: 400; letter-spacing: .02em; }
+.sidebar .menu-title-gap { margin-top: 22px; }
+.sidebar .menu { display: flex; flex-direction: column; gap: 4px; }
+.sidebar .menu-item {
+    display: flex; align-items: center; gap: 14px; min-height: 46px; box-sizing: border-box;
+    padding: 11px 14px; border: 0; border-radius: 8px; color: #e3e9f6;
+    font-size: 15px; font-weight: 400; line-height: 1.4; text-decoration: none;
+    transition: background-color .15s ease,color .15s ease;
+}
+.sidebar .menu-item .icon { width: 20px; height: 20px; flex: 0 0 20px; }
+.sidebar .menu-item span { min-width: 0; }
+.sidebar .menu-item:hover { background: rgba(255,255,255,.08); color: #fff; }
+.sidebar .menu-item.active { background: var(--sidebar-blue); color: #fff; font-weight: 600; }
+.sidebar .menu-item:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+.sidebar .sidebar-bottom { display: flex; flex-direction: column; gap: 2px; margin-top: auto; padding-top: 16px; border-top: 1px solid rgba(255,255,255,.12); }
+.sidebar .sidebar-user { display: flex; align-items: center; gap: 12px; min-width: 0; padding: 0 12px 12px; }
+.sidebar .sidebar-user .avatar { width: 40px; height: 40px; min-width: 40px; flex: 0 0 40px; display: grid; place-items: center; border-radius: 50%; background: var(--sidebar-blue); color: #fff; font-size: 13px; font-weight: 600; }
+.sidebar .sidebar-user > div { min-width: 0; }
+.sidebar .sidebar-user strong { display: block; overflow: hidden; color: #fff; font-size: 14px; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
+.sidebar .sidebar-user small { display: block; margin-top: 2px; color: #b4c3dd; font-size: 12.5px; }
+.sidebar .sidebar-bottom > .menu-item { flex: none; }
+@media(max-width:860px) {
+    .sidebar { position: fixed; z-index: 50; left: 0; top: 0; width: min(var(--sidebar-w),calc(100vw - 48px)); min-width: 0; height: 100vh; height: 100dvh; padding-top: max(24px,env(safe-area-inset-top)); transform: translateX(-102%); visibility: hidden; transition: transform .25s ease, visibility 0s linear .25s; }
+    .sidebar.open { transform: translateX(0); visibility: visible; transition: transform .25s ease, visibility 0s; box-shadow: 18px 0 36px rgba(15,24,40,.2); }
+    body.nav-open::after { content: ""; position: fixed; inset: 0; z-index: 45; background: rgba(27,42,69,.45); }
+    .menu-toggle { display: block; }
+}
+
+/* Skip link: first stop for keyboard users, visible only while focused */
+.skip-link { position: fixed; z-index: 100; left: 12px; top: 12px; padding: 10px 16px; border-radius: 8px; background: #fff; color: var(--sidebar-navy); font: 600 14px/1.4 "Libre Franklin", system-ui, sans-serif; text-decoration: none; box-shadow: 0 6px 20px rgba(15,24,40,.25); transform: translateY(-200%); }
+.skip-link:focus { transform: translateY(0); outline: 2px solid var(--sidebar-blue); outline-offset: 2px; }
+#mainContent:focus { outline: none; }
+@media (prefers-reduced-motion: reduce) {
+    .sidebar, .sidebar.open { transition: none; }
+}
+
+/* Touch sizing shared by every signed-in page */
+@media (max-width: 860px) {
+    /* The ☰ glyph stays where it was; the button around it becomes a 44px tap target */
+    body.fig .menu-toggle { display: grid; place-items: center; flex: none; width: 44px; height: 44px; margin: 0 0 0 -11px; padding: 0; border-radius: 10px; line-height: 1; cursor: pointer; }
+    body.fig .menu-toggle:focus-visible { outline: 2px solid #395886; outline-offset: 0; }
+}
+@media (pointer: coarse) {
+    /* Inline text links keep their look, but the area a thumb can hit grows to about 40px tall */
+    body.fig .card-head .link,
+    body.fig .row-link,
+    body.fig .txn-table a,
+    body.fig .bill-link,
+    body.fig .bill-shipment,
+    body.fig .crumbs a {
+        display: inline-block; padding-block: 10px; margin-block: -10px;
+    }
+}
+
+/* Type defaults for every signed-in page. :where() keeps specificity at zero, so component styles still win. */
+:where(body.fig) :where(button, input, select, textarea) { font-family: inherit; }   /* browsers default controls to Arial */
+:where(body.fig) :where(small) { font-size: max(12px, .85em); }                      /* the browser's "smaller" drops to 11.7px */
+
+/* One table style for every signed-in page (tablet and desktop; phones keep the stacked-card layout).
+   #mainContent lifts these rules above each page's own table styles. */
+@media (min-width: 641px) {
+    body.fig #mainContent table {
+        width: 100%; min-width: 0;                     /* no forced widths: scroll only when the columns truly do not fit */
+        border-collapse: separate; border-spacing: 0;
+        font-variant-numeric: tabular-nums;            /* digits line up down a column */
+    }
+    body.fig #mainContent table thead th {
+        height: auto; padding: 11px 12px;
+        background: #f0f3fa; color: #4f5f78;
+        font-size: 12px; font-weight: 600; line-height: 1.4; letter-spacing: .02em; text-transform: none;
+        text-align: left; vertical-align: middle; white-space: nowrap;
+        border: 0;
+    }
+    body.fig #mainContent table tbody td {
+        height: auto; padding: 14px 12px;
+        font-size: 14px; line-height: 1.45; vertical-align: middle;
+        border: 0; border-bottom: 1px solid #e3e9f4;
+    }
+    body.fig #mainContent table tbody tr:last-child td { border-bottom: 0; }
+    body.fig #mainContent table tbody::before { content: none; display: none; }   /* drop the blank spacer row some tables add */
+    body.fig #mainContent table thead th:first-child,
+    body.fig #mainContent table tbody td:first-child { padding-left: 16px; }
+    body.fig #mainContent table thead th:last-child,
+    body.fig #mainContent table tbody td:last-child { padding-right: 16px; }
+    /* Money and counts: right-aligned so the figures line up */
+    body.fig #mainContent table .num { text-align: right; white-space: nowrap; }
+    /* Short values stay on one line; long names and notes may wrap */
+    body.fig #mainContent table td:has(> .badge, > .txn-badge, > .sr-status, > time) { white-space: nowrap; }
+    body.fig #mainContent table tbody td.empty,
+    body.fig #mainContent table tbody td.txn-empty { padding: 32px 16px; text-align: center; color: #4f5f78; }
+}
+@media (min-width: 641px) {
+    /* The 12-column shipment list scrolls inside its card on purpose; each row stays on one line */
+    body.fig #mainContent .ship-table:has(thead th:nth-child(10)) td { white-space: nowrap; }
+    /* The documents table sits in a narrow column: scroll it rather than crush file names into tall rows */
+    body.fig #mainContent .document-table { min-width: 760px; }
+    /* Let long names, emails and notes wrap so these tables fit without sideways scrolling */
+    body.fig #mainContent .txn-table td[data-label="Client"] { white-space: normal; }
+    body.fig #mainContent .users-table td[data-label="Email Address"],
+    body.fig #mainContent .users-table td[data-label="Full Name"] { overflow-wrap: anywhere; }
+    body.fig #mainContent .activity-table td:nth-child(3) { min-width: 0; }
+}
+
+/* Shipment reference that opens the details dialog (dashboards): reads as a link, keeps button semantics */
+body.fig .ref-button { display: inline-block; margin: -10px 0; padding: 10px 0; border: 0; background: none; color: #395886; font: inherit; font-weight: 600; text-decoration: underline; text-decoration-color: color-mix(in oklab, currentColor 35%, transparent); text-underline-offset: 3px; white-space: nowrap; cursor: pointer; }
+body.fig .ref-button:hover { text-decoration-color: currentColor; }
+body.fig .ref-button:focus-visible { outline: 2px solid #395886; outline-offset: 2px; border-radius: 3px; }
+@media (min-width: 641px) {
+    /* Compact side-panel tables keep tighter cells */
+    body.fig #mainContent .compact table thead th,
+    body.fig #mainContent .compact table tbody td { padding-left: 10px; padding-right: 10px; }
+}
+@media (min-width: 641px) {
+    body.fig #mainContent table td[data-label="Client"] { white-space: normal; }
+    body.fig #mainContent .compact table thead th,
+    body.fig #mainContent .compact table tbody td { padding-left: 8px; padding-right: 8px; }
+}
+/* Secondary line under a table value, e.g. the shipment under a bill number */
+body.fig #mainContent td .cell-sub { display: block; margin-top: 2px; color: #4f5f78; font-size: 12px; font-weight: 400; }
