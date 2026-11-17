@@ -205,6 +205,21 @@ class DocupassTest extends TestCase
         $this->assertCount(2, Storage::disk('local')->allFiles('identity'));
     }
 
+    public function test_a_result_that_cannot_be_processed_goes_to_admin_review(): void
+    {
+        $this->start();
+        $this->transaction = $this->finishedTransaction();
+        $this->mock(\App\Services\Identity\IdAnalyzerReader::class, function ($mock): void {
+            $mock->shouldReceive('map')->andThrow(new \RuntimeException('unexpected result shape'));
+        });
+
+        $this->actingAs($this->client)->post(route('client.identity.live.check'));
+
+        $verification = IdentityVerification::query()->sole();
+        $this->assertSame('needs_review', $verification->status);
+        $this->assertSame('The live ID check result could not be processed.', $verification->reader_error);
+    }
+
     public function test_live_routes_are_off_when_docupass_is_disabled(): void
     {
         config(['services.identity.method' => 'upload']);

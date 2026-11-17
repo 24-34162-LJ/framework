@@ -131,18 +131,27 @@ class DocupassService
         }
         $verification->refresh();
 
-        $images = is_array($transaction['outputImage'] ?? null) ? $transaction['outputImage'] : [];
-        $front = is_string($images['front'] ?? null) ? $this->client->image($images['front']) : null;
-        $selfie = is_string($images['face'] ?? null) ? $this->client->image($images['face']) : null;
-        $verification->forceFill([
-            'provider_transaction_id' => is_string($transaction['transactionId'] ?? null) ? mb_substr($transaction['transactionId'], 0, 64) : null,
-            'file_path' => $front !== null ? $this->verifications->storeImage($verification, $front) : null,
-            'file_mime' => $front !== null ? $this->mime($front) : null,
-            'selfie_path' => $selfie !== null ? $this->verifications->storeImage($verification, $selfie) : null,
-            'provider_url' => null,
-        ])->save();
+        // Once claimed, the check must always leave "processing": any failure sends it to admin review.
+        try {
+            $images = is_array($transaction['outputImage'] ?? null) ? $transaction['outputImage'] : [];
+            $front = is_string($images['front'] ?? null) ? $this->client->image($images['front']) : null;
+            $selfie = is_string($images['face'] ?? null) ? $this->client->image($images['face']) : null;
+            $verification->forceFill([
+                'provider_transaction_id' => is_string($transaction['transactionId'] ?? null) ? mb_substr($transaction['transactionId'], 0, 64) : null,
+                'file_path' => $front !== null ? $this->verifications->storeImage($verification, $front) : null,
+                'file_mime' => $front !== null ? $this->mime($front) : null,
+                'selfie_path' => $selfie !== null ? $this->verifications->storeImage($verification, $selfie) : null,
+                'provider_url' => null,
+            ])->save();
 
-        $this->verifications->applyReading($verification, $this->reader->map($transaction));
+            $this->verifications->applyReading($verification, $this->reader->map($transaction));
+        } catch (\Throwable $exception) {
+            report($exception);
+            $verification->refresh();
+            if ($verification->status === IdentityVerification::STATUS_PROCESSING) {
+                $this->verifications->markReaderFailed($verification, 'The live ID check result could not be processed.');
+            }
+        }
     }
 
     private function mime(string $bytes): string

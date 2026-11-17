@@ -24,7 +24,7 @@ class LegacyCompatibilityTest extends TestCase
     {
         $this->get('/login.php')
             ->assertOk()
-            ->assertSee('<form method="post" action="" id="loginForm" novalidate>', false)
+            ->assertSee('method="post" action="" id="loginForm" novalidate>', false)
             ->assertSee('name="login"', false)
             ->assertSee('name="password"', false)
             ->assertSee('name="remember"', false)

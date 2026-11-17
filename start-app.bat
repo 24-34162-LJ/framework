@@ -2,7 +2,7 @@
 rem ==================================================================
 rem  AstraTrack - one-click start
 rem  Starts (only if not already running): MySQL, Apache, PHP 8.5,
-rem  the queue worker, then opens http://127.0.0.1:8080
+rem  the queue worker, the scheduler, then opens http://127.0.0.1:8080
 rem ==================================================================
 setlocal
 set "XAMPP=C:\xampp"
@@ -50,7 +50,16 @@ if errorlevel 1 (
     echo  [Queue]  already running
 )
 
-rem ---- 5. Wait for the site, then open it ----
+rem ---- 5. Scheduler (daily purge of expired ID images) ----
+powershell -NoProfile -Command "if (Get-CimInstance Win32_Process -Filter \"Name='php.exe'\" | Where-Object { $_.CommandLine -like '*schedule:work*' }) { exit 0 } else { exit 1 }"
+if errorlevel 1 (
+    echo  [Sched]  starting...
+    start "AstraTrack Scheduler" /min /D "%APPDIR%" "%PHPDIR%\php.exe" artisan schedule:work
+) else (
+    echo  [Sched]  already running
+)
+
+rem ---- 6. Wait for the site, then open it ----
 echo.
 echo  Waiting for %URL% ...
 set /a TRIES=0
@@ -65,7 +74,7 @@ goto wait
 echo  AstraTrack is running: %URL%
 start "" %URL%
 echo.
-echo  Keep the "AstraTrack Queue Worker" window open while you use the app.
+echo  Keep the "AstraTrack Queue Worker" and "AstraTrack Scheduler" windows open while you use the app.
 echo  To stop: run stop-app.bat
 timeout /t 5 >nul
 exit /b 0

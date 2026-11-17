@@ -45,12 +45,18 @@ class AuthController extends Controller
                 ->withInput(['login' => $identifier]);
         }
 
+        // Names are not unique, so several active users can match: sign in the one whose password fits.
+        // An exact email match is tried first.
         $user = User::query()
             ->where('status', 'active')
             ->where(fn ($query) => $query->where('email', $identifier)->orWhere('full_name', $identifier))
-            ->first();
+            ->orderByRaw('CASE WHEN email = ? THEN 0 ELSE 1 END', [$identifier])
+            ->orderBy('user_id')
+            ->limit(20)
+            ->get()
+            ->first(fn (User $candidate) => Hash::check($password, $candidate->getAuthPassword()));
 
-        if (! $user || ! Hash::check($password, $user->getAuthPassword())) {
+        if (! $user) {
             return redirect('/login.php')->with('legacy_login_error', 'Incorrect email/username or password.')
                 ->withInput(['login' => $identifier]);
         }
@@ -59,25 +65,12 @@ class AuthController extends Controller
             'action' => 'login',
             'role' => $user->role,
         ]);
-        Auth::login($user);
+        // "Remember me" uses Laravel's remember-token cookie, which logs the user back in after the
+        // session itself has expired (SESSION_LIFETIME).
+        Auth::login($user, $request->filled('remember'));
         $request->session()->regenerate();
 
-        $response = redirect()->to($this->dashboardPath($user));
-        if ($request->filled('remember')) {
-            $response->withCookie(cookie(
-                config('session.cookie'),
-                $request->session()->getId(),
-                60 * 24 * 30,
-                config('session.path'),
-                config('session.domain'),
-                (bool) config('session.secure'),
-                (bool) config('session.http_only'),
-                false,
-                config('session.same_site'),
-            ));
-        }
-
-        return $response;
+        return redirect()->to($this->dashboardPath($user));
     }
 
     public function dashboard(): RedirectResponse
