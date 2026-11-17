@@ -1,7 +1,7 @@
 <x-app-layout title="Shipment Updates" active="shipment_activity" :breadcrumbs="[['Dashboard', route('admin.dashboard')], ['Shipment Updates', null]]">
     @push('styles')
         <link href="{{ asset('assets/css/staff.css') }}?v=10" rel="stylesheet">
-        <link href="{{ asset('assets/css/shipments.css') }}?v=9" rel="stylesheet">
+        <link href="{{ asset('assets/css/shipments.css') }}?v=10" rel="stylesheet">
         <link href="{{ asset('assets/css/reports.css') }}?v=9" rel="stylesheet">
         <link href="{{ asset('assets/css/activity.css') }}?v=9" rel="stylesheet">
     @endpush

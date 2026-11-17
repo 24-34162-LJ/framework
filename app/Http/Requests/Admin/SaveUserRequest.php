@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin;
 
+use App\Rules\RealMailDomain;
 use App\Support\PhoneNumber;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -24,7 +25,7 @@ class SaveUserRequest extends FormRequest
             'action' => ['required', Rule::in(['add', 'edit', 'toggle', 'delete'])],
             'user_id' => [$action === 'add' ? 'nullable' : 'required', 'integer', Rule::exists('users', 'user_id')],
             'full_name' => [$isSave ? 'required' : 'nullable', 'string', 'min:2', 'max:100'],
-            'email' => [$isSave ? 'required' : 'nullable', 'email', 'max:120', Rule::unique('users', 'email')->ignore($userId, 'user_id')],
+            'email' => [$isSave ? 'required' : 'nullable', 'email', 'max:120', Rule::unique('users', 'email')->ignore($userId, 'user_id'), new RealMailDomain],
             'password' => [$action === 'add' ? 'required' : 'nullable', 'string', 'min:8', 'max:72'],
             'role' => [$isSave ? 'required' : 'nullable', Rule::in(['admin', 'staff', 'client'])],
             'status' => [$isSave ? 'required' : 'nullable', Rule::in(['active', 'inactive'])],

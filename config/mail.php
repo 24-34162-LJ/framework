@@ -115,4 +115,10 @@ return [
         'name' => env('MAIL_FROM_NAME', env('APP_NAME', 'Laravel')),
     ],
 
+    /*
+    | Check that a user's or client's email domain can actually receive mail
+    | (has a mail server) when an admin saves it. See App\Rules\RealMailDomain.
+    */
+    'verify_domains' => (bool) env('MAIL_VERIFY_DOMAINS', true),
+
 ];

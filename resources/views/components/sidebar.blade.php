@@ -56,6 +56,7 @@
             ]));
             $adminMenu = $makeMenu([
                 'users' => ['User Management', '/account-management/user_management.php', 'shield'],
+                'identity' => ['ID Verification'.(($pendingIds = rescue(fn () => \App\Models\IdentityVerification::query()->needsAdmin()->count(), 0, false)) ? ' · '.$pendingIds : ''), '/admin/identity', 'shield'],
             ]);
         } else {
             $menu = array_merge($menu, $makeMenu([
@@ -99,9 +100,13 @@
             <span class="avatar">{{ $initials !== '' ? $initials : 'U' }}</span>
             <div><strong>{{ $fullName }}</strong><small>{{ ucfirst($role) }}</small></div>
         </div>
-        <a href="/logout.php" class="menu-item">
-            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">{!! $icons['logout'] !!}</svg>
-            <span>Logout</span>
-        </a>
+        {{-- POST, not a link: a plain GET URL lets any other site sign users out --}}
+        <form method="post" action="{{ route('logout') }}" class="logout-form">
+            @csrf
+            <button type="submit" class="menu-item">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">{!! $icons['logout'] !!}</svg>
+                <span>Logout</span>
+            </button>
+        </form>
     </div>
 </aside>

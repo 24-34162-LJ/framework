@@ -314,6 +314,7 @@ body.fig { background: #f0f3fa; color: #1e2f4d; }
 .dlg input[type=text]:focus { outline: 0; border-color: #395886; }
 .dlg-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 4px; }
 .flash { padding: 10px 14px; border-radius: 10px; background: #e9edf5; color: #2e476b; font-size: 14px; }
+.flash-error { background: #fdecec; color: #a32020; }
 #reassignDialog { width: min(500px, calc(100vw - 28px)); max-height: min(650px, calc(100dvh - 28px)); overflow: hidden; }
 #reassignDialog form { padding: 0; gap: 0; }
 #reassignPickerPanel { display: flex; min-height: 0; flex-direction: column; }

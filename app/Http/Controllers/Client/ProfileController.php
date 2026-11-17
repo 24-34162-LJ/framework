@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
 use App\Services\ActivityLogger;
+use App\Services\Identity\IdentityVerificationService;
 use App\Support\PhoneNumber;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -13,7 +14,7 @@ use Illuminate\View\View;
 
 class ProfileController extends Controller
 {
-    public function show(Request $request): View|RedirectResponse
+    public function show(Request $request, IdentityVerificationService $identityService): View|RedirectResponse
     {
         $user = $request->user();
         if ($user->status !== 'active') {
@@ -44,7 +45,10 @@ class ProfileController extends Controller
 
         $contact = ['phone' => $user->phone, 'sms_enabled' => (bool) ($user->sms_enabled ?? true)];
 
-        return view('client.profile.show', compact('accountFields', 'companyFields', 'contact'));
+        // ID verification panel; skipped (not fatal) if its table is missing, e.g. before migrating.
+        $identity = rescue(fn () => $identityService->panelData($user), null, false);
+
+        return view('client.profile.show', compact('accountFields', 'companyFields', 'contact', 'identity'));
     }
 
     /** Save the client's own mobile number and SMS on/off choice (used for SMS notifications). */

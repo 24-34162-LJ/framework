@@ -40,7 +40,7 @@
     @stack('styles')
     <link href="{{ asset('assets/css/navbar.css') }}?v=9" rel="stylesheet">
     <link href="{{ asset('assets/css/notifications.css') }}?v=9" rel="stylesheet">
-    <link href="{{ asset('assets/css/sidebar.css') }}?v=17" rel="stylesheet">
+    <link href="{{ asset('assets/css/sidebar.css') }}?v=18" rel="stylesheet">
 </head>
 <body class="fig">
 <a class="skip-link" href="#mainContent">Skip to main content</a>

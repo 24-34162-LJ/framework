@@ -2,7 +2,7 @@
 <x-app-layout :title="$view === 'detail' ? $bill->billing_no : ($view === 'create' ? 'Create Bill' : ($view === 'review' ? 'Payment Review' : ($view === 'record' ? 'Record Payment' : ($view === 'submit' ? 'Submit Payment Evidence' : ($isClientTitle ? 'My Billing & Payments' : 'Billing Overview')))))" active="billing">
     @push('styles')
         <link href="{{ asset('assets/css/staff.css') }}?v=10" rel="stylesheet">
-        <link href="{{ asset('assets/css/shipments.css') }}?v=9" rel="stylesheet">
+        <link href="{{ asset('assets/css/shipments.css') }}?v=10" rel="stylesheet">
         <link href="{{ asset('assets/css/billing.css') }}?v=9" rel="stylesheet">
     @endpush
     @push('scripts')<script src="{{ asset('assets/js/billing.js') }}?v=2" defer></script>@endpush

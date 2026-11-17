@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin;
 
+use App\Rules\RealMailDomain;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -23,7 +24,7 @@ class SaveClientRequest extends FormRequest
             'client_id' => [$isSave ? 'nullable' : 'required', 'integer', Rule::exists('clients', 'client_id')],
             'client_name' => [$isSave ? 'required' : 'nullable', 'string', 'max:150', Rule::unique('clients', 'client_name')->ignore($clientId, 'client_id')],
             'contact_person' => ['nullable', 'string', 'max:100'],
-            'email' => ['nullable', 'email', 'max:120'],
+            'email' => ['nullable', 'email', 'max:120', new RealMailDomain],
             'phone' => ['nullable', 'string', 'max:30'],
             'address' => ['nullable', 'string', 'max:255'],
             'tin' => ['nullable', 'string', 'max:30'],

@@ -2,9 +2,10 @@
     @push('styles')
         <link href="{{ asset('assets/css/client_dashbroad.css') }}?v=12" rel="stylesheet">
         <link href="{{ asset('assets/css/client_profile.css') }}?v=10" rel="stylesheet">
+        <link href="{{ asset('assets/css/identity.css') }}?v=3" rel="stylesheet">
     @endpush
 
-    <div class="profile-content client-profile-content">
+    <div class="profile-content client-profile-content idv-client">
         @foreach ([['Account details', $accountFields], ['Company details', $companyFields]] as [$section, $fields])
             <section class="profile-card" aria-labelledby="{{ \Illuminate\Support\Str::slug($section) }}-heading">
                 <h2 id="{{ \Illuminate\Support\Str::slug($section) }}-heading">{{ $section }}</h2>
@@ -15,6 +16,10 @@
                 </div>
             </section>
         @endforeach
+
+        @if ($identity)
+            @include('client.identity.panel', $identity)
+        @endif
 
         <section class="profile-card" aria-labelledby="sms-updates-heading">
             <div>

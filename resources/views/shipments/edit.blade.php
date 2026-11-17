@@ -1,7 +1,7 @@
 <x-app-layout :title="'Edit '.$shipment->reference_no" active="shipments">
     @push('styles')
         <link href="{{ asset('assets/css/staff.css') }}?v=10" rel="stylesheet">
-        <link href="{{ asset('assets/css/shipments.css') }}?v=9" rel="stylesheet">
+        <link href="{{ asset('assets/css/shipments.css') }}?v=10" rel="stylesheet">
         <link href="{{ asset('assets/css/shipment_edit.css') }}?v=9" rel="stylesheet">
     @endpush
     @push('scripts')
@@ -34,7 +34,7 @@
                 <span class="eyebrow">Access restricted</span><h2>You can’t edit this shipment</h2>
                 <p>This shipment is assigned to {{ $shipment->assignedStaff?->full_name ?? 'another staff member' }}. Staff may edit only their assigned shipments or unassigned shipments.</p>
                 <div class="restricted-ref"><strong>{{ $shipment->reference_no }}</strong><span>Assigned to {{ $shipment->assignedStaff?->full_name ?? 'another staff member' }}</span></div>
-                <a class="btn btn-primary" href="{{ route('staff.shipments') }}">Back to Shipments</a><small>If this assignment is incorrect, contact an administrator.</small>
+                <a class="btn btn-primary" href="{{ \App\Support\ShipmentListUrl::for(auth()->user()) }}">Back to Shipments</a><small>If this assignment is incorrect, contact an administrator.</small>
             </section>
         @else
             @if ($isArchived)
@@ -97,7 +97,7 @@
                 </section>
             </form>
 
-            <footer class="edit-footer"><span id="editState" aria-live="polite">{{ $isReadOnly ? 'Read-only · '.($isArchived ? 'Archived shipment' : 'Closed shipment') : 'No changes to save' }}</span><div><a class="btn btn-secondary" href="{{ auth()->user()->role === 'admin' ? route('admin.shipments', ['q' => $shipment->reference_no]) : route('staff.shipments', ['q' => $shipment->reference_no]) }}" data-cancel>{{ $isReadOnly ? 'Back to Shipments' : 'Cancel' }}</a><button class="btn btn-primary" type="submit" form="shipmentEditForm" id="saveShipment" {{ $isReadOnly ? 'disabled' : '' }}>Save Changes</button></div></footer>
+            <footer class="edit-footer"><span id="editState" aria-live="polite">{{ $isReadOnly ? 'Read-only · '.($isArchived ? 'Archived shipment' : 'Closed shipment') : 'No changes to save' }}</span><div><a class="btn btn-secondary" href="{{ \App\Support\ShipmentListUrl::for(auth()->user()) }}" data-cancel>{{ $isReadOnly ? 'Back to Shipments' : 'Cancel' }}</a><button class="btn btn-primary" type="submit" form="shipmentEditForm" id="saveShipment" {{ $isReadOnly ? 'disabled' : '' }}>Save Changes</button></div></footer>
             <dialog class="leave-dialog" id="leaveDialog"><div class="leave-mark">!</div><h2>Leave page without saving?</h2><p>Your unsaved changes to {{ $shipment->reference_no }} will be lost. Stay on this page to keep editing your draft.</p><div><button class="btn btn-danger-outline" type="button" data-leave-confirm>Leave without saving</button><button class="btn btn-primary" type="button" data-leave-stay>Stay</button></div></dialog>
         @endif
     </div>

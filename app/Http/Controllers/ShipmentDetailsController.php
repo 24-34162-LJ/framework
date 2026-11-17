@@ -66,11 +66,13 @@ class ShipmentDetailsController extends Controller
         $isArchived = $shipment->archived_at !== null;
         $isShipmentClosed = (bool) $shipment->stage?->is_closed;
         $statusModalState = $stageService->modalState($shipment, $request->user()->role);
+        $canChangeDetails = $shipment->officeChangeBlockedFor($request->user()) === null;
+        $canReassign = $request->user()->role === 'admin' && $shipment->isOpen();
 
         return view('shipments.show', compact(
             'shipment', 'delivery', 'documents', 'documentChecklist', 'progress', 'statusLabel', 'statusClass',
             'modeLabels', 'latestAudit', 'isArchived', 'isShipmentClosed', 'staffList', 'statusModalState',
-            'documentHistory', 'documentRequests', 'pendingReviewCount'
+            'documentHistory', 'documentRequests', 'pendingReviewCount', 'canChangeDetails', 'canReassign'
         ));
     }
 
@@ -82,14 +84,26 @@ class ShipmentDetailsController extends Controller
         $staff = User::query()->where('user_id', $data['staff_id'])->where('role', 'staff')->where('status', 'active')->firstOrFail();
         $oldStaffName = $shipment->assignedStaff?->full_name ?? 'Unassigned';
 
-        DB::transaction(function () use ($shipment, $staff, $oldStaffName, $request): void {
+        $error = DB::transaction(function () use ($shipment, $staff, $oldStaffName, $request): ?string {
             $locked = Shipment::query()->lockForUpdate()->findOrFail($shipment->shipment_id);
+            if (! $locked->isOpen()) {
+                return $locked->reference_no.' is closed or archived, so its staff assignment can no longer change.';
+            }
+            if ((int) $locked->assigned_staff_id === (int) $staff->user_id) {
+                return $locked->reference_no.' is already assigned to '.$staff->full_name.'.';
+            }
             $locked->assigned_staff_id = $staff->user_id;
             $locked->save();
             $description = $locked->reference_no.' reassigned from '.$oldStaffName.' to '.$staff->full_name;
             app(\App\Services\ActivityLogger::class)->record($request->user(), 'Shipment Update', $description);
             app(\App\Services\NotificationService::class)->forShipment($locked, $request->user(), 'assignment', 'Shipment reassigned', $locked->reference_no.' was assigned to '.$staff->full_name.'.');
+
+            return null;
         }, 3);
+
+        if ($error !== null) {
+            return redirect()->route('shipments.show', $shipmentId)->with('error', $error);
+        }
 
         return redirect()->route('shipments.show', $shipmentId)->with('success', 'Shipment reassigned to '.$staff->full_name.'.');
     }
@@ -97,6 +111,9 @@ class ShipmentDetailsController extends Controller
     public function saveCustoms(Request $request, int $shipmentId): RedirectResponse
     {
         $shipment = $this->accessibleShipment($request, $shipmentId);
+        if ($blocked = $shipment->officeChangeBlockedFor($request->user())) {
+            return redirect()->route('shipments.show', $shipmentId)->withFragment('customs')->with('error', $blocked);
+        }
         if ($request->input('declaration_type') === '__other__') {
             $request->merge(['declaration_type' => trim((string) $request->input('declaration_type_custom', ''))]);
         }
@@ -141,6 +158,9 @@ class ShipmentDetailsController extends Controller
     public function saveDelivery(Request $request, int $shipmentId): RedirectResponse
     {
         $shipment = $this->accessibleShipment($request, $shipmentId);
+        if ($blocked = $shipment->officeChangeBlockedFor($request->user())) {
+            return redirect()->route('shipments.show', $shipmentId)->withFragment('delivery')->with('error', $blocked);
+        }
         $data = $request->validate([
             'delivery_id' => ['nullable', 'integer'], 'trucker' => ['nullable', 'string', 'max:100'],
             'driver_name' => ['nullable', 'string', 'max:100'], 'plate_no' => ['nullable', 'regex:/^[A-Za-z]{3} ?\d{4}$/', 'max:20'],

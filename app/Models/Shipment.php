@@ -100,7 +100,33 @@ class Shipment extends Model
     {
         $this->loadMissing('stage');
 
+        return $this->isOpen();
+    }
+
+    /** Not archived and not in a closed stage (delivered/cancelled). */
+    public function isOpen(): bool
+    {
+        $this->loadMissing('stage');
+
         return $this->archived_at === null && ! (bool) $this->stage?->is_closed;
+    }
+
+    /**
+     * Why an admin/staff user may not change this shipment's details, or null when they may.
+     * Same rule as the Edit page: archived is read-only for everyone; closed is read-only except for admins.
+     */
+    public function officeChangeBlockedFor(User $user): ?string
+    {
+        $this->loadMissing('stage');
+
+        if ($this->archived_at !== null) {
+            return $this->reference_no.' is archived and read-only.';
+        }
+        if ((bool) $this->stage?->is_closed && $user->role !== 'admin') {
+            return $this->reference_no.' is closed. Only an administrator can change it.';
+        }
+
+        return null;
     }
 
     public function billings(): HasMany
