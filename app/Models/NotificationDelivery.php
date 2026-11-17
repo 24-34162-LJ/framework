@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Models/NotificationDelivery.php
+ * Feature: Notifications
+ * Purpose: Table notification_deliveries: one SMS / WhatsApp / email attempt and its result.
+ */
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;

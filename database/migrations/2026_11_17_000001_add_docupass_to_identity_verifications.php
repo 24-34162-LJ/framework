@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : database/migrations/2026_11_17_000001_add_docupass_to_identity_verifications.php
+ * Feature: ID Recognition
+ * Purpose: Adds DocuPass columns (live check link, transaction, selfie image) to
+ *          identity_verifications.
+ */
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;

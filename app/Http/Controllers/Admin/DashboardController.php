@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Http/Controllers/Admin/DashboardController.php
+ * Feature: Admin - Dashboard
+ * Purpose: Builds the admin dashboard: shipment counts, charts and the latest activity.
+ */
+
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;

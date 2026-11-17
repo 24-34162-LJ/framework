@@ -1,3 +1,10 @@
+{{--
+    FILE PURPOSE
+    File   : resources/views/welcome.blade.php
+    Feature: Core
+    Purpose: Default Laravel welcome page (not used by AstraTrack).
+--}}
+
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>

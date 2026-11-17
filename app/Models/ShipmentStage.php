@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Models/ShipmentStage.php
+ * Feature: Database model
+ * Purpose: Table shipment_stages: the list of possible shipment stages (statuses).
+ */
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;

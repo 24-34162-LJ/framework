@@ -1,3 +1,11 @@
+/*
+ * FILE PURPOSE
+ * File   : public/astratrack/js/notifications.js
+ * Feature: Legacy (old copy)
+ * Purpose: OLD COPY of notifications.js from the original plain-PHP AstraTrack. Not loaded by the
+ *          Laravel pages, which use public/assets/js/notifications.js. Kept for reference only.
+ */
+
 (() => {
   const menu = document.querySelector('[data-notification-menu]');
   const csrf = document.querySelector('meta[name="csrf"]')?.content || menu?.dataset.csrf || '';

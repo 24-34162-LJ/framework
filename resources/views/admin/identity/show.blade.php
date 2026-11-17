@@ -1,3 +1,10 @@
+{{--
+    FILE PURPOSE
+    File   : resources/views/admin/identity/show.blade.php
+    Feature: ID Recognition
+    Purpose: Admin page for one ID check: ID image, selfie, what was read, and approve / reject.
+--}}
+
 <x-app-layout title="ID Check #{{ $verification->verification_id }}" active="identity"
     :breadcrumbs="[['Dashboard', '/account-management/admin.php'], ['ID Verification', route('admin.identity.index')], ['#'.$verification->verification_id, null]]">
     @push('styles')

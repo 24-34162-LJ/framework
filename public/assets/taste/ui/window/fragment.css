@@ -1,3 +1,12 @@
+/*
+ * FILE PURPOSE
+ * File   : public/assets/taste/ui/window/fragment.css
+ * Feature: Landing page - design kit
+ * Purpose: Part of the third-party "taste-skill" design kit used by the landing page
+ *          (resources/views/landing/index.blade.php). fragment.css is a kit file, not AstraTrack
+ *          business logic.
+ */
+
 /* window: a helpdesk queue (sidebar, list); the assistant works down the open rows */
 .ui-win { width: 600px; overflow: hidden; }
 .ui-win__bar { display: flex; align-items: center; gap: 14px; height: 44px; padding: 0 12px 0 14px; border-bottom: 1px solid var(--u-line); background: var(--u-fill); min-width: 0; }

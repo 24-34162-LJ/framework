@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Mail/NotificationMail.php
+ * Feature: Notifications
+ * Purpose: The email sent for a notification: title, message and a "View in AstraTrack" link.
+ */
+
 namespace App\Mail;
 
 use Illuminate\Mail\Mailable;

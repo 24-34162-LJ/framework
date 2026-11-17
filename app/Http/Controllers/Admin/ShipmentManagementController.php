@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Http/Controllers/Admin/ShipmentManagementController.php
+ * Feature: Shipments
+ * Purpose: Admin shipment list: filters, assigning shipments to staff, and CSV export.
+ */
+
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;

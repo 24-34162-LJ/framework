@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Services/Identity/PhIdRules.php
+ * Feature: ID Recognition
+ * Purpose: Our own rules for Philippine IDs: ID number format, expiry, name match, tampering ->
+ *          verified / needs review / rejected.
+ */
+
 namespace App\Services\Identity;
 
 use Illuminate\Support\Carbon;

@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : config/app.php
+ * Feature: Config
+ * Purpose: Main app settings: name, environment, debug, timezone, URL (values come from .env).
+ */
+
 return [
 
     /*

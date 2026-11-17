@@ -1,3 +1,10 @@
+{{--
+    FILE PURPOSE
+    File   : resources/views/admin/activity/shipment-updates.blade.php
+    Feature: Admin - Activity log
+    Purpose: Admin "Shipment Updates" page.
+--}}
+
 <x-app-layout title="Shipment Updates" active="shipment_activity" :breadcrumbs="[['Dashboard', route('admin.dashboard')], ['Shipment Updates', null]]">
     @push('styles')
         <link href="{{ asset('assets/css/staff.css') }}?v=10" rel="stylesheet">

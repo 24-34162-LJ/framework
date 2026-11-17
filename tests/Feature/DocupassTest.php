@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : tests/Feature/DocupassTest.php
+ * Feature: Testing - ID Recognition
+ * Purpose: Tests the live ID + selfie check (DocuPass): start, return, result and webhook.
+ */
+
 namespace Tests\Feature;
 
 use App\Models\IdentityVerification;

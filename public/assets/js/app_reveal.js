@@ -1,3 +1,10 @@
+/*
+ * FILE PURPOSE
+ * File   : public/assets/js/app_reveal.js
+ * Feature: Core
+ * Purpose: Scroll reveal animation for cards on app pages.
+ */
+
 // AstraTrack app screens (client, staff, admin): scroll reveal.
 // Each outer card in the main content rises and fades in the first time it comes on screen, once.
 // Cards that arrive together (a row of stats) follow each other 60ms apart. Inner cards, table rows and

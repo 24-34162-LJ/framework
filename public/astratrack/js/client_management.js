@@ -1,3 +1,11 @@
+/*
+ * FILE PURPOSE
+ * File   : public/astratrack/js/client_management.js
+ * Feature: Legacy (old copy)
+ * Purpose: OLD COPY of client_management.js from the original plain-PHP AstraTrack. Not loaded by the
+ *          Laravel pages, which use public/assets/js/client_management.js. Kept for reference only.
+ */
+
 document.addEventListener('DOMContentLoaded', () => {
     const dialog = document.getElementById('clientDialog');
     if (dialog && typeof dialog.showModal === 'function') {

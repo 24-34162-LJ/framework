@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : tests/Feature/IdentityVerificationTest.php
+ * Feature: Testing - ID Recognition
+ * Purpose: Tests the ID upload flow: panel, encrypted storage, reader failure, admin review.
+ */
+
 namespace Tests\Feature;
 
 use App\Jobs\ReadIdentityDocument;

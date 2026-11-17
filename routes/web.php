@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : routes/web.php
+ * Feature: Core
+ * Purpose: All website URLs: which URL goes to which controller, for every feature and role.
+ */
+
 use App\Http\Controllers\Admin\ActivityController;
 use App\Http\Controllers\Admin\ClientManagementController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;

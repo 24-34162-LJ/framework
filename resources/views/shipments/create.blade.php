@@ -1,3 +1,10 @@
+{{--
+    FILE PURPOSE
+    File   : resources/views/shipments/create.blade.php
+    Feature: Shipments
+    Purpose: Add Shipment page.
+--}}
+
 <x-app-layout title="Add Shipment" active="shipments" legacy-dashboard :show-notifications="false">
     @push('styles')
         <link href="{{ asset('assets/css/staff.css') }}?v=10" rel="stylesheet">

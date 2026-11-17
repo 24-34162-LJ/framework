@@ -1,3 +1,10 @@
+/*
+ * FILE PURPOSE
+ * File   : public/assets/js/landing.js
+ * Feature: Landing page
+ * Purpose: Landing page script: navigation links and menu.
+ */
+
 // AstraTrack - Landing page scripts
 (function () {
     'use strict';

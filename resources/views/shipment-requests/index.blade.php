@@ -1,3 +1,10 @@
+{{--
+    FILE PURPOSE
+    File   : resources/views/shipment-requests/index.blade.php
+    Feature: Shipment requests
+    Purpose: Staff page to review client shipment requests.
+--}}
+
 <x-app-layout title="Shipment Requests" active="shipment_requests" :breadcrumbs="[['Dashboard', route('dashboard')], ['Shipment Requests', null]]">
     @push('styles')
         <link href="{{ asset('assets/css/staff.css') }}?v=10" rel="stylesheet">

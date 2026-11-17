@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Services/Identity/IdDocumentReader.php
+ * Feature: ID Recognition
+ * Purpose: Interface (contract) every ID reader must follow, so Gemini and ID Analyzer can be swapped
+ *          in config.
+ */
+
 namespace App\Services\Identity;
 
 /**

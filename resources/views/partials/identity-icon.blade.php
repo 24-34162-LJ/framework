@@ -1,3 +1,10 @@
+{{--
+    FILE PURPOSE
+    File   : resources/views/partials/identity-icon.blade.php
+    Feature: ID Recognition
+    Purpose: Small SVG icons used on the ID verification pages.
+--}}
+
 {{-- Stroke icons for ID Verification, same 24px / 1.8 stroke style as the sidebar icons. --}}
 <svg class="idv-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
     @switch($name)

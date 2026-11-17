@@ -1,3 +1,10 @@
+/*
+ * FILE PURPOSE
+ * File   : public/assets/css/activity.css
+ * Feature: Admin - Activity log
+ * Purpose: Styles for the admin activity pages.
+ */
+
 .activity-page { gap: 17px; }
 .activity-page .page-head { align-items: center; }
 .activity-page .report-records { gap: 14px; }

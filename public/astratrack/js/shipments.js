@@ -1,3 +1,11 @@
+/*
+ * FILE PURPOSE
+ * File   : public/astratrack/js/shipments.js
+ * Feature: Legacy (old copy)
+ * Purpose: OLD COPY of shipments.js from the original plain-PHP AstraTrack. Not loaded by the Laravel
+ *          pages, which use public/assets/js/shipments.js. Kept for reference only.
+ */
+
 /* shipments.js — AstraTrack shipment list and details pages */
 
 // Chrome can restore nested horizontal scroll after the first paint. Reset on

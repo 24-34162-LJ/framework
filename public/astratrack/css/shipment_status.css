@@ -1,3 +1,11 @@
+/*
+ * FILE PURPOSE
+ * File   : public/astratrack/css/shipment_status.css
+ * Feature: Legacy (old copy)
+ * Purpose: OLD COPY of shipment_status.css from the original plain-PHP AstraTrack. Not loaded by the
+ *          Laravel pages, which use public/assets/css/shipment_status.css. Kept for reference only.
+ */
+
 /* shipment_status.css — Update Status modal, toast and the On Hold / Cancelled timeline entries
  * Used by shipment_view.php (modal + toast) and, for the .tl-hold / .tl-cancelled dots, clint_shipment.php.
  * Colours: navy #163a5f, blue #2878b5, grey #f4f6f8. Headings Poppins, body Inter (same as shipments.css). */

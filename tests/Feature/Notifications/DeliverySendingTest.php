@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : tests/Feature/Notifications/DeliverySendingTest.php
+ * Feature: Testing - Notifications
+ * Purpose: Tests sending SMS / WhatsApp / email and recording success or failure.
+ */
+
 namespace Tests\Feature\Notifications;
 
 use App\Mail\NotificationMail;

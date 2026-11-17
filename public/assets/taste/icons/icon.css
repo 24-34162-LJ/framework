@@ -1,4 +1,13 @@
 /*
+ * FILE PURPOSE
+ * File   : public/assets/taste/icons/icon.css
+ * Feature: Landing page - design kit
+ * Purpose: Part of the third-party "taste-skill" design kit used by the landing page
+ *          (resources/views/landing/index.blade.php). icon.css is a kit file, not AstraTrack business
+ *          logic.
+ */
+
+/*
   taste-skill icons/icon.css - how a real icon sits on the page: bare, in a tile, in a list row, in a chip,
   in an avatar stack, in an integration grid, on a file card. Link it after system.css. It reads the
   ground tokens (--bg --surface --card --ink --muted --accent --line) and the radius set, so the same

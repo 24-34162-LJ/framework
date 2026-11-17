@@ -1,3 +1,11 @@
+/*
+ * FILE PURPOSE
+ * File   : public/astratrack/js/billing.js
+ * Feature: Legacy (old copy)
+ * Purpose: OLD COPY of billing.js from the original plain-PHP AstraTrack. Not loaded by the Laravel
+ *          pages, which use public/assets/js/billing.js. Kept for reference only.
+ */
+
 document.addEventListener('DOMContentLoaded', () => {
     const sidebar = document.getElementById('sidebar');
     const menuToggle = document.getElementById('menuToggle');

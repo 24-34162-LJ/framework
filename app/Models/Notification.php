@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Models/Notification.php
+ * Feature: Database model
+ * Purpose: Table notifications: in-app notifications shown in the bell menu.
+ */
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;

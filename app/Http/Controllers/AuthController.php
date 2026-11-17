@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Http/Controllers/AuthController.php
+ * Feature: Login / Auth
+ * Purpose: Login page, sign-in, sign-out, and sending each role (admin / staff / client) to its own
+ *          dashboard.
+ */
+
 namespace App\Http\Controllers;
 
 use App\Models\User;

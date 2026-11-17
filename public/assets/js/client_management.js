@@ -1,3 +1,10 @@
+/*
+ * FILE PURPOSE
+ * File   : public/assets/js/client_management.js
+ * Feature: Admin - Client management
+ * Purpose: Client management script: confirm popups.
+ */
+
 document.addEventListener('DOMContentLoaded', () => {
     const dialog = document.getElementById('clientDialog');
     if (dialog && typeof dialog.showModal === 'function') {

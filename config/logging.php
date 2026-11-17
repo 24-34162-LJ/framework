@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : config/logging.php
+ * Feature: Config
+ * Purpose: Log settings: where Laravel writes error and debug logs.
+ */
+
 use Monolog\Handler\NullHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\SyslogUdpHandler;

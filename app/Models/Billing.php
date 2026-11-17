@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Models/Billing.php
+ * Feature: Database model
+ * Purpose: Table billing: a bill for a client/shipment, with its items, payments and transactions.
+ */
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;

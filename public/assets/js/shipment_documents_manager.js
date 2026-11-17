@@ -1,3 +1,10 @@
+/*
+ * FILE PURPOSE
+ * File   : public/assets/js/shipment_documents_manager.js
+ * Feature: Documents
+ * Purpose: Shipment documents popup: add, list and delete files.
+ */
+
 (() => {
   const dialog = document.getElementById('documentsDialog');
   if (!dialog) return;

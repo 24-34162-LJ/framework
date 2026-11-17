@@ -1,3 +1,10 @@
+{{--
+    FILE PURPOSE
+    File   : resources/views/client/identity/panel.blade.php
+    Feature: ID Recognition
+    Purpose: Client ID verification panel on My Profile: upload / live check button, status and history.
+--}}
+
 {{-- ID verification panel, shown on the client's My Profile page. Needs: $latest, $history, $companyVerified, $idTypes. --}}
 @php
     $resultMessages = [

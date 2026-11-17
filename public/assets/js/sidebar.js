@@ -1,3 +1,10 @@
+/*
+ * FILE PURPOSE
+ * File   : public/assets/js/sidebar.js
+ * Feature: Core
+ * Purpose: Opens and closes the sidebar menu on small screens.
+ */
+
 /* sidebar.js — the one place that opens and closes the navigation on small screens.
    Page scripts must not bind their own handler to the menu button: two handlers cancel each other out. */
 (() => {

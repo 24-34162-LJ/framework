@@ -1,3 +1,10 @@
+/*
+ * FILE PURPOSE
+ * File   : public/assets/css/client_management.css
+ * Feature: Admin - Client management
+ * Purpose: Styles for the admin client management page.
+ */
+
 .cm-page { gap: 20px; }
 .cm-head { align-items: flex-end; }
 .cm-head h1 { margin: 6px 0 0; }

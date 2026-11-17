@@ -1,3 +1,10 @@
+{{--
+    FILE PURPOSE
+    File   : resources/views/shipments/edit.blade.php
+    Feature: Shipments
+    Purpose: Edit Shipment page.
+--}}
+
 <x-app-layout :title="'Edit '.$shipment->reference_no" active="shipments">
     @push('styles')
         <link href="{{ asset('assets/css/staff.css') }}?v=10" rel="stylesheet">

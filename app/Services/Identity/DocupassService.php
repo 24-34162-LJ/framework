@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Services/Identity/DocupassService.php
+ * Feature: ID Recognition
+ * Purpose: Live ID + selfie check with ID Analyzer DocuPass: creates the DocuPass link, then downloads
+ *          and saves the result.
+ */
+
 namespace App\Services\Identity;
 
 use App\Models\IdentityVerification;

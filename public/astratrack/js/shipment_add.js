@@ -1,3 +1,11 @@
+/*
+ * FILE PURPOSE
+ * File   : public/astratrack/js/shipment_add.js
+ * Feature: Legacy (old copy)
+ * Purpose: OLD COPY of shipment_add.js from the original plain-PHP AstraTrack. Not loaded by the
+ *          Laravel pages, which use public/assets/js/shipment_add.js. Kept for reference only.
+ */
+
 /* Shipment add: manual entry and PDF assisted draft review. */
 document.addEventListener("DOMContentLoaded", () => {
     const $ = id => document.getElementById(id);

@@ -1,4 +1,13 @@
 /*
+ * FILE PURPOSE
+ * File   : public/assets/taste/motion/motion.css
+ * Feature: Landing page - design kit
+ * Purpose: Part of the third-party "taste-skill" design kit used by the landing page
+ *          (resources/views/landing/index.blade.php). motion.css is a kit file, not AstraTrack business
+ *          logic.
+ */
+
+/*
   taste-skill motion.css - the micro-interactions a company site has (figma.com, x.ai): one small
   opt-in layer over system.css and ui/cards.css. Link it after them (data-motion on <html> is optional);
   load motion.js once (it adds the tab indicator, the number tick and the card loops).

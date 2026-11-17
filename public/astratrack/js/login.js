@@ -1,3 +1,11 @@
+/*
+ * FILE PURPOSE
+ * File   : public/astratrack/js/login.js
+ * Feature: Legacy (old copy)
+ * Purpose: OLD COPY of login.js from the original plain-PHP AstraTrack. Not loaded by the Laravel
+ *          pages, which use public/assets/js/login.js. Kept for reference only.
+ */
+
 // AstraTrack - Login page scripts
 (function () {
     'use strict';

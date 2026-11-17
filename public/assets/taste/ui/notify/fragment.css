@@ -1,3 +1,12 @@
+/*
+ * FILE PURPOSE
+ * File   : public/assets/taste/ui/notify/fragment.css
+ * Feature: Landing page - design kit
+ * Purpose: Part of the third-party "taste-skill" design kit used by the landing page
+ *          (resources/views/landing/index.blade.php). fragment.css is a kit file, not AstraTrack
+ *          business logic.
+ */
+
 /* notify: a short stack of notifications; a new one slides in on top, the oldest leaves */
 .ui-notify { width: 380px; }
 .ui-notify__list { position: relative; display: grid; gap: 8px; }

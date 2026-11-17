@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Models/ShipmentDocument.php
+ * Feature: Database model
+ * Purpose: Table shipment_documents: files attached to a shipment, with review status and versions.
+ */
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;

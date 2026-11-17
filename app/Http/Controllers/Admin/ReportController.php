@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Http/Controllers/Admin/ReportController.php
+ * Feature: Admin - Reports
+ * Purpose: Admin reports page: counts shipments/billing by date range and exports them as CSV.
+ */
+
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;

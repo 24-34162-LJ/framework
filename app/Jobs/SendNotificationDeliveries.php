@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Jobs/SendNotificationDeliveries.php
+ * Feature: Notifications
+ * Purpose: Background job that sends pending SMS / WhatsApp / email notifications and saves whether
+ *          each one was sent or failed.
+ */
+
 namespace App\Jobs;
 
 use App\Models\NotificationDelivery;

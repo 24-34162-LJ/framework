@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Http/Controllers/IdAnalyzerWebhookController.php
+ * Feature: ID Recognition
+ * Purpose: Receives the webhook from ID Analyzer when a live DocuPass check finishes; checks the
+ *          signature, then saves the result.
+ */
+
 namespace App\Http\Controllers;
 
 use App\Services\Identity\DocupassService;

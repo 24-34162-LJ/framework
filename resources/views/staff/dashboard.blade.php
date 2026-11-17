@@ -1,3 +1,10 @@
+{{--
+    FILE PURPOSE
+    File   : resources/views/staff/dashboard.blade.php
+    Feature: Staff portal
+    Purpose: Staff dashboard page.
+--}}
+
 <x-app-layout title="Dashboard" active="dashboard" :search-action="url('/staff/dashboard#shipments')" search-placeholder="Search shipments or clients" legacy-dashboard>
     @push('styles')<link href="{{ asset('assets/css/staff.css') }}?v=10" rel="stylesheet">@endpush
     @push('scripts')

@@ -1,3 +1,11 @@
+/*
+ * FILE PURPOSE
+ * File   : public/astratrack/css/sidebar.css
+ * Feature: Legacy (old copy)
+ * Purpose: OLD COPY of sidebar.css from the original plain-PHP AstraTrack. Not loaded by the Laravel
+ *          pages, which use public/assets/css/sidebar.css. Kept for reference only.
+ */
+
 /* Shared sidebar skin loaded last on dashboard and workflow pages. */
 :root { --sidebar-w: 264px; --sidebar-navy: #17385f; --sidebar-blue: #2b78bd; }
 .layout { display: flex; min-height: 100vh; }

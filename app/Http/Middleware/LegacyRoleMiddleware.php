@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Http/Middleware/LegacyRoleMiddleware.php
+ * Feature: Security
+ * Purpose: Keeps the old redirect behaviour for inactive accounts or users opening a page of another
+ *          role.
+ */
+
 namespace App\Http\Middleware;
 
 use Closure;

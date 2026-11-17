@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Models/ActivityLog.php
+ * Feature: Database model
+ * Purpose: Table activity_log: one row per action a user did (used by the activity pages and audit
+ *          trail).
+ */
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;

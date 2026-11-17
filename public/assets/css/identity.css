@@ -1,3 +1,10 @@
+/*
+ * FILE PURPOSE
+ * File   : public/assets/css/identity.css
+ * Feature: ID Recognition
+ * Purpose: Styles for ID verification: client upload / live check panel and admin review pages.
+ */
+
 /* identity.css — ID Verification (client upload + admin review).
    Uses the app tokens from staff.css / client_dashbroad.css; fallbacks keep it safe if loaded alone. */
 

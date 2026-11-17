@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : config/session.php
+ * Feature: Config
+ * Purpose: Login session settings (lifetime, cookie).
+ */
+
 use Illuminate\Support\Str;
 
 return [

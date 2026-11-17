@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Services/Identity/IdAnalyzerReader.php
+ * Feature: ID Recognition
+ * Purpose: ID reader that uses the ID Analyzer API to scan an ID photo, and converts its answer to our
+ *          own fields.
+ */
+
 namespace App\Services\Identity;
 
 /**

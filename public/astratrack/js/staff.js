@@ -1,3 +1,11 @@
+/*
+ * FILE PURPOSE
+ * File   : public/astratrack/js/staff.js
+ * Feature: Legacy (old copy)
+ * Purpose: OLD COPY of staff.js from the original plain-PHP AstraTrack. Not loaded by the Laravel
+ *          pages, which use public/assets/js/staff.js. Kept for reference only.
+ */
+
 /* staff.js — AstraTrack Staff Dashboard */
 
 document.addEventListener("DOMContentLoaded", () => {

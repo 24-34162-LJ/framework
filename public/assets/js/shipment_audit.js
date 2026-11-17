@@ -1,3 +1,10 @@
+/*
+ * FILE PURPOSE
+ * File   : public/assets/js/shipment_audit.js
+ * Feature: Shipments
+ * Purpose: Shipment audit trail popup: loads and filters the history.
+ */
+
 (function () {
   const dialog = document.getElementById('auditDialog');
   if (!dialog) return;

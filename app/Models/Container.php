@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Models/Container.php
+ * Feature: Database model
+ * Purpose: Table containers: a container that belongs to a shipment.
+ */
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;

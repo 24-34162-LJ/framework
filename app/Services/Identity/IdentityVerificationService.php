@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Services/Identity/IdentityVerificationService.php
+ * Feature: ID Recognition
+ * Purpose: Main ID recognition flow: save the ID photo encrypted, have it read, apply the rules,
+ *          notify, and admin decisions.
+ */
+
 namespace App\Services\Identity;
 
 use App\Jobs\ReadIdentityDocument;

@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Http/Controllers/Client/IdentityVerificationController.php
+ * Feature: ID Recognition
+ * Purpose: Client side of ID recognition (on My Profile): consent, upload an ID photo, start the live
+ *          ID + selfie check (DocuPass), and see the result.
+ */
+
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;

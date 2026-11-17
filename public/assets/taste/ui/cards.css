@@ -1,4 +1,13 @@
 /*
+ * FILE PURPOSE
+ * File   : public/assets/taste/ui/cards.css
+ * Feature: Landing page - design kit
+ * Purpose: Part of the third-party "taste-skill" design kit used by the landing page
+ *          (resources/views/landing/index.blade.php). cards.css is a kit file, not AstraTrack business
+ *          logic.
+ */
+
+/*
   taste-skill feature cards - the card, its inset panel and where a fragment sits on it.
   The rules and their reasons are in references/cards.md. Link after system.css (it refines .card
   and .panel there) or on its own with these tokens on a ground:

@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Http/Controllers/ShipmentEditController.php
+ * Feature: Shipments
+ * Purpose: Edit Shipment page: update shipment fields, record what changed, notify about date changes.
+ */
+
 namespace App\Http\Controllers;
 
 use App\Models\Client;

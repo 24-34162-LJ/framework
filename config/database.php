@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : config/database.php
+ * Feature: Config
+ * Purpose: Database connection settings (MySQL, SQLite for tests).
+ */
+
 use Illuminate\Support\Str;
 use Pdo\Mysql;
 

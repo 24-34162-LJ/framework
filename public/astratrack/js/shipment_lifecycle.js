@@ -1,3 +1,11 @@
+/*
+ * FILE PURPOSE
+ * File   : public/astratrack/js/shipment_lifecycle.js
+ * Feature: Legacy (old copy)
+ * Purpose: OLD COPY of shipment_lifecycle.js from the original plain-PHP AstraTrack. Not loaded by the
+ *          Laravel pages, which use public/assets/js/shipment_lifecycle.js. Kept for reference only.
+ */
+
 (() => {
   const dialog = document.getElementById('shipmentActionDialog');
   if (!dialog) return;

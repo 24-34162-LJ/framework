@@ -1,3 +1,11 @@
+/*
+ * FILE PURPOSE
+ * File   : public/astratrack/css/staff.css
+ * Feature: Legacy (old copy)
+ * Purpose: OLD COPY of staff.css from the original plain-PHP AstraTrack. Not loaded by the Laravel
+ *          pages, which use public/assets/css/staff.css. Kept for reference only.
+ */
+
 /* staff.css — AstraTrack Staff Dashboard */
 
 :root {

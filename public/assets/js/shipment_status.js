@@ -1,3 +1,10 @@
+/*
+ * FILE PURPOSE
+ * File   : public/assets/js/shipment_status.js
+ * Feature: Shipments
+ * Purpose: Update Status modal: pick the next stage, validate, send, show a toast.
+ */
+
 /* shipment_status.js — Update Status modal on ../shipment-management/shipment_view.php (admin and staff)
  * Talks to ../shipment-management/shipment_status.php (POST, X-CSRF-Token header, JSON back).
  * The valid stages come from the data-state attribute on #statusDialog (built by PHP for this person's role);

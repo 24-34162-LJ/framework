@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Models/IdentityVerification.php
+ * Feature: ID Recognition
+ * Purpose: Table identity_verifications: one row per client ID check (status, reader result, DocuPass
+ *          link, review decision).
+ */
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;

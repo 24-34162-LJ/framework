@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : database/migrations/2026_11_16_000001_create_identity_verifications.php
+ * Feature: ID Recognition
+ * Purpose: Creates the identity_verifications table (one row per client ID check).
+ */
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;

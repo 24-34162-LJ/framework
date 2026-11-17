@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Models/BillingItem.php
+ * Feature: Database model
+ * Purpose: Table billing_items: one line (charge) on a bill.
+ */
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;

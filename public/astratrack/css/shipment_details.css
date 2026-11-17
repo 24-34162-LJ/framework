@@ -1,3 +1,11 @@
+/*
+ * FILE PURPOSE
+ * File   : public/astratrack/css/shipment_details.css
+ * Feature: Legacy (old copy)
+ * Purpose: OLD COPY of shipment_details.css from the original plain-PHP AstraTrack. Not loaded by the
+ *          Laravel pages, which use public/assets/css/shipment_details.css. Kept for reference only.
+ */
+
 /* Shipment detail accordions and delivery editor. */
 .collapse-card { gap: 0; padding: 12px 14px; }
 .collapse-head { display: flex; align-items: center; justify-content: space-between; gap: 14px; min-width: 0; }

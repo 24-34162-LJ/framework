@@ -1,3 +1,12 @@
+/*
+ * FILE PURPOSE
+ * File   : public/astratrack/js/shipment_documents_manager.js
+ * Feature: Legacy (old copy)
+ * Purpose: OLD COPY of shipment_documents_manager.js from the original plain-PHP AstraTrack. Not loaded
+ *          by the Laravel pages, which use public/assets/js/shipment_documents_manager.js. Kept for
+ *          reference only.
+ */
+
 (() => {
   const dialog = document.getElementById('documentsDialog');
   if (!dialog) return;

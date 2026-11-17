@@ -1,3 +1,11 @@
+/*
+ * FILE PURPOSE
+ * File   : public/astratrack/js/admin.js
+ * Feature: Legacy (old copy)
+ * Purpose: OLD COPY of admin.js from the original plain-PHP AstraTrack. Not loaded by the Laravel
+ *          pages, which use public/assets/js/admin.js. Kept for reference only.
+ */
+
 /* admin.js — AstraTrack Admin Dashboard */
 
 document.addEventListener("DOMContentLoaded", () => {

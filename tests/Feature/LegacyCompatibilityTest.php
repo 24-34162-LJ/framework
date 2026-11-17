@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : tests/Feature/LegacyCompatibilityTest.php
+ * Feature: Testing
+ * Purpose: Tests that old URLs, login and page layout from the plain-PHP app still work.
+ */
+
 namespace Tests\Feature;
 
 use App\Models\User;

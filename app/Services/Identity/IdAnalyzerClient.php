@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Services/Identity/IdAnalyzerClient.php
+ * Feature: ID Recognition
+ * Purpose: Small HTTP client for the ID Analyzer API (sends the requests, returns data or an error).
+ */
+
 namespace App\Services\Identity;
 
 use Illuminate\Http\Client\ConnectionException;

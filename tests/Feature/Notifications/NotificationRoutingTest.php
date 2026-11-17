@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : tests/Feature/Notifications/NotificationRoutingTest.php
+ * Feature: Testing - Notifications
+ * Purpose: Tests who gets SMS and email for each event.
+ */
+
 namespace Tests\Feature\Notifications;
 
 use App\Jobs\SendNotificationDeliveries;

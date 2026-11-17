@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : tests/Feature/IdAnalyzerReaderTest.php
+ * Feature: Testing - ID Recognition
+ * Purpose: Tests the ID Analyzer reader: request sent and answer mapped, errors handled.
+ */
+
 namespace Tests\Feature;
 
 use App\Services\Identity\IdAnalyzerReader;

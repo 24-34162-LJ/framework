@@ -1,3 +1,10 @@
+{{--
+    FILE PURPOSE
+    File   : resources/views/admin/forecasting/index.blade.php
+    Feature: Forecasting
+    Purpose: Customer volume forecasting page.
+--}}
+
 {{-- Customer Volume Forecasting page. Data comes from App\Http\Controllers\Admin\ForecastingController. --}}
 <x-app-layout title="Volume Forecasting" active="reports">
     @push('styles')

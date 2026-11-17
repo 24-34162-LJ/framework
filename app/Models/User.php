@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Models/User.php
+ * Feature: Database model
+ * Purpose: Table users: login accounts (admin, staff, client) and their relations.
+ */
+
 namespace App\Models;
 
 use Database\Factories\UserFactory;

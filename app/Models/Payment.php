@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Models/Payment.php
+ * Feature: Database model
+ * Purpose: Table payments: a payment made against a bill, and who recorded / verified it.
+ */
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;

@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Http/Controllers/Admin/IdentityVerificationController.php
+ * Feature: ID Recognition
+ * Purpose: Admin side of ID recognition: review queue of client IDs, view one ID (image access is
+ *          logged), and approve or reject it.
+ */
+
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;

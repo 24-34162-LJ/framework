@@ -1,3 +1,8 @@
+-- FILE PURPOSE
+-- File   : database/legacy-schema/2026_10_shipment_cleanup.sql
+-- Feature: Legacy database
+-- Purpose: Old SQL patch: cleans up shipment stages and constraints. Kept for reference.
+
 -- =====================================================================
 -- AstraTrack migration 2026_10_shipment_cleanup
 -- Target : existing `astratrack` database (MySQL 5.7+ / 8.x, MariaDB 10.3+)

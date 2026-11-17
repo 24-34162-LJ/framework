@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Models/DocumentRequest.php
+ * Feature: Database model
+ * Purpose: Table document_requests: staff asking a client to upload a specific document.
+ */
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;

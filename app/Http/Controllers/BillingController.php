@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Http/Controllers/BillingController.php
+ * Feature: Billing
+ * Purpose: Bills for shipments: create a bill, record payments, review payment proof, show the evidence
+ *          file.
+ */
+
 namespace App\Http\Controllers;
 
 use App\Models\Billing;

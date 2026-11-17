@@ -1,3 +1,11 @@
+/*
+ * FILE PURPOSE
+ * File   : public/astratrack/js/landing.js
+ * Feature: Legacy (old copy)
+ * Purpose: OLD COPY of landing.js from the original plain-PHP AstraTrack. Not loaded by the Laravel
+ *          pages, which use public/assets/js/landing.js. Kept for reference only.
+ */
+
 // AstraTrack - Landing page scripts
 (function () {
     'use strict';

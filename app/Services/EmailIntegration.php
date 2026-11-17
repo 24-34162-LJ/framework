@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Services/EmailIntegration.php
+ * Feature: Notifications
+ * Purpose: The only code that sends notification emails (uses Laravel Mail and the .env mail settings).
+ */
+
 namespace App\Services;
 
 use App\Mail\NotificationMail;

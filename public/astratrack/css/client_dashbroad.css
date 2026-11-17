@@ -1,3 +1,11 @@
+/*
+ * FILE PURPOSE
+ * File   : public/astratrack/css/client_dashbroad.css
+ * Feature: Legacy (old copy)
+ * Purpose: OLD COPY of client_dashbroad.css from the original plain-PHP AstraTrack. Not loaded by the
+ *          Laravel pages, which use public/assets/css/client_dashbroad.css. Kept for reference only.
+ */
+
 /* client_dashbroad.css — AstraTrack Client Dashboard */
 
 :root {

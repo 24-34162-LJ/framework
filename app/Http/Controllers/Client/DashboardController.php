@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Http/Controllers/Client/DashboardController.php
+ * Feature: Client portal
+ * Purpose: Client dashboard: the client's shipments, tracking search and pending document tasks.
+ */
+
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;

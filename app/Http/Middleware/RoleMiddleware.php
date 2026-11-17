@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Http/Middleware/RoleMiddleware.php
+ * Feature: Security
+ * Purpose: Blocks a route unless the logged-in user has the required role (admin, staff or client).
+ */
+
 namespace App\Http\Middleware;
 
 use Closure;

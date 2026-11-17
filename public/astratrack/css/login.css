@@ -1,3 +1,11 @@
+/*
+ * FILE PURPOSE
+ * File   : public/astratrack/css/login.css
+ * Feature: Legacy (old copy)
+ * Purpose: OLD COPY of login.css from the original plain-PHP AstraTrack. Not loaded by the Laravel
+ *          pages, which use public/assets/css/login.css. Kept for reference only.
+ */
+
 /* AstraTrack - Login page styles */
 :root {
     --at-navy: #17395e;

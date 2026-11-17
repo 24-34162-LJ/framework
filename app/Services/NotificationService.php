@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Services/NotificationService.php
+ * Feature: Notifications
+ * Purpose: Central notification hub: creates in-app notifications and queues the SMS / email for each
+ *          event.
+ */
+
 namespace App\Services;
 
 use App\Jobs\SendNotificationDeliveries;

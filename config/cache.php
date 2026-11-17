@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : config/cache.php
+ * Feature: Config
+ * Purpose: Cache settings (where cached data is stored).
+ */
+
 use Illuminate\Support\Str;
 
 return [

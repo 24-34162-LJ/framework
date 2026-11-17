@@ -1,3 +1,9 @@
+-- FILE PURPOSE
+-- File   : database/legacy-schema/astratrack_mysql.sql
+-- Feature: Legacy database
+-- Purpose: Full original AstraTrack MySQL schema (all base tables). Used by the baseline migration on
+--          an empty database.
+
 -- =====================================================================
 -- AstraTrack: Customs Brokerage Shipment & Transaction Monitoring System
 -- MySQL schema (MySQL 5.7+ / 8.x, also works on MariaDB 10.3+)

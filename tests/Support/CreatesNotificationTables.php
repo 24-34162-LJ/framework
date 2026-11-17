@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : tests/Support/CreatesNotificationTables.php
+ * Feature: Testing
+ * Purpose: Helper that builds the tables tests need in SQLite.
+ */
+
 namespace Tests\Support;
 
 use Illuminate\Database\Schema\Blueprint;

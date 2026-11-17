@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : tests/Feature/Notifications/ContactSettingsTest.php
+ * Feature: Testing - Notifications
+ * Purpose: Tests saving mobile number and SMS on/off settings.
+ */
+
 namespace Tests\Feature\Notifications;
 
 use App\Models\User;

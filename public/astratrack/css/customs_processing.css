@@ -1,3 +1,11 @@
+/*
+ * FILE PURPOSE
+ * File   : public/astratrack/css/customs_processing.css
+ * Feature: Legacy (old copy)
+ * Purpose: OLD COPY of customs_processing.css from the original plain-PHP AstraTrack. Not loaded by the
+ *          Laravel pages, which use public/assets/css/customs_processing.css. Kept for reference only.
+ */
+
 /* Customs Processing card and editor. Values and controls follow the existing customs_processing table. */
 .customs-record-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .customs-empty { display: flex; align-items: center; gap: 16px; padding: 18px 0 4px; }

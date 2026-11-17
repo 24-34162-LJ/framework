@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Support/MailDomainChecker.php
+ * Feature: Validation
+ * Purpose: DNS lookup that answers "can this email domain receive mail?" (used by RealMailDomain).
+ */
+
 namespace App\Support;
 
 /**

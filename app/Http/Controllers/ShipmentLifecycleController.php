@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Http/Controllers/ShipmentLifecycleController.php
+ * Feature: Shipments
+ * Purpose: Archive, cancel and reopen actions on a shipment (its lifecycle).
+ */
+
 namespace App\Http\Controllers;
 
 use App\Models\Shipment;

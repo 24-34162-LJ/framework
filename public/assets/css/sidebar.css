@@ -1,3 +1,10 @@
+/*
+ * FILE PURPOSE
+ * File   : public/assets/css/sidebar.css
+ * Feature: Core
+ * Purpose: Shared sidebar styles for all dashboard pages.
+ */
+
 /* Shared sidebar skin loaded last on dashboard and workflow pages. */
 :root { --sidebar-w: 264px; --sidebar-navy: #1e2f4d; --sidebar-blue: #395886; }
 .layout { display: flex; min-height: 100vh; }

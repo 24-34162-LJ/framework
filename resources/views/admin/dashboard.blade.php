@@ -1,3 +1,10 @@
+{{--
+    FILE PURPOSE
+    File   : resources/views/admin/dashboard.blade.php
+    Feature: Admin - Dashboard
+    Purpose: Admin dashboard page.
+--}}
+
 <x-app-layout title="Admin Dashboard" active="dashboard" :search-action="'/operations/search.php'" search-placeholder="Search records or users" legacy-dashboard>
     @push('styles')
         <link href="{{ asset('assets/css/admin.css') }}?v=9" rel="stylesheet">

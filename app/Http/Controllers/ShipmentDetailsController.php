@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Http/Controllers/ShipmentDetailsController.php
+ * Feature: Shipments
+ * Purpose: Shipment details page for staff/admin: reassign staff, save customs processing and delivery
+ *          details.
+ */
+
 namespace App\Http\Controllers;
 
 use App\Models\ActivityLog;

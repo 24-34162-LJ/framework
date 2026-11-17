@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : tests/Unit/EmailIntegrationTest.php
+ * Feature: Testing - Notifications
+ * Purpose: Tests sending notification emails.
+ */
+
 namespace Tests\Unit;
 
 use App\Mail\NotificationMail;

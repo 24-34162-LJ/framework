@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : routes/console.php
+ * Feature: Core
+ * Purpose: Artisan commands and scheduled tasks (e.g. daily delete of old ID images).
+ */
+
 use App\Services\Identity\IdentityVerificationService;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;

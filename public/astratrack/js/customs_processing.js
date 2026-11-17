@@ -1,3 +1,11 @@
+/*
+ * FILE PURPOSE
+ * File   : public/astratrack/js/customs_processing.js
+ * Feature: Legacy (old copy)
+ * Purpose: OLD COPY of customs_processing.js from the original plain-PHP AstraTrack. Not loaded by the
+ *          Laravel pages, which use public/assets/js/customs_processing.js. Kept for reference only.
+ */
+
 (() => {
     const dialog = document.getElementById('customsDialog');
     const form = document.getElementById('customsForm');

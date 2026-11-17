@@ -1,3 +1,10 @@
+/*
+ * FILE PURPOSE
+ * File   : public/assets/css/shipment_status.css
+ * Feature: Shipments
+ * Purpose: Styles for the Update Status modal and timeline.
+ */
+
 /* shipment_status.css — Update Status modal, toast and the On Hold / Cancelled timeline entries
  * Used by shipment_view.php (modal + toast) and, for the .tl-hold / .tl-cancelled dots, clint_shipment.php.
  * Colours: navy #1e2f4d, blue #395886, grey #f0f3fa. Headings and body "Libre Franklin" (same as shipments.css). */

@@ -1,3 +1,11 @@
+/*
+ * FILE PURPOSE
+ * File   : public/astratrack/css/client_profile.css
+ * Feature: Legacy (old copy)
+ * Purpose: OLD COPY of client_profile.css from the original plain-PHP AstraTrack. Not loaded by the
+ *          Laravel pages, which use public/assets/css/client_profile.css. Kept for reference only.
+ */
+
 .profile-main { min-width: 0; }
 .profile-topbar { margin-bottom: 22px; }
 .profile-heading { display: flex; align-items: center; gap: 14px; }

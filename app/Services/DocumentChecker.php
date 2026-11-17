@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Services/DocumentChecker.php
+ * Feature: Documents
+ * Purpose: Asks Gemini if an uploaded file is really the document type chosen and if its numbers match
+ *          the shipment (advice for staff only).
+ */
+
 namespace App\Services;
 
 use App\Models\ShipmentDocument;

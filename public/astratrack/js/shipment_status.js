@@ -1,3 +1,11 @@
+/*
+ * FILE PURPOSE
+ * File   : public/astratrack/js/shipment_status.js
+ * Feature: Legacy (old copy)
+ * Purpose: OLD COPY of shipment_status.js from the original plain-PHP AstraTrack. Not loaded by the
+ *          Laravel pages, which use public/assets/js/shipment_status.js. Kept for reference only.
+ */
+
 /* shipment_status.js — Update Status modal on shipment_view.php (admin and staff)
  * Talks to shipment_status.php (POST, X-CSRF-Token header, JSON back).
  * The valid stages come from the data-state attribute on #statusDialog (built by PHP for this person's role);

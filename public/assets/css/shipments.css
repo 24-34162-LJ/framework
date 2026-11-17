@@ -1,3 +1,10 @@
+/*
+ * FILE PURPOSE
+ * File   : public/assets/css/shipments.css
+ * Feature: Shipments
+ * Purpose: Styles for the shipment list and details (admin).
+ */
+
 /* shipments.css — Shipment Management (list) and Shipment Details, from the Figma design.
    Loaded after staff.css: it reuses the sidebar, avatar, bell and pager from there. */
 

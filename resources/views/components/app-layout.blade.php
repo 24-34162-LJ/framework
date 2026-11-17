@@ -1,3 +1,10 @@
+{{--
+    FILE PURPOSE
+    File   : resources/views/components/app-layout.blade.php
+    Feature: Core
+    Purpose: Main page layout used by every app page (head, sidebar, header, content).
+--}}
+
 @props([
     'title' => 'AstraTrack',
     'active' => '',

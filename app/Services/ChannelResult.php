@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Services/ChannelResult.php
+ * Feature: Notifications
+ * Purpose: Small result object for one SMS / email send: success + id, or an error message.
+ */
+
 namespace App\Services;
 
 /** Result of one SMS or email send: ok + provider id, or a short error. */

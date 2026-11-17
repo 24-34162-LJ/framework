@@ -1,3 +1,10 @@
+/*
+ * FILE PURPOSE
+ * File   : public/assets/css/notifications.css
+ * Feature: Notifications
+ * Purpose: Styles for the bell menu and notifications page.
+ */
+
 .notification-menu { position: relative; }
 .notification-toggle { position: relative; }
 .notification-count { position: absolute; top: -6px; right: -7px; display: grid; min-width: 18px; height: 18px; padding: 0 4px; place-items: center; border: 2px solid #fff; border-radius: 999px; color: #fff; background: #c54148; font-size: 12px; font-weight: 700; line-height: 14px; }

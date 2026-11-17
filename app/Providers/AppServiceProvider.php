@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Providers/AppServiceProvider.php
+ * Feature: Core
+ * Purpose: App start-up settings: chooses which ID reader to use (Gemini or ID Analyzer) and sets up
+ *          shared services.
+ */
+
 namespace App\Providers;
 
 use App\Services\Identity\GeminiIdReader;

@@ -1,3 +1,10 @@
+{{--
+    FILE PURPOSE
+    File   : resources/views/shipments/show.blade.php
+    Feature: Shipments
+    Purpose: Shipment details page for staff / admin.
+--}}
+
 <x-app-layout :title="$shipment->reference_no.' · Shipment Details'" active="shipments">
     @push('styles')
         <link href="{{ asset('assets/css/staff.css') }}?v=10" rel="stylesheet">

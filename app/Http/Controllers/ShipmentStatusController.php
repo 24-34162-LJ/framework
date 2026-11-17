@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Http/Controllers/ShipmentStatusController.php
+ * Feature: Shipments
+ * Purpose: "Update Status" modal: moves a shipment to its next stage and notifies the client.
+ */
+
 namespace App\Http\Controllers;
 
 use App\Models\Shipment;

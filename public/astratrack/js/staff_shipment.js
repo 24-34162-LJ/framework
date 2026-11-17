@@ -1,3 +1,11 @@
+/*
+ * FILE PURPOSE
+ * File   : public/astratrack/js/staff_shipment.js
+ * Feature: Legacy (old copy)
+ * Purpose: OLD COPY of staff_shipment.js from the original plain-PHP AstraTrack. Not loaded by the
+ *          Laravel pages, which use public/assets/js/staff_shipment.js. Kept for reference only.
+ */
+
 /* staff_shipment.js — Shipment Management (staff) */
 
 document.addEventListener("DOMContentLoaded", () => {

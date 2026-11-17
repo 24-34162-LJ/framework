@@ -1,3 +1,11 @@
+/*
+ * FILE PURPOSE
+ * File   : public/astratrack/css/shipments.css
+ * Feature: Legacy (old copy)
+ * Purpose: OLD COPY of shipments.css from the original plain-PHP AstraTrack. Not loaded by the Laravel
+ *          pages, which use public/assets/css/shipments.css. Kept for reference only.
+ */
+
 /* shipments.css — Shipment Management (list) and Shipment Details, from the Figma design.
    Loaded after staff.css: it reuses the sidebar, avatar, bell and pager from there. */
 

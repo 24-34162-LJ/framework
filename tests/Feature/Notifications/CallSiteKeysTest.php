@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : tests/Feature/Notifications/CallSiteKeysTest.php
+ * Feature: Testing - Notifications
+ * Purpose: Checks that controllers pass the right notification keys.
+ */
+
 namespace Tests\Feature\Notifications;
 
 use Tests\TestCase;

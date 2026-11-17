@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Services/GeminiExtractor.php
+ * Feature: Shipments
+ * Purpose: Reads a shipping-document PDF with Gemini and returns a draft to pre-fill the Add Shipment
+ *          form.
+ */
+
 namespace App\Services;
 
 use App\Models\Client;

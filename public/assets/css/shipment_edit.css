@@ -1,3 +1,10 @@
+/*
+ * FILE PURPOSE
+ * File   : public/assets/css/shipment_edit.css
+ * Feature: Shipments
+ * Purpose: Styles for the Edit Shipment page.
+ */
+
 /* Shipment metadata editor: responsive three-column fields, fixed save bar, and safe exit dialog. */
 .edit-page { max-width: 1480px; padding-bottom: 112px; gap: 18px; }
 .edit-head { align-items: flex-start; }

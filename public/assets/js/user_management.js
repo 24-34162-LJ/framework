@@ -1,3 +1,10 @@
+/*
+ * FILE PURPOSE
+ * File   : public/assets/js/user_management.js
+ * Feature: Admin - User management
+ * Purpose: User management: filters, add/edit/view popups, validation, confirm popups.
+ */
+
 /* user_management.js — filters, empty states, Add/Edit/View popups, validation, confirm popups */
 
 document.addEventListener("DOMContentLoaded", () => {

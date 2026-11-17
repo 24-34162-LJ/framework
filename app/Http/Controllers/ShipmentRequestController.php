@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Http/Controllers/ShipmentRequestController.php
+ * Feature: Shipment requests
+ * Purpose: Clients request a new shipment by uploading documents; staff review, decline or convert the
+ *          request.
+ */
+
 namespace App\Http\Controllers;
 
 use App\Models\ShipmentDocument;

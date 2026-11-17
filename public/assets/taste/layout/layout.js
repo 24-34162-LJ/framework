@@ -1,4 +1,13 @@
 /*
+ * FILE PURPOSE
+ * File   : public/assets/taste/layout/layout.js
+ * Feature: Landing page - design kit
+ * Purpose: Part of the third-party "taste-skill" design kit used by the landing page
+ *          (resources/views/landing/index.blade.php). layout.js is a kit file, not AstraTrack business
+ *          logic.
+ */
+
+/*
   taste-skill layout.js - the small moments of the layout v4 heroes (references/layout-v4.md, section 3).
   Load it once, after system.js:  <script type="module" src="assets/layout/layout.js"></script>
   Every loop runs through ui.loop (it rests off screen, carries the kit's pause button and restarts

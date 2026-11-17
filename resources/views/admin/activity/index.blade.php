@@ -1,3 +1,10 @@
+{{--
+    FILE PURPOSE
+    File   : resources/views/admin/activity/index.blade.php
+    Feature: Admin - Activity log
+    Purpose: Admin "Recent Activity" page.
+--}}
+
 <x-app-layout title="Recent Activity" active="activity">
     @push('styles')
         <link href="{{ asset('assets/css/staff.css') }}?v=10" rel="stylesheet">

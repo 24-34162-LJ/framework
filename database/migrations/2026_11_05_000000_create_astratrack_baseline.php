@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : database/migrations/2026_11_05_000000_create_astratrack_baseline.php
+ * Feature: Database migration
+ * Purpose: Creates the original AstraTrack tables, only when the database is empty.
+ */
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;

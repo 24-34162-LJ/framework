@@ -1,3 +1,11 @@
+/*
+ * FILE PURPOSE
+ * File   : public/astratrack/css/transactions.css
+ * Feature: Legacy (old copy)
+ * Purpose: OLD COPY of transactions.css from the original plain-PHP AstraTrack. Not loaded by the
+ *          Laravel pages, which use public/assets/css/transactions.css. Kept for reference only.
+ */
+
 .txn-page { gap: 18px; }
 .txn-flash { padding: 13px 16px; border-radius: 10px; background: #e8f3fb; color: #174c78; border: 1px solid #c9e1f3; }
 .txn-flash-error { color: #9d2b31; background: #fff0f0; border-color: #f4c7c9; }

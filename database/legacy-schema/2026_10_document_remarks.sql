@@ -1,3 +1,8 @@
+-- FILE PURPOSE
+-- File   : database/legacy-schema/2026_10_document_remarks.sql
+-- Feature: Legacy database
+-- Purpose: Old SQL patch: adds a remark column to uploaded documents. Kept for reference.
+
 -- 2026_10_document_remarks.sql
 -- Shipment Details: each uploaded document can carry a short remark written by the uploader.
 -- Safe to run more than once (MariaDB 10.3+; on MySQL 5.7/8 run the ALTER inside the

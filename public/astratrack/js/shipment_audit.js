@@ -1,3 +1,11 @@
+/*
+ * FILE PURPOSE
+ * File   : public/astratrack/js/shipment_audit.js
+ * Feature: Legacy (old copy)
+ * Purpose: OLD COPY of shipment_audit.js from the original plain-PHP AstraTrack. Not loaded by the
+ *          Laravel pages, which use public/assets/js/shipment_audit.js. Kept for reference only.
+ */
+
 (function () {
   const dialog = document.getElementById('auditDialog');
   if (!dialog) return;

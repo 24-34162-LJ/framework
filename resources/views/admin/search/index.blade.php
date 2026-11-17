@@ -1,3 +1,10 @@
+{{--
+    FILE PURPOSE
+    File   : resources/views/admin/search/index.blade.php
+    Feature: Admin - Search
+    Purpose: Admin search results page.
+--}}
+
 <x-app-layout title="Search" active="search" plain-layout>
     @push('styles')
         <style>

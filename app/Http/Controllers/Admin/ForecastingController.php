@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Http/Controllers/Admin/ForecastingController.php
+ * Feature: Forecasting
+ * Purpose: Customer volume forecasting: counts each client's shipments per month and asks the Python
+ *          Chronos service (forecasting/) to predict the next months.
+ */
+
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;

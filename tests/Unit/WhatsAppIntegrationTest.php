@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : tests/Unit/WhatsAppIntegrationTest.php
+ * Feature: Testing - Notifications
+ * Purpose: Tests WhatsApp sending through Meta's API.
+ */
+
 namespace Tests\Unit;
 
 use App\Services\WhatsAppIntegration;

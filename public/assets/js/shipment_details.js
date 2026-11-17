@@ -1,3 +1,10 @@
+/*
+ * FILE PURPOSE
+ * File   : public/assets/js/shipment_details.js
+ * Feature: Shipments
+ * Purpose: Shipment details script: open/close sections, delivery editor.
+ */
+
 (() => {
     document.querySelectorAll('[data-collapse]').forEach(button => {
         const initialBody = document.getElementById(button.getAttribute('aria-controls'));

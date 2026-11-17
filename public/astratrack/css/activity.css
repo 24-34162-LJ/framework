@@ -1,3 +1,11 @@
+/*
+ * FILE PURPOSE
+ * File   : public/astratrack/css/activity.css
+ * Feature: Legacy (old copy)
+ * Purpose: OLD COPY of activity.css from the original plain-PHP AstraTrack. Not loaded by the Laravel
+ *          pages, which use public/assets/css/activity.css. Kept for reference only.
+ */
+
 .activity-page { gap: 17px; }
 .activity-page .page-head { align-items: center; }
 .activity-page .report-records { gap: 14px; }

@@ -1,3 +1,11 @@
+/*
+ * FILE PURPOSE
+ * File   : public/astratrack/js/shipment_edit.js
+ * Feature: Legacy (old copy)
+ * Purpose: OLD COPY of shipment_edit.js from the original plain-PHP AstraTrack. Not loaded by the
+ *          Laravel pages, which use public/assets/js/shipment_edit.js. Kept for reference only.
+ */
+
 (() => {
     const form = document.getElementById('shipmentEditForm');
     if (!form) return;

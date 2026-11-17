@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : database/factories/UserFactory.php
+ * Feature: Testing
+ * Purpose: Creates fake users for automated tests.
+ */
+
 namespace Database\Factories;
 
 use App\Models\User;

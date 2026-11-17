@@ -1,3 +1,10 @@
+{{--
+    FILE PURPOSE
+    File   : resources/views/admin/clients/index.blade.php
+    Feature: Admin - Client management
+    Purpose: Admin client management page (list + add/edit form).
+--}}
+
 <x-app-layout :title="$client?->client_name ?? 'Client Management'" active="clients">
     @push('styles')
         <link href="{{ asset('assets/css/staff.css') }}?v=10" rel="stylesheet">

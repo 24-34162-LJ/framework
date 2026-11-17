@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : database/migrations/2026_11_08_000001_add_client_document_features.php
+ * Feature: Database migration
+ * Purpose: Adds client document uploads, document requests and shipment requests.
+ */
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;

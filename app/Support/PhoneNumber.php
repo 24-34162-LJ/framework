@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Support/PhoneNumber.php
+ * Feature: Notifications
+ * Purpose: Cleans and checks Philippine mobile numbers (09..., +639..., 639...) for SMS.
+ */
+
 namespace App\Support;
 
 /**

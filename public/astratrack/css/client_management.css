@@ -1,3 +1,11 @@
+/*
+ * FILE PURPOSE
+ * File   : public/astratrack/css/client_management.css
+ * Feature: Legacy (old copy)
+ * Purpose: OLD COPY of client_management.css from the original plain-PHP AstraTrack. Not loaded by the
+ *          Laravel pages, which use public/assets/css/client_management.css. Kept for reference only.
+ */
+
 .cm-page { gap: 20px; }
 .cm-head { align-items: flex-end; }
 .cm-head h1 { margin: 6px 0 0; }

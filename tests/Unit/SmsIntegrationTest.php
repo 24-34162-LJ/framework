@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : tests/Unit/SmsIntegrationTest.php
+ * Feature: Testing - Notifications
+ * Purpose: Tests SMS sending through Semaphore.
+ */
+
 namespace Tests\Unit;
 
 use App\Services\SmsIntegration;

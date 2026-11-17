@@ -1,3 +1,8 @@
+-- FILE PURPOSE
+-- File   : database/legacy-schema/2026_10_shipment_reference_features.sql
+-- Feature: Legacy database
+-- Purpose: Old SQL patch: shipment lifecycle, key dates and in-app notifications. Kept for reference.
+
 -- AstraTrack shipment lifecycle, key dates, and in-app notifications.
 -- Safe to rerun on MySQL 5.7+/MariaDB 10.3+. Back up before applying to production.
 -- phpMyAdmin: select astratrack, open SQL, paste/run this file.

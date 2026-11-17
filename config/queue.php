@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : config/queue.php
+ * Feature: Config
+ * Purpose: Queue settings for background jobs (ID reading, sending SMS/email).
+ */
+
 return [
 
     /*

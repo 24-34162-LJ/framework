@@ -1,3 +1,10 @@
+{{--
+    FILE PURPOSE
+    File   : resources/views/client/shipments/index.blade.php
+    Feature: Client portal
+    Purpose: Client My Shipments list.
+--}}
+
 <x-app-layout title="My Shipments" active="shipments" :breadcrumbs="[['Dashboard', route('client.dashboard')], ['My Shipments', null]]">
     @push('styles')
         <link href="{{ asset('assets/css/staff.css') }}?v=10" rel="stylesheet">

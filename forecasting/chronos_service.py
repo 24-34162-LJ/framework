@@ -1,3 +1,9 @@
+# FILE PURPOSE
+# File   : forecasting/chronos_service.py
+# Feature: Forecasting
+# Purpose: Python web service that runs Amazon Chronos to forecast each client's shipment volume;
+#          called by ForecastingController.
+
 """
 AstraTrack - Customer Volume Forecasting Service (Amazon Chronos)
 =================================================================

@@ -1,3 +1,10 @@
+/*
+ * FILE PURPOSE
+ * File   : public/assets/js/staff_shipment.js
+ * Feature: Staff portal
+ * Purpose: Staff shipment list: submits the filters automatically.
+ */
+
 /* staff_shipment.js — Shipment Management (staff) */
 
 document.addEventListener("DOMContentLoaded", () => {

@@ -1,3 +1,10 @@
+/*
+ * FILE PURPOSE
+ * File   : public/assets/css/shipment_add.css
+ * Feature: Shipments
+ * Purpose: Styles for the Add Shipment page.
+ */
+
 /* Add Shipment v2: manual and document assisted shipment entry. */
 [hidden] { display:none !important; }
 .add-shell { width:100%; max-width:1180px; margin:0 auto; padding-bottom:90px; display:flex; flex-direction:column; gap:20px; }

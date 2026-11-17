@@ -1,3 +1,11 @@
+/*
+ * FILE PURPOSE
+ * File   : public/astratrack/js/clint_shipment.js
+ * Feature: Legacy (old copy)
+ * Purpose: OLD COPY of clint_shipment.js from the original plain-PHP AstraTrack. Not loaded by the
+ *          Laravel pages, which use public/assets/js/clint_shipment.js. Kept for reference only.
+ */
+
 /* clint_shipment.js — My Shipments (client) */
 
 document.addEventListener("DOMContentLoaded", () => {

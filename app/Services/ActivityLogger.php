@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Services/ActivityLogger.php
+ * Feature: Activity log
+ * Purpose: Helper that writes one row to the activity log.
+ */
+
 namespace App\Services;
 
 use App\Models\ActivityLog;

@@ -1,3 +1,10 @@
+{{--
+    FILE PURPOSE
+    File   : resources/views/landing/index.blade.php
+    Feature: Landing page
+    Purpose: Public landing (home) page.
+--}}
+
 <!doctype html>
 <html lang="en" data-type="service" data-radius="soft" data-buttons="tonal" data-motion>
 <head>

@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : tests/Feature/ExampleTest.php
+ * Feature: Testing
+ * Purpose: Default Laravel example test.
+ */
+
 namespace Tests\Feature;
 
 // use Illuminate\Foundation\Testing\RefreshDatabase;

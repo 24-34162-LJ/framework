@@ -1,3 +1,11 @@
+/*
+ * FILE PURPOSE
+ * File   : public/astratrack/css/shipment_edit.css
+ * Feature: Legacy (old copy)
+ * Purpose: OLD COPY of shipment_edit.css from the original plain-PHP AstraTrack. Not loaded by the
+ *          Laravel pages, which use public/assets/css/shipment_edit.css. Kept for reference only.
+ */
+
 /* Shipment metadata editor: responsive three-column fields, fixed save bar, and safe exit dialog. */
 .edit-page { max-width: 1480px; padding-bottom: 112px; gap: 18px; }
 .edit-head { align-items: flex-start; }

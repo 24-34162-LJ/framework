@@ -1,3 +1,10 @@
+/*
+ * FILE PURPOSE
+ * File   : public/assets/js/staff.js
+ * Feature: Staff portal
+ * Purpose: Staff dashboard script: tracking search and shipment popup.
+ */
+
 /* staff.js — AstraTrack Staff Dashboard */
 
 document.addEventListener("DOMContentLoaded", () => {

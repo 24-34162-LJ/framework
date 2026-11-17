@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Services/ShipmentDocumentService.php
+ * Feature: Documents
+ * Purpose: Document catalog (required document types), duplicate check, storing files and the document
+ *          checklist.
+ */
+
 namespace App\Services;
 
 use App\Models\ShipmentDocument;

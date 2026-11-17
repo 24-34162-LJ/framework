@@ -1,3 +1,10 @@
+/*
+ * FILE PURPOSE
+ * File   : public/assets/js/admin.js
+ * Feature: Admin - Dashboard
+ * Purpose: Admin dashboard script: animated counters and chart bars.
+ */
+
 /* admin.js — AstraTrack Admin Dashboard */
 
 document.addEventListener("DOMContentLoaded", () => {

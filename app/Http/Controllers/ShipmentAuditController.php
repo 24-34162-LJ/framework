@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Http/Controllers/ShipmentAuditController.php
+ * Feature: Shipments
+ * Purpose: Shows the audit trail (history of changes) of one shipment.
+ */
+
 namespace App\Http\Controllers;
 
 use App\Models\ActivityLog;

@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : database/migrations/2026_11_12_000001_add_sms_email_notifications.php
+ * Feature: Database migration
+ * Purpose: Adds mobile number / SMS settings and the notification_deliveries table.
+ */
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;

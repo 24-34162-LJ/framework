@@ -1,3 +1,11 @@
+/*
+ * FILE PURPOSE
+ * File   : public/astratrack/js/shipment_details.js
+ * Feature: Legacy (old copy)
+ * Purpose: OLD COPY of shipment_details.js from the original plain-PHP AstraTrack. Not loaded by the
+ *          Laravel pages, which use public/assets/js/shipment_details.js. Kept for reference only.
+ */
+
 (() => {
     document.querySelectorAll('[data-collapse]').forEach(button => {
         const initialBody = document.getElementById(button.getAttribute('aria-controls'));

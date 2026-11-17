@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Http/Requests/Admin/SaveUserRequest.php
+ * Feature: Validation
+ * Purpose: Validation rules for adding / editing a user account.
+ */
+
 namespace App\Http\Requests\Admin;
 
 use App\Rules\RealMailDomain;

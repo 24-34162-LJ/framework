@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : config/services.php
+ * Feature: Config
+ * Purpose: Keys and settings for outside services: Gemini, ID Analyzer / DocuPass, ID recognition,
+ *          Semaphore SMS, WhatsApp, Chronos.
+ */
+
 return [
 
     /*

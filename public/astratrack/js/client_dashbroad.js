@@ -1,3 +1,11 @@
+/*
+ * FILE PURPOSE
+ * File   : public/astratrack/js/client_dashbroad.js
+ * Feature: Legacy (old copy)
+ * Purpose: OLD COPY of client_dashbroad.js from the original plain-PHP AstraTrack. Not loaded by the
+ *          Laravel pages, which use public/assets/js/client_dashbroad.js. Kept for reference only.
+ */
+
 /* client_dashbroad.js — AstraTrack Client Dashboard */
 
 document.addEventListener("DOMContentLoaded", () => {

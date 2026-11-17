@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Services/SmsIntegration.php
+ * Feature: Notifications
+ * Purpose: The only code that sends SMS, through the Semaphore SMS gateway (or to the log in
+ *          development).
+ */
+
 namespace App\Services;
 
 use Illuminate\Support\Facades\Http;

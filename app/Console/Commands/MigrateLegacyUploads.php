@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Console/Commands/MigrateLegacyUploads.php
+ * Feature: Legacy migration
+ * Purpose: Artisan command that copies files uploaded by the old plain-PHP AstraTrack into Laravel
+ *          storage and updates their paths in the database.
+ */
+
 namespace App\Console\Commands;
 
 use App\Models\Payment;

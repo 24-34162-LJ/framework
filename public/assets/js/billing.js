@@ -1,3 +1,10 @@
+/*
+ * FILE PURPOSE
+ * File   : public/assets/js/billing.js
+ * Feature: Billing
+ * Purpose: Billing page script: bill carousel and bill item rows.
+ */
+
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('[data-bill-carousel]').forEach(carousel => {
         const track = carousel.querySelector('[data-bill-track]');

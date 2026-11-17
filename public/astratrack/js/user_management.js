@@ -1,3 +1,11 @@
+/*
+ * FILE PURPOSE
+ * File   : public/astratrack/js/user_management.js
+ * Feature: Legacy (old copy)
+ * Purpose: OLD COPY of user_management.js from the original plain-PHP AstraTrack. Not loaded by the
+ *          Laravel pages, which use public/assets/js/user_management.js. Kept for reference only.
+ */
+
 /* user_management.js — filters, empty states, Add/Edit/View popups, validation, confirm popups */
 
 document.addEventListener("DOMContentLoaded", () => {

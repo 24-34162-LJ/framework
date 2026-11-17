@@ -1,3 +1,11 @@
+/*
+ * FILE PURPOSE
+ * File   : public/astratrack/css/clint_shipment.css
+ * Feature: Legacy (old copy)
+ * Purpose: OLD COPY of clint_shipment.css from the original plain-PHP AstraTrack. Not loaded by the
+ *          Laravel pages, which use public/assets/css/clint_shipment.css. Kept for reference only.
+ */
+
 /* clint_shipment.css — CLIENT "My Shipments" (list) and Shipment Details (read-only), from the Figma design.
    Loaded after staff.css (sidebar, avatar, bell, pager). */
 
