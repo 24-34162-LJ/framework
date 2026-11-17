@@ -52,7 +52,11 @@
     @endif
 
     <div class="page report-page">
-        <header class="page-head"><div><h1>Customer Volume Forecasting</h1></div></header>
+        <header class="page-head">
+            <div>
+                <h1>Customer Volume Forecasting</h1>
+            </div>
+        </header>
         <nav class="report-tabs" aria-label="Report categories">
             <a href="{{ route('admin.reports') }}">Overview</a>
             @foreach (['shipments' => 'Shipments', 'clients' => 'Clients', 'transactions' => 'Transactions', 'billing' => 'Billing & Payments', 'activity' => 'Activity'] as $key => $label)
@@ -62,15 +66,37 @@
         </nav>
 
         @if ($demo)
-            <section class="fcard fc-demo"><p class="fc-note"><strong>Demo data.</strong> These customers and volumes are generated examples that show how the forecast works. <a href="{{ route('admin.forecasting') }}">Switch to real shipment data</a>.</p></section>
+            <section class="fcard fc-demo">
+                <p class="fc-note">
+                    <strong>Demo data.</strong> These customers and volumes are generated examples that show how the forecast works. 
+                    <a href="{{ route('admin.forecasting') }}">Switch to real shipment data</a>.
+                </p>
+            </section>
         @endif
 
         <form class="fcard report-filters" method="get" action="{{ route('admin.forecasting') }}">
-            @if ($demo)<input type="hidden" name="demo" value="1">@endif
-            @if ($clients)<label><span>Customer for chart</span><select name="client_id">@foreach ($clients as $id => $name)<option value="{{ $id }}" @selected($selected === $id)>{{ $name }}</option>@endforeach</select></label>@endif
-            <label><span>Months to predict</span><select name="horizon">@foreach ([1, 3, 6] as $h)<option value="{{ $h }}" @selected($horizon === $h)>{{ $h }} month{{ $h > 1 ? 's' : '' }}</option>@endforeach</select></label>
+            @if ($demo)
+            <input type="hidden" name="demo" value="1">@endif
+            @if ($clients)
+            <label>
+                <span>Customer for chart</span>
+                <select name="client_id">@foreach ($clients as $id => $name)
+                    <option value="{{ $id }}" @selected($selected === $id)>{{ $name }}</option>
+                    @endforeach
+                </select>
+            </label>
+            @endif
+            <label>
+                <span>Months to predict</span>
+                <select name="horizon">@foreach ([1, 3, 6] as $h)
+                    <option value="{{ $h }}" @selected($horizon === $h)>{{ $h }} month{{ $h > 1 ? 's' : '' }}</option>
+                    @endforeach
+                </select>
+            </label>
             <button class="btn btn-primary" type="submit">Update</button>
-            @unless ($demo)<a class="btn" href="{{ route('admin.forecasting', ['demo' => 1]) }}">View demo data</a>@endunless
+            @unless ($demo)
+            <a class="btn" href="{{ route('admin.forecasting', ['demo' => 1]) }}">View demo data</a>
+            @endunless
         </form>
 
         @if ($error)
@@ -79,15 +105,31 @@
             <section class="fcard"><p class="fc-note">Not enough history to forecast yet. A customer needs at least 3 full months of shipments.@if ($skipped) Waiting for more data: {{ rtrim(implode(', ', $skipped), '.') }}.@endif @unless ($demo)<a href="{{ route('admin.forecasting', ['demo' => 1]) }}">View demo data</a> to see how it works.@endunless</p></section>
         @else
             <section class="fcard report-chart">
-                <header><h2>{{ $clients[$selected] ?? '' }}: actual vs. forecast</h2></header>
-                <div class="report-canvas-wrap" style="height:340px"><canvas id="fc-chart" aria-label="Monthly shipments, actual and forecast"></canvas></div>
+                <header>
+                    <h2>{{ $clients[$selected] ?? '' }}: actual vs. forecast</h2>
+                </header>
+                <div class="report-canvas-wrap" style="height:340px">
+                    <canvas id="fc-chart" aria-label="Monthly shipments, actual and forecast"></canvas>
+                </div>
                 <p class="fc-note">The dashed line is the most likely volume. The shaded band is the range Chronos expects 80% of outcomes to fall in.</p>
             </section>
 
             <section class="fcard">
-                <header><h2>Forecast for {{ $nextMonth }}</h2></header>
-                <div class="report-table-wrap"><table class="report-table">
-                    <thead><tr><th>Customer</th><th class="num">Avg. last 3 months</th><th class="num">Predicted next month</th><th class="num">Likely range</th><th class="num">Next {{ $horizon }} month{{ $horizon > 1 ? 's' : '' }} total</th><th>Trend</th></tr></thead>
+                <header>
+                    <h2>Forecast for {{ $nextMonth }}</h2>
+                </header>
+                <div class="report-table-wrap">
+                    <table class="report-table">
+                    <thead>
+                        <tr>
+                            <th>Customer</th>
+                            <th class="num">Avg. last 3 months</th>
+                            <th class="num">Predicted next month</th>
+                            <th class="num">Likely range</th>
+                            <th class="num">Next {{ $horizon }} month{{ $horizon > 1 ? 's' : '' }} total</th>
+                            <th>Trend</th>
+                        </tr>
+                    </thead>
                     <tbody>@foreach ($rows as $r)
                         <tr>
                             <td><a href="{{ route('admin.forecasting', array_filter(['client_id' => $r['id'], 'horizon' => $horizon, 'demo' => $demo ? 1 : null])) }}">{{ $r['name'] }}</a></td>
@@ -97,9 +139,12 @@
                             <td class="num">{{ $r['total'] }}</td>
                             <td><span class="fc-trend {{ $r['trend'] }}">{{ ['up' => '▲ Up', 'down' => '▼ Down', 'steady' => '● Steady'][$r['trend']] }} {{ $r['change'] > 0 ? '+' : '' }}{{ $r['change'] }}%</span></td>
                         </tr>
-                    @endforeach</tbody>
-                </table></div>
-                @if ($skipped)<p class="fc-note">Not forecast yet (under 3 months of history): {{ implode(', ', $skipped) }}.</p>@endif
+                    @endforeach
+                </tbody>
+                </table>
+            </div>
+                @if ($skipped)
+                <p class="fc-note">Not forecast yet (under 3 months of history): {{ implode(', ', $skipped) }}.</p>@endif
             </section>
         @endif
     </div>
