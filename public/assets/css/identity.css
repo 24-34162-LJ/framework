@@ -27,6 +27,88 @@
 .idv-rejected { background: var(--idv-bad-bg); color: var(--idv-bad-fg); }
 .idv-none { background: var(--idv-neutral-bg); color: var(--idv-neutral-fg); }
 .idv-processing { background: var(--idv-info-bg); color: var(--idv-info-fg); }
+.idv-pending { background: var(--idv-neutral-bg); color: var(--idv-neutral-fg); }
+
+/* Choose how to verify: live check vs photo upload (same layout as Add Shipment's start cards) */
+.idv-choose { display: grid; gap: 18px; min-width: 0; }
+.idv-choose-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; }
+.idv-choose-head h2 { margin: 0; color: var(--idv-navy); font: 600 19px/1.35 "Libre Franklin", sans-serif; }
+.idv-stepper { display: flex; align-items: center; gap: 12px; margin: 0; padding: 0; list-style: none; color: var(--idv-muted); font-size: 13px; }
+.idv-stepper li { display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+.idv-stepper b { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: #e9edf5; color: var(--idv-navy); font-size: 13px; }
+.idv-stepper li.active { color: var(--idv-navy); font-weight: 500; }
+.idv-stepper li.active b { background: #395886; color: #fff; }
+.idv-stepper-line { width: 56px; height: 2px; background: #dfe5f1; }
+
+.idv-start-card { display: flex; flex-direction: column; gap: 18px; min-width: 0; padding: 0 28px 26px; border: 1px solid #e8ecf5; border-radius: 16px; background: #fff; box-shadow: 0 2px 8px rgba(29, 46, 76, .04); }
+.idv-start-head { margin: 0 -28px; padding: 26px 28px 22px; border-bottom: 1px solid #e9edf5; }
+.idv-start-icon { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 12px; background: #e9edf5; color: #395886; }
+.idv-start-icon .idv-icon { width: 24px; height: 24px; }
+.idv-start-head h3 { margin: 0; color: var(--idv-navy); font: 600 19px/27px "Libre Franklin", sans-serif; }
+.idv-start-head p { margin: 9px 0 0; color: var(--idv-muted); font-size: 13px; line-height: 20px; }
+
+
+.idv-start-form { display: flex; flex: 1; flex-direction: column; gap: 14px; }
+.idv-start-form .idv-consent { max-width: none; margin-top: auto; }
+.idv-start-form .idv-consent span { font-size: 12.5px; color: var(--idv-muted); }
+.idv-btn { display: inline-flex; align-self: flex-start; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 20px; border: 1px solid #395886; border-radius: 9px; background: #395886; color: #fff; font: 600 14px/20px "Libre Franklin", sans-serif; cursor: pointer; }
+.idv-btn:hover { background: #314b72; }
+.idv-btn:disabled { opacity: .6; cursor: progress; }
+.idv-btn .idv-icon { width: 18px; height: 18px; transition: transform .15s ease; }
+.idv-btn:hover .idv-icon { transform: translateX(2px); }
+
+
+.idv-choose-foot { display: grid; gap: 14px; padding: 16px 20px; border-radius: 12px; background: #eef1f8; }
+.idv-accepted { display: grid; gap: 8px; }
+.idv-accepted > span { color: var(--idv-muted); font-size: 12px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }
+.idv-accepted ul { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.idv-accepted li { padding: 4px 10px; border: 1px solid #dfe5f1; border-radius: 999px; background: #fff; color: var(--idv-text); font-size: 12.5px; line-height: 18px; }
+.idv-control { display: flex; align-items: flex-start; gap: 8px; margin: 0; color: var(--idv-muted); font-size: 12.5px; line-height: 1.5; }
+.idv-control .idv-icon { color: #395886; }
+.idv-control strong { color: var(--idv-text); font-weight: 600; }
+
+/* Single live-check card: icon + title on top, steps left, consent + button right */
+.idv-live-card .idv-start-head { display: flex; align-items: flex-start; gap: 16px; }
+.idv-live-card .idv-start-head .idv-start-icon { flex: none; }
+.idv-live-card .idv-start-head p { max-width: 60ch; }
+.idv-start-body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 28px; padding-top: 4px; }
+.idv-flow { display: grid; gap: 0; margin: 0; padding: 0; list-style: none; }
+.idv-flow li { position: relative; display: flex; align-items: flex-start; gap: 14px; padding-bottom: 20px; }
+.idv-flow li:last-child { padding-bottom: 0; }
+.idv-flow li:not(:last-child)::after { content: ""; position: absolute; top: 42px; bottom: 4px; left: 19px; width: 2px; background: #e3e8f2; }
+.idv-flow-icon { display: grid; place-items: center; flex: none; width: 40px; height: 40px; border-radius: 10px; background: #e9edf5; color: #395886; }
+.idv-flow-icon .idv-icon { width: 20px; height: 20px; }
+.idv-flow li > span:last-child { display: grid; gap: 2px; padding-top: 2px; color: var(--idv-muted); font-size: 13px; line-height: 1.45; }
+.idv-flow strong { color: var(--idv-text); font-size: 14px; font-weight: 600; }
+.idv-live-card .idv-start-form { padding: 20px; border: 1px solid #e9edf5; border-radius: 12px; background: #f8f9fc; }
+.idv-live-card .idv-start-form .idv-consent { margin-top: 0; }
+.idv-tip { display: flex; align-items: flex-start; gap: 8px; margin: 0; color: var(--idv-text); font-size: 13px; line-height: 1.45; }
+.idv-tip .idv-icon { color: #395886; }
+@media (max-width: 900px) {
+    .idv-start-body { grid-template-columns: 1fr; gap: 20px; }
+}
+
+/* "Finish your live ID check" card */
+.idv-verify-head { display: flex; align-items: flex-start; gap: 14px; }
+.idv-verify-head h2 { margin: 0; }
+.idv-verify-head .profile-note { margin-top: 4px; }
+.idv-verify-mark { display: grid; place-items: center; flex: none; width: 44px; height: 44px; border-radius: 12px; background: #e9edf5; color: #395886; }
+.idv-verify-mark .idv-icon { width: 24px; height: 24px; }
+
+@media (max-width: 560px) {
+    .idv-start-card { padding: 0 20px 22px; }
+    .idv-start-head { margin: 0 -20px; padding: 22px 20px 18px; }
+    .idv-btn { align-self: stretch; }
+    .idv-stepper-line { width: 28px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .idv-btn .idv-icon { transition: none; }
+}
+
+/* Live ID check (DocuPass): continue / check-result buttons */
+.profile-secondary { min-height: 40px; padding: 0 20px; border: 1px solid #c9d3e3; border-radius: 8px; background: #fff; color: #1e2f4d; font: 600 14px/1 "Libre Franklin", sans-serif; cursor: pointer; }
+.profile-secondary:hover { background: #f2f5fa; }
+.profile-secondary:focus-visible { outline: 2px solid #2f5ea8; outline-offset: 2px; }
 .idv-notice .idv-spinner { flex: none; margin-top: 2px; border-color: #b9c6e0; border-top-color: var(--idv-info-fg); }
 
 /* Notices: result after upload, rejection reasons */

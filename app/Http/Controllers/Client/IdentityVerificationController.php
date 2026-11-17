@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
 use App\Models\IdentityVerification;
+use App\Services\Identity\DocupassService;
 use App\Services\Identity\IdentityVerificationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -30,6 +31,9 @@ class IdentityVerificationController extends Controller
 
     public function store(Request $request, IdentityVerificationService $service): RedirectResponse
     {
+        // With the live check on, a photo upload would skip the selfie (face match + liveness), so it is closed.
+        abort_if(DocupassService::enabled(), 404);
+
         $request->validate([
             'id_image' => ['required', 'file', 'max:5120', 'mimes:jpg,jpeg,png,webp'],
             'consent' => ['accepted'],
@@ -69,6 +73,70 @@ class IdentityVerificationController extends Controller
         $verification = $service->submit($user, $file, $request->ip());
 
         return redirect()->to(self::panelUrl())->with('identity_result', $verification->status);
+    }
+
+    /** Start (or resume) the live ID + selfie check on ID Analyzer's DocuPass page. */
+    public function startLive(Request $request, DocupassService $docupass, IdentityVerificationService $service): RedirectResponse
+    {
+        abort_unless(DocupassService::enabled(), 404);
+        $request->validate(['live_consent' => ['accepted']], [
+            'live_consent.accepted' => 'Please agree to the processing of your ID and selfie before starting.',
+        ]);
+        $user = $request->user();
+
+        $open = IdentityVerification::query()->where('user_id', $user->user_id)
+            ->where('status', IdentityVerification::STATUS_PENDING)
+            ->orderByDesc('verification_id')->first();
+        if ($open && $open->isOpenPending() && $open->provider_url) {
+            return redirect()->away($open->provider_url);
+        }
+
+        $max = (int) config('services.identity.max_attempts_per_day', 5);
+        if ($service->attemptsToday($user) >= $max) {
+            throw ValidationException::withMessages(['live_consent' => "You have reached {$max} attempts today. Please try again tomorrow."]);
+        }
+
+        try {
+            $verification = $docupass->start($user, $request->ip());
+        } catch (\RuntimeException $exception) {
+            report($exception);
+
+            return redirect()->to(self::panelUrl())->with('identity_error', 'The live ID check could not be started right now. Please try again in a few minutes.');
+        }
+
+        return redirect()->away((string) $verification->provider_url);
+    }
+
+    /** ID Analyzer sends the client back here (with ?reference=...) after the live check. */
+    public function returnFromLive(Request $request, DocupassService $docupass): RedirectResponse
+    {
+        abort_unless(DocupassService::enabled(), 404);
+
+        return $this->refreshLatestPending($request, $docupass);
+    }
+
+    /** "Check my result" button, for when the client did not come back through the redirect. */
+    public function checkLive(Request $request, DocupassService $docupass): RedirectResponse
+    {
+        abort_unless(DocupassService::enabled(), 404);
+
+        return $this->refreshLatestPending($request, $docupass);
+    }
+
+    private function refreshLatestPending(Request $request, DocupassService $docupass): RedirectResponse
+    {
+        $pending = IdentityVerification::query()->where('user_id', $request->user()->user_id)
+            ->where('status', IdentityVerification::STATUS_PENDING)
+            ->orderByDesc('verification_id')->first();
+        if (! $pending) {
+            return redirect()->to(self::panelUrl());
+        }
+
+        if (! $docupass->refresh($pending)) {
+            return redirect()->to(self::panelUrl())->with('identity_pending', true);
+        }
+
+        return redirect()->to(self::panelUrl())->with('identity_result', $pending->refresh()->status);
     }
 
     /** Polled by the page while the ID is being read in the background. */

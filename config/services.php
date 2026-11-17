@@ -60,6 +60,9 @@ return [
     'identity' => [
         // Which IdDocumentReader reads the ID image: "idanalyzer" (ID Analyzer API) or "gemini".
         'reader' => env('IDENTITY_READER', 'gemini'),
+        // How clients verify: "docupass" = live ID + selfie on ID Analyzer's hosted page (photo upload stays as a backup),
+        // "upload" = photo upload only.
+        'method' => env('IDENTITY_METHOD', 'upload'),
         // Fuzzy name match (0-1) between the name on the ID and the account / company contact name.
         'name_match_threshold' => (float) env('IDENTITY_NAME_MATCH', 0.85),
         // Below this reader confidence (0-1) the ID goes to admin review instead of passing automatically.
@@ -76,6 +79,8 @@ return [
         'profile' => env('IDANALYZER_PROFILE', 'security_medium'),
         // US region by default; EU data residency: https://api2-eu.idanalyzer.com
         'base_url' => env('IDANALYZER_BASE_URL', 'https://api2.idanalyzer.com'),
+        // Signing secret for webhooks (Profile > General in the portal); webhooks are refused without it.
+        'webhook_secret' => env('IDANALYZER_WEBHOOK_SECRET'),
     ],
 
     'resend' => [
