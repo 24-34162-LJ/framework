@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : config/mail.php
+ * Feature: Config
+ * Purpose: Email server settings used to send notification emails.
+ */
+
 return [
 
     /*

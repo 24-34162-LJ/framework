@@ -1,3 +1,10 @@
+/*
+ * FILE PURPOSE
+ * File   : public/assets/js/shipment_edit.js
+ * Feature: Shipments
+ * Purpose: Edit Shipment script: save bar and leave-without-saving warning.
+ */
+
 (() => {
     const form = document.getElementById('shipmentEditForm');
     if (!form) return;

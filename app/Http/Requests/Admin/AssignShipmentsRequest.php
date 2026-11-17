@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Http/Requests/Admin/AssignShipmentsRequest.php
+ * Feature: Validation
+ * Purpose: Validation rules for assigning shipments to a staff member.
+ */
+
 namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;

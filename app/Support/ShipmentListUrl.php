@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Support/ShipmentListUrl.php
+ * Feature: Shipments
+ * Purpose: Remembers the shipment list filters/page so "Back to Shipments" returns to the same list.
+ */
+
 namespace App\Support;
 
 use App\Models\User;

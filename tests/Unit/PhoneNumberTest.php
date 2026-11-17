@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : tests/Unit/PhoneNumberTest.php
+ * Feature: Testing - Notifications
+ * Purpose: Tests Philippine mobile number cleaning.
+ */
+
 namespace Tests\Unit;
 
 use App\Support\PhoneNumber;

@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Services/Identity/GeminiIdReader.php
+ * Feature: ID Recognition
+ * Purpose: ID reader that uses Google Gemini to read the printed fields on an ID photo.
+ */
+
 namespace App\Services\Identity;
 
 use App\Services\GeminiClient;

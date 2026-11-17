@@ -1,3 +1,10 @@
+/*
+ * FILE PURPOSE
+ * File   : public/assets/js/shipment_lifecycle.js
+ * Feature: Shipments
+ * Purpose: Archive / restore / cancel shipment popups.
+ */
+
 (() => {
   const dialog = document.getElementById('shipmentActionDialog');
   if (!dialog) return;

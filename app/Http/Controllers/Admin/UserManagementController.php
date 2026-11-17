@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Http/Controllers/Admin/UserManagementController.php
+ * Feature: Admin - User management
+ * Purpose: Admin page to list, add, edit and deactivate user accounts (never removes the last active
+ *          admin).
+ */
+
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;

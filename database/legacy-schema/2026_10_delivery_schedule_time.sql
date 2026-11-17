@@ -1,3 +1,9 @@
+-- FILE PURPOSE
+-- File   : database/legacy-schema/2026_10_delivery_schedule_time.sql
+-- Feature: Legacy database
+-- Purpose: Old SQL patch: adds pickup time to deliveries. Kept for reference; Laravel migrations are
+--          used now.
+
 -- AstraTrack migration: add pickup time support for the Delivery Details editor.
 -- Run against the target database before deploying shipment_view.php.
 -- Safe to rerun; does not change existing delivery dates or records.

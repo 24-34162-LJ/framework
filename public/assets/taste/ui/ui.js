@@ -1,4 +1,13 @@
 /*
+ * FILE PURPOSE
+ * File   : public/assets/taste/ui/ui.js
+ * Feature: Landing page - design kit
+ * Purpose: Part of the third-party "taste-skill" design kit used by the landing page
+ *          (resources/views/landing/index.blade.php). ui.js is a kit file, not AstraTrack business
+ *          logic.
+ */
+
+/*
   ui.js - the taste-skill UI fragment kit. One ES module, no dependencies.
 
   A fragment is a folder next to this file: <name>/fragment.html, fragment.css, meta.json and,

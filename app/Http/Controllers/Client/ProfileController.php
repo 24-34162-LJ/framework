@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Http/Controllers/Client/ProfileController.php
+ * Feature: Client portal
+ * Purpose: Client "My Profile" page and saving the client's contact / SMS settings.
+ */
+
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;

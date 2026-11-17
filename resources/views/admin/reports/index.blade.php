@@ -1,3 +1,10 @@
+{{--
+    FILE PURPOSE
+    File   : resources/views/admin/reports/index.blade.php
+    Feature: Admin - Reports
+    Purpose: Admin reports page.
+--}}
+
 <x-app-layout :title="$labels[$report]" active="reports">
     @push('styles')
         <link href="{{ asset('assets/css/staff.css') }}?v=10" rel="stylesheet">

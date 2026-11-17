@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Services/ShipmentStageService.php
+ * Feature: Shipments
+ * Purpose: Rules for shipment stages: groups, which next stage is allowed, and updating the status.
+ */
+
 namespace App\Services;
 
 use App\Models\Shipment;

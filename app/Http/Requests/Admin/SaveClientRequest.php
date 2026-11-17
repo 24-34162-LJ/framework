@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Http/Requests/Admin/SaveClientRequest.php
+ * Feature: Validation
+ * Purpose: Validation rules for adding / editing a client company.
+ */
+
 namespace App\Http\Requests\Admin;
 
 use App\Rules\RealMailDomain;

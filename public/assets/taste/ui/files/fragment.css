@@ -1,3 +1,12 @@
+/*
+ * FILE PURPOSE
+ * File   : public/assets/taste/ui/files/fragment.css
+ * Feature: Landing page - design kit
+ * Purpose: Part of the third-party "taste-skill" design kit used by the landing page
+ *          (resources/views/landing/index.blade.php). fragment.css is a kit file, not AstraTrack
+ *          business logic.
+ */
+
 /* files: file tiles with real app icons; each one is read in turn and gets a check.
    Every mark is one treatment: the app's colour icon (a local file in icons/) on a light tile, or a plain ink
    file glyph for a bare file type such as PDF. */

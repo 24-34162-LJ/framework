@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Http/Controllers/NotificationController.php
+ * Feature: Notifications
+ * Purpose: Bell menu / notifications page: list notifications and mark them as read.
+ */
+
 namespace App\Http\Controllers;
 
 use App\Models\Notification;

@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Http/Controllers/Admin/ActivityController.php
+ * Feature: Admin - Activity log
+ * Purpose: Admin pages "Recent Activity" and "Shipment Updates": lists what users did in the system.
+ */
+
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;

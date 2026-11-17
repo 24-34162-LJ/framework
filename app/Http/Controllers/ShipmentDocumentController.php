@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Http/Controllers/ShipmentDocumentController.php
+ * Feature: Documents
+ * Purpose: Upload, download (one or all as ZIP) and delete documents attached to a shipment.
+ */
+
 namespace App\Http\Controllers;
 
 use App\Models\Shipment;

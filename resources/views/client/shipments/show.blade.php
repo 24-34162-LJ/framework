@@ -1,3 +1,10 @@
+{{--
+    FILE PURPOSE
+    File   : resources/views/client/shipments/show.blade.php
+    Feature: Client portal
+    Purpose: Client shipment details page (read-only).
+--}}
+
 @php
     $typeMode = ucfirst((string) $shipment->transaction_type).' · '.ucfirst((string) $shipment->mode);
     $movementLabel = $shipment->mode === 'land' ? 'Truck Plate' : ($shipment->mode === 'air' ? 'Airline / Flight' : 'Vessel / Voyage');

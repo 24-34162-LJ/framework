@@ -1,3 +1,10 @@
+{{--
+    FILE PURPOSE
+    File   : resources/views/staff/shipments/index.blade.php
+    Feature: Staff portal
+    Purpose: Staff shipment list page.
+--}}
+
 <x-app-layout title="Shipment Management" active="shipments">
     @push('styles')
         <link href="{{ asset('assets/css/staff.css') }}?v=10" rel="stylesheet">

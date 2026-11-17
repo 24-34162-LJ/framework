@@ -1,3 +1,12 @@
+/*
+ * FILE PURPOSE
+ * File   : public/assets/taste/ui/notify/fragment.js
+ * Feature: Landing page - design kit
+ * Purpose: Part of the third-party "taste-skill" design kit used by the landing page
+ *          (resources/views/landing/index.blade.php). fragment.js is a kit file, not AstraTrack
+ *          business logic.
+ */
+
 // notify: one cycle (about 3 s): a notification slides in at the top and the oldest fades out at the
 // bottom (FLIP for the shift); hold. What slides in is the page's own: opts.items [[icon, title, body]]
 // (HTML) when given, else the oldest notification of the stack comes round to the top again. The times

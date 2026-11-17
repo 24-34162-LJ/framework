@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Http/Controllers/DocumentWorkflowController.php
+ * Feature: Documents
+ * Purpose: Client document uploads and staff review of them: accept/reject, request a document, and run
+ *          the Gemini document check.
+ */
+
 namespace App\Http\Controllers;
 
 use App\Models\DocumentRequest;

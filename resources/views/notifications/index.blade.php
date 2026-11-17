@@ -1,3 +1,10 @@
+{{--
+    FILE PURPOSE
+    File   : resources/views/notifications/index.blade.php
+    Feature: Notifications
+    Purpose: Notifications list page.
+--}}
+
 <x-app-layout title="Notifications" active="notifications">
     @push('styles')
         <link href="{{ asset('assets/css/staff.css') }}?v=10" rel="stylesheet">

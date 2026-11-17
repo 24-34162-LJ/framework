@@ -1,4 +1,13 @@
 /*
+ * FILE PURPOSE
+ * File   : public/assets/taste/diagrams/mount.js
+ * Feature: Landing page - design kit
+ * Purpose: Part of the third-party "taste-skill" design kit used by the landing page
+ *          (resources/views/landing/index.blade.php). mount.js is a kit file, not AstraTrack business
+ *          logic.
+ */
+
+/*
   taste-skill diagrams/mount.js - draws every [data-diagram] on the page. One line in the page:
     <link rel="stylesheet" href="assets/diagrams/diagram.css">
     <script type="module" src="assets/diagrams/mount.js"></script>

@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Http/Controllers/Staff/ShipmentManagementController.php
+ * Feature: Staff portal
+ * Purpose: Staff shipment list with filters (only shipments the staff member may see).
+ */
+
 namespace App\Http\Controllers\Staff;
 
 use App\Http\Controllers\Controller;

@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : tests/Unit/PhIdRulesTest.php
+ * Feature: Testing - ID Recognition
+ * Purpose: Tests the Philippine ID rules: verified, review and rejected cases.
+ */
+
 namespace Tests\Unit;
 
 use App\Services\Identity\PhIdRules;

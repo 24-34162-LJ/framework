@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Http/Controllers/LandingController.php
+ * Feature: Landing page
+ * Purpose: Shows the public landing (home) page.
+ */
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;

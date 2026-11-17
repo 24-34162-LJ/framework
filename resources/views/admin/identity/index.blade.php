@@ -1,3 +1,10 @@
+{{--
+    FILE PURPOSE
+    File   : resources/views/admin/identity/index.blade.php
+    Feature: ID Recognition
+    Purpose: Admin list of client ID checks (review queue).
+--}}
+
 <x-app-layout title="ID Verification" active="identity" :breadcrumbs="[['Dashboard', '/account-management/admin.php'], ['ID Verification', null]]">
     @push('styles')
         <link href="{{ asset('assets/css/staff.css') }}?v=10" rel="stylesheet">

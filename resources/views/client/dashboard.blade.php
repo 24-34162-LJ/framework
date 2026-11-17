@@ -1,3 +1,10 @@
+{{--
+    FILE PURPOSE
+    File   : resources/views/client/dashboard.blade.php
+    Feature: Client portal
+    Purpose: Client dashboard page.
+--}}
+
 <x-app-layout title="Welcome to AstraTrack" active="dashboard" legacy-dashboard>
     @push('styles')
         <link href="{{ asset('assets/css/client_dashbroad.css') }}?v=12" rel="stylesheet">

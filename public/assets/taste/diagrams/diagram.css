@@ -1,4 +1,13 @@
 /*
+ * FILE PURPOSE
+ * File   : public/assets/taste/diagrams/diagram.css
+ * Feature: Landing page - design kit
+ * Purpose: Part of the third-party "taste-skill" design kit used by the landing page
+ *          (resources/views/landing/index.blade.php). diagram.css is a kit file, not AstraTrack
+ *          business logic.
+ */
+
+/*
   taste-skill diagram.css - the look of diagram.js (references/diagrams.md). Every colour comes from the
   palette around it: --ink, --muted, --accent, --accent-ink and --card (or --bg); --frag sets the node
   fill when a page has one. On a dark ground the nodes are one step lighter than the card, on a light

@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : routes/web.php
+ * Feature: Core
+ * Purpose: All website URLs: which URL goes to which controller, for every feature and role.
+ */
+
 use App\Http\Controllers\Admin\ActivityController;
 use App\Http\Controllers\Admin\ClientManagementController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
@@ -8,6 +15,7 @@ use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\SearchController;
 use App\Http\Controllers\Admin\ShipmentManagementController as AdminShipmentManagementController;
 use App\Http\Controllers\Admin\UserManagementController;
+use App\Http\Controllers\IdAnalyzerWebhookController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BillingController;
 use App\Http\Controllers\Client\DashboardController as ClientDashboardController;
@@ -175,7 +183,16 @@ Route::middleware(['auth', 'role:client'])->prefix('client')->name('client.')->g
     Route::get('/identity', [ClientIdentityVerificationController::class, 'show'])->name('identity');
     Route::post('/identity', [ClientIdentityVerificationController::class, 'store'])->middleware('throttle:5,1')->name('identity.store');
     Route::get('/identity/status', [ClientIdentityVerificationController::class, 'status'])->middleware('throttle:60,1')->name('identity.status');
+    // Live ID + selfie check on ID Analyzer DocuPass
+    Route::post('/identity/live', [ClientIdentityVerificationController::class, 'startLive'])->middleware('throttle:5,1')->name('identity.live');
+    Route::get('/identity/live/return', [ClientIdentityVerificationController::class, 'returnFromLive'])->middleware('throttle:20,1')->name('identity.live.return');
+    Route::post('/identity/live/check', [ClientIdentityVerificationController::class, 'checkLive'])->middleware('throttle:10,1')->name('identity.live.check');
 });
+
+// ID Analyzer webhook (signed with IDANALYZER_WEBHOOK_SECRET; no session or CSRF token)
+Route::post('/webhooks/idanalyzer', IdAnalyzerWebhookController::class)
+    ->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class])
+    ->middleware('throttle:120,1')->name('webhooks.idanalyzer');
 
 // Admin review of client IDs
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function (): void {

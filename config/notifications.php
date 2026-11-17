@@ -1,6 +1,13 @@
 <?php
 
 /*
+ * FILE PURPOSE
+ * File   : config/notifications.php
+ * Feature: Config - Notifications
+ * Purpose: Which events send SMS and/or email, and to whom.
+ */
+
+/*
 |--------------------------------------------------------------------------
 | SMS and email rules per notification
 |--------------------------------------------------------------------------

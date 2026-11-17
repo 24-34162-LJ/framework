@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Models/TransactionHistory.php
+ * Feature: Database model
+ * Purpose: Table transaction_history: changes / corrections made to a transaction.
+ */
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;

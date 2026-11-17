@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Services/WhatsAppIntegration.php
+ * Feature: Notifications
+ * Purpose: The only code that sends WhatsApp messages, through Meta's WhatsApp Cloud API.
+ */
+
 namespace App\Services;
 
 use Illuminate\Support\Facades\Http;

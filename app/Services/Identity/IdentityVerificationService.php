@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Services/Identity/IdentityVerificationService.php
+ * Feature: ID Recognition
+ * Purpose: Main ID recognition flow: save the ID photo encrypted, have it read, apply the rules,
+ *          notify, and admin decisions.
+ */
+
 namespace App\Services\Identity;
 
 use App\Jobs\ReadIdentityDocument;
@@ -82,7 +90,18 @@ class IdentityVerificationService
             return;
         }
 
-        $data = (array) ($result['data'] ?? []);
+        $this->applyReading($verification, (array) ($result['data'] ?? []));
+    }
+
+    /**
+     * Run PhIdRules on what a reader extracted and save the decision. Shared by the photo upload
+     * (process) and the DocuPass live check (DocupassService::complete).
+     *
+     * @param  array<string, mixed>  $data
+     */
+    public function applyReading(IdentityVerification $verification, array $data): void
+    {
+        $verification->loadMissing(['user', 'client']);
         $number = PhIdRules::normalizeNumber(is_scalar($data['id_number'] ?? null) ? (string) $data['id_number'] : '');
         $hash = $number !== '' ? $this->hashNumber($number) : null;
         $usedElsewhere = $hash !== null && IdentityVerification::query()
@@ -158,29 +177,43 @@ class IdentityVerificationService
             $decision === IdentityVerification::STATUS_VERIFIED ? 'ID verified' : 'ID not accepted',
             $decision === IdentityVerification::STATUS_VERIFIED
                 ? 'Your ID has been verified.'
-                : 'Your ID was not accepted'.($note ? ': '.$note : '.').' Please upload a new one.',
+                : 'Your ID was not accepted'.($note ? ': '.$note : '.').' Please verify again on My Profile.',
             null, null, $verification->client_id,
         ));
     }
 
-    /** Decrypted image bytes, or null after the retention purge. */
-    public function imageBytes(IdentityVerification $verification): ?string
+    /** Decrypted ID image (or the selfie, for $kind "selfie"), or null after the retention purge. */
+    public function imageBytes(IdentityVerification $verification, string $kind = 'id'): ?string
     {
-        if (! $verification->file_path || ! Storage::disk('local')->exists($verification->file_path)) {
+        $path = $kind === 'selfie' ? $verification->selfie_path : $verification->file_path;
+        if (! $path || ! Storage::disk('local')->exists($path)) {
             return null;
         }
 
-        return Crypt::decryptString((string) Storage::disk('local')->get($verification->file_path));
+        return Crypt::decryptString((string) Storage::disk('local')->get($path));
     }
 
-    /** Delete ID images whose retention period has passed; the decision record stays. */
+    /** Store an image encrypted on the private disk; returns its path. */
+    public function storeImage(IdentityVerification $verification, string $bytes): string
+    {
+        $path = 'identity/'.(int) $verification->client_id.'/'.Str::uuid().'.enc';
+        Storage::disk('local')->put($path, Crypt::encryptString($bytes));
+
+        return $path;
+    }
+
+    /** Delete ID images and selfies whose retention period has passed; the decision record stays. */
     public function purgeExpiredFiles(): int
     {
         $count = 0;
-        IdentityVerification::query()->whereNotNull('file_path')->whereNull('file_purged_at')
+        IdentityVerification::query()
+            ->where(fn ($query) => $query->whereNotNull('file_path')->orWhereNotNull('selfie_path'))
+            ->whereNull('file_purged_at')
             ->where('purge_after', '<', now())->each(function (IdentityVerification $verification) use (&$count): void {
-                Storage::disk('local')->delete((string) $verification->file_path);
-                $verification->forceFill(['file_path' => null, 'file_purged_at' => now()])->save();
+                foreach (array_filter([$verification->file_path, $verification->selfie_path]) as $path) {
+                    Storage::disk('local')->delete((string) $path);
+                }
+                $verification->forceFill(['file_path' => null, 'selfie_path' => null, 'file_purged_at' => now()])->save();
                 $count++;
             });
 
@@ -230,7 +263,7 @@ class IdentityVerificationService
 
         [$title, $message] = match ($verification->status) {
             IdentityVerification::STATUS_VERIFIED => ['ID verified', 'Your ID has been verified.'],
-            IdentityVerification::STATUS_REJECTED => ['ID not accepted', 'Your ID could not be accepted. Open My Profile to see why and upload a new photo.'],
+            IdentityVerification::STATUS_REJECTED => ['ID not accepted', 'Your ID could not be accepted. Open My Profile to see why and try again.'],
             default => ['ID under review', 'Your ID needs a quick manual check. We will notify you when it is done.'],
         };
         $this->notifySafely(fn () => $this->notifications->forUsers(
@@ -247,7 +280,8 @@ class IdentityVerificationService
     private function safeFields(array $data): array
     {
         $fields = [];
-        foreach (['full_name', 'first_name', 'middle_name', 'last_name', 'birth_date', 'expiry_date', 'has_face_photo', 'confidence', 'quality_issues', 'tamper_signs', 'provider_decision', 'provider_warnings'] as $key) {
+        foreach (['full_name', 'first_name', 'middle_name', 'last_name', 'birth_date', 'expiry_date', 'has_face_photo', 'confidence', 'quality_issues', 'tamper_signs', 'provider_decision', 'provider_warnings',
+            'face_checked', 'face_score', 'face_failures', 'face_issues'] as $key) {
             if (array_key_exists($key, $data)) {
                 $fields[$key] = is_string($data[$key]) ? mb_substr($data[$key], 0, 150) : $data[$key];
             }

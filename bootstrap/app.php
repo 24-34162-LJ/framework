@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : bootstrap/app.php
+ * Feature: Core
+ * Purpose: Laravel start-up file: loads the routes and registers middleware and exception handling.
+ */
+
 use App\Http\Middleware\LegacyCsrfToken;
 use App\Http\Middleware\LegacyRoleMiddleware;
 use App\Http\Middleware\RoleMiddleware;

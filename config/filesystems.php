@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : config/filesystems.php
+ * Feature: Config
+ * Purpose: Storage disks: where uploaded files (documents, ID photos) are saved.
+ */
+
 return [
 
     /*

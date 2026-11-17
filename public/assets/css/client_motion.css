@@ -1,3 +1,10 @@
+/*
+ * FILE PURPOSE
+ * File   : public/assets/css/client_motion.css
+ * Feature: Client portal
+ * Purpose: Animations for client pages (stepper, reveals).
+ */
+
 /* AstraTrack client portal: motion. Loaded on client pages only.
    Motion here explains state and acknowledges actions; nothing waits on it.
    - shipment stepper: completed stages draw in order (line, then check), then the current stage pulses twice

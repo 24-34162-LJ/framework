@@ -1,3 +1,12 @@
+/*
+ * FILE PURPOSE
+ * File   : public/assets/taste/ui/files/fragment.js
+ * Feature: Landing page - design kit
+ * Purpose: Part of the third-party "taste-skill" design kit used by the landing page
+ *          (resources/views/landing/index.blade.php). fragment.js is a kit file, not AstraTrack
+ *          business logic.
+ */
+
 // files: one cycle (about 3.6 s): every tile clears, then a wave runs across the grid: each tile lifts, a
 // thin bar fills and a check appears, a few tiles reading at once; it holds on all read. The status line
 // only ever shows the page's words: while the wave runs it reads data-reading on the root (or

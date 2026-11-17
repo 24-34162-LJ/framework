@@ -1,3 +1,10 @@
+/*
+ * FILE PURPOSE
+ * File   : public/assets/css/client_documents.css
+ * Feature: Documents
+ * Purpose: Styles for client document uploads, staff review, document and shipment requests.
+ */
+
 /* Client document uploads, staff review, document requests, shipment requests. */
 /* Design tokens for this feature. Shared colours point at the staff.css palette; the rest are status tints. */
 :root {

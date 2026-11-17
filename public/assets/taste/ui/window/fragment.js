@@ -1,3 +1,12 @@
+/*
+ * FILE PURPOSE
+ * File   : public/assets/taste/ui/window/fragment.js
+ * Feature: Landing page - design kit
+ * Purpose: Part of the third-party "taste-skill" design kit used by the landing page
+ *          (resources/views/landing/index.blade.php). fragment.js is a kit file, not AstraTrack
+ *          business logic.
+ */
+
 // window: one row per cycle (about 3 s): the assistant finishes the row it is on (it turns to the done
 // word) and takes the next open row (it turns to the working word); after the last open row the queue
 // starts over. A row is open when its status reads the open word as written. The words are the page's

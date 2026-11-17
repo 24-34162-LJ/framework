@@ -1,3 +1,10 @@
+{{--
+    FILE PURPOSE
+    File   : resources/views/auth/login.blade.php
+    Feature: Login / Auth
+    Purpose: Login page.
+--}}
+
 <!doctype html>
 <html lang="en" data-type="service" data-radius="soft" data-buttons="tonal" data-motion>
 <head>

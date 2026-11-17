@@ -1,3 +1,10 @@
+{{--
+    FILE PURPOSE
+    File   : resources/views/staff/partials/pager.blade.php
+    Feature: Core
+    Purpose: Page number (pagination) controls used by the lists.
+--}}
+
 @php($anchorSuffix = filled($anchor ?? null) ? '#'.$anchor : '')
 @if ($paginator->hasPages())
     <nav class="pager" aria-label="Pagination">

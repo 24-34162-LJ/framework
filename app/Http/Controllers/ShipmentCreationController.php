@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Http/Controllers/ShipmentCreationController.php
+ * Feature: Shipments
+ * Purpose: Add Shipment page: manual entry or reading a shipping PDF with Gemini to pre-fill the form,
+ *          then saving the shipment.
+ */
+
 namespace App\Http\Controllers;
 
 use App\Models\Client;

@@ -1,3 +1,10 @@
+{{--
+    FILE PURPOSE
+    File   : resources/views/components/notification-menu.blade.php
+    Feature: Notifications
+    Purpose: Bell menu component in the page header.
+--}}
+
 @props(['user', 'unreadCount' => 0, 'notificationItems' => collect()])
 
 <div class="notification-menu" data-notification-menu data-csrf="{{ csrf_token() }}" data-read-url="/operations/notifications_action.php">

@@ -1,4 +1,13 @@
 /*
+ * FILE PURPOSE
+ * File   : public/assets/taste/system.js
+ * Feature: Landing page - design kit
+ * Purpose: Part of the third-party "taste-skill" design kit used by the landing page
+ *          (resources/views/landing/index.blade.php). system.js is a kit file, not AstraTrack business
+ *          logic.
+ */
+
+/*
   taste-skill system.js - the page behaviour every build shares. Load it once, at the end of <body>:
     <script type="module" src="assets/system.js"></script>
   Write no second script for any of this.

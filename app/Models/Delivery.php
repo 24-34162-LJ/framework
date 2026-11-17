@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Models/Delivery.php
+ * Feature: Database model
+ * Purpose: Table deliveries: delivery schedule and details of a shipment.
+ */
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;

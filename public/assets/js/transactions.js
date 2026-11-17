@@ -1,3 +1,10 @@
+/*
+ * FILE PURPOSE
+ * File   : public/assets/js/transactions.js
+ * Feature: Transactions
+ * Purpose: Transactions form: shows only the bills of the chosen shipment.
+ */
+
 (() => {
   const shipment = document.getElementById('txnShipment');
   const bill = document.getElementById('txnBill');

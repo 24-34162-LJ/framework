@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Rules/RealMailDomain.php
+ * Feature: Validation
+ * Purpose: Validation rule that rejects email addresses whose domain cannot receive mail (typos, fake
+ *          domains).
+ */
+
 namespace App\Rules;
 
 use App\Support\MailDomainChecker;

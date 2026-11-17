@@ -1,9 +1,14 @@
 <?php
 
-namespace App\Services\Identity;
+/*
+ * FILE PURPOSE
+ * File   : app/Services/Identity/IdAnalyzerReader.php
+ * Feature: ID Recognition
+ * Purpose: ID reader that uses the ID Analyzer API to scan an ID photo, and converts its answer to our
+ *          own fields.
+ */
 
-use Illuminate\Http\Client\ConnectionException;
-use Illuminate\Support\Facades\Http;
+namespace App\Services\Identity;
 
 /**
  * Reads an ID photo with the ID Analyzer v2 API (POST /scan) and maps the answer onto the
@@ -40,6 +45,14 @@ class IdAnalyzerReader implements IdDocumentReader
         'philhealth' => ['PHILHEALTH'],
     ];
 
+    /** Selfie problems that mean the selfie is not the ID holder, or not a live person: the ID is rejected. */
+    public const FACE_FAIL_CODES = ['FACE_MISMATCH', 'FACE_LIVENESS_ERR', 'RECAPTURED_FACE', 'FACE_IDENTICAL'];
+
+    /** Selfie problems that only mean the check could not run properly: an admin looks at it. */
+    private const FACE_REVIEW_CODES = ['SELFIE_FACE_NOT_FOUND', 'SELFIE_MULTIPLE_FACES', 'SELFIE_FACE_LANDMARK_ERR', 'DOCUMENT_FACE_LANDMARK_ERR'];
+
+    public function __construct(private IdAnalyzerClient $client) {}
+
     public function name(): string
     {
         return 'idanalyzer';
@@ -47,31 +60,12 @@ class IdAnalyzerReader implements IdDocumentReader
 
     public function read(string $mimeType, string $bytes): array
     {
-        $apiKey = trim((string) config('services.idanalyzer.api_key'));
-        if ($apiKey === '') {
-            return ['error' => 'The ID Analyzer API key is missing. Add IDANALYZER_API_KEY to the Laravel .env file.'];
-        }
+        $result = $this->client->post('/scan', [
+            'profile' => (string) config('services.idanalyzer.profile', 'security_medium'),
+            'document' => base64_encode($bytes),
+        ]);
 
-        try {
-            $response = Http::connectTimeout(10)->timeout(120)
-                ->withOptions($this->tlsOptions())
-                ->withHeaders(['X-API-KEY' => $apiKey, 'Accept' => 'application/json'])
-                ->post(rtrim((string) config('services.idanalyzer.base_url', 'https://api2.idanalyzer.com'), '/').'/scan', [
-                    'profile' => (string) config('services.idanalyzer.profile', 'security_medium'),
-                    'document' => base64_encode($bytes),
-                ]);
-        } catch (ConnectionException $e) {
-            return ['error' => 'Could not reach ID Analyzer: '.$e->getMessage()];
-        }
-
-        $body = $response->json();
-        if (! $response->successful() || ! is_array($body) || ($body['success'] ?? true) === false || isset($body['error'])) {
-            $message = is_array($body) ? ($body['error']['message'] ?? null) : null;
-
-            return ['error' => 'ID Analyzer: '.($message ?? 'API error (HTTP '.$response->status().').')];
-        }
-
-        return ['data' => $this->map($body)];
+        return isset($result['error']) ? ['error' => $result['error']] : ['data' => $this->map($result['data'])];
     }
 
     /** Turn the /scan response into the reader fields PhIdRules understands. */
@@ -94,7 +88,17 @@ class IdAnalyzerReader implements IdDocumentReader
             ['fullName', 'firstName', 'lastName', 'documentNumber', 'personalNumber', 'dob', 'expiry'],
         ), fn ($value) => $value !== null);
 
-        return [
+        // Selfie face match + liveness: only present when a selfie was taken (DocuPass, or /scan with "face").
+        $faceScore = $body['scores']['faceCompare'] ?? null;
+        $faceCodes = array_values(array_intersect($codes, [...self::FACE_FAIL_CODES, ...self::FACE_REVIEW_CODES]));
+        $face = is_numeric($faceScore) || $faceCodes !== [] ? [
+            'face_checked' => true,
+            'face_score' => is_numeric($faceScore) ? round((float) $faceScore, 3) : null,
+            'face_failures' => array_values(array_map('strtolower', array_intersect($faceCodes, self::FACE_FAIL_CODES))),
+            'face_issues' => array_values(array_map('strtolower', array_intersect($faceCodes, self::FACE_REVIEW_CODES))),
+        ] : [];
+
+        return $face + [
             'id_type' => $this->idType($fields, $codes),
             'full_name' => $full,
             'first_name' => $first,
@@ -170,14 +174,4 @@ class IdAnalyzerReader implements IdDocumentReader
         return $value !== null && preg_match('#^(\d{4})[/-](\d{2})[/-](\d{2})$#', $value, $m) === 1 ? "{$m[1]}-{$m[2]}-{$m[3]}" : null;
     }
 
-    /** Same CA-bundle fallback as GeminiClient (XAMPP's PHP often has no CA file configured). */
-    private function tlsOptions(): array
-    {
-        $bundle = (string) config('services.gemini.ca_bundle', '');
-        if ((string) ini_get('curl.cainfo') !== '' || (string) ini_get('openssl.cafile') !== '' || $bundle === '' || ! is_file($bundle)) {
-            return [];
-        }
-
-        return ['verify' => $bundle];
-    }
 }

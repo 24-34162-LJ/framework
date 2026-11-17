@@ -1,3 +1,10 @@
+/*
+ * FILE PURPOSE
+ * File   : public/assets/css/transactions.css
+ * Feature: Transactions
+ * Purpose: Styles for the transactions page.
+ */
+
 .txn-page { gap: 18px; }
 .txn-flash { padding: 13px 16px; border-radius: 10px; background: #eaeff9; color: #24395d; border: 1px solid #ccd7f0; }
 .txn-flash-error { color: #9d2b31; background: #fff0f0; border-color: #f4c7c9; }

@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Http/Controllers/TransactionController.php
+ * Feature: Transactions
+ * Purpose: Transactions page: link a payment/transaction to a shipment and bill, and correct it (with
+ *          history).
+ */
+
 namespace App\Http\Controllers;
 
 use App\Models\Billing;

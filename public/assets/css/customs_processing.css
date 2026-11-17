@@ -1,3 +1,10 @@
+/*
+ * FILE PURPOSE
+ * File   : public/assets/css/customs_processing.css
+ * Feature: Shipments
+ * Purpose: Styles for the customs processing card and editor.
+ */
+
 /* Customs Processing card and editor. Values and controls follow the existing customs_processing table. */
 .customs-record-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .customs-empty { display: flex; align-items: center; gap: 16px; padding: 18px 0 4px; }

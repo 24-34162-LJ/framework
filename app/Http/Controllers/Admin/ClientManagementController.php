@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Http/Controllers/Admin/ClientManagementController.php
+ * Feature: Admin - Client management
+ * Purpose: Admin page to list, add and edit client companies.
+ */
+
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;

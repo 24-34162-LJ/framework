@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Models/ShipmentRequest.php
+ * Feature: Database model
+ * Purpose: Table shipment_requests: a client's request for a new shipment.
+ */
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;

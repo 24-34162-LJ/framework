@@ -1,3 +1,10 @@
+/*
+ * FILE PURPOSE
+ * File   : public/assets/js/clint_shipment.js
+ * Feature: Client portal
+ * Purpose: Client My Shipments: submits the filters automatically.
+ */
+
 /* clint_shipment.js — My Shipments (client) */
 
 document.addEventListener("DOMContentLoaded", () => {

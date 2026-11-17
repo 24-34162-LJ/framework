@@ -1,3 +1,10 @@
+{{--
+    FILE PURPOSE
+    File   : resources/views/transactions/index.blade.php
+    Feature: Transactions
+    Purpose: Transactions pages: list, link and correct a transaction.
+--}}
+
 <x-app-layout :title="$view === 'create' ? 'Link Transaction' : ($view === 'correct' ? 'Correct Transaction' : ($view === 'detail' ? 'Transaction Details' : 'Transactions'))" active="transactions">
     @push('styles')
         <link href="{{ asset('assets/css/staff.css') }}?v=10" rel="stylesheet">

@@ -1,3 +1,10 @@
+{{--
+    FILE PURPOSE
+    File   : resources/views/emails/notification.blade.php
+    Feature: Notifications
+    Purpose: HTML template of the notification email.
+--}}
+
 <!doctype html>
 <html lang="en">
 <head>

@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Http/Controllers/Staff/DashboardController.php
+ * Feature: Staff portal
+ * Purpose: Staff dashboard: assigned shipments and the tracking search.
+ */
+
 namespace App\Http\Controllers\Staff;
 
 use App\Http\Controllers\Controller;

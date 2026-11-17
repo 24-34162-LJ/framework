@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Services/Identity/PhIdRules.php
+ * Feature: ID Recognition
+ * Purpose: Our own rules for Philippine IDs: ID number format, expiry, name match, tampering ->
+ *          verified / needs review / rejected.
+ */
+
 namespace App\Services\Identity;
 
 use Illuminate\Support\Carbon;
@@ -110,7 +118,7 @@ class PhIdRules
         // 1. Is it an accepted ID at all?
         if ($type === 'not_an_id') {
             $add('type', 'ID type', 'fail', 'The image does not look like a government ID.');
-            $reject[] = 'The image does not look like a government ID. Upload a photo of the front of your ID.';
+            $reject[] = 'The image does not look like a government ID. Try again with the front of a valid government ID.';
         } elseif (isset(self::TYPES[$type])) {
             $add('type', 'ID type', 'pass', self::label($type));
         } else {
@@ -134,7 +142,7 @@ class PhIdRules
         $needsExpiry = (bool) (self::TYPES[$type][2] ?? false);
         if ($expiry && $expiry->lt($today)) {
             $add('expiry', 'Expiry', 'fail', 'Expired on '.$expiry->format('M d, Y'));
-            $reject[] = 'This ID expired on '.$expiry->format('M d, Y').'. Upload a valid ID.';
+            $reject[] = 'This ID expired on '.$expiry->format('M d, Y').'. Try again with a valid ID.';
         } elseif ($expiry) {
             $add('expiry', 'Expiry', 'pass', 'Valid until '.$expiry->format('M d, Y'));
         } elseif ($needsExpiry) {
@@ -184,6 +192,22 @@ class PhIdRules
         if (($data['has_face_photo'] ?? null) === false && $type !== 'not_an_id') {
             $add('photo', 'Face photo', 'warn', 'No face photo seen on the card');
             $review[] = 'No face photo was found on the card.';
+        }
+
+        // 6b. Selfie vs the face on the ID, and liveness (only when a selfie was taken, e.g. DocuPass).
+        if (($data['face_checked'] ?? false) === true) {
+            $failures = $this->list($data['face_failures'] ?? []);
+            $issues = $this->list($data['face_issues'] ?? []);
+            $score = is_numeric($data['face_score'] ?? null) ? ' ('.number_format((float) $data['face_score'] * 100).'% match)' : '';
+            if ($failures !== []) {
+                $add('face', 'Selfie check', 'fail', implode(', ', $failures).$score);
+                $reject[] = 'Your selfie did not pass the check ('.implode(', ', $failures).'). Take the selfie again yourself, live, in good light.';
+            } elseif ($issues !== []) {
+                $add('face', 'Selfie check', 'warn', implode(', ', $issues).$score);
+                $review[] = 'The selfie could not be checked automatically: '.implode(', ', $issues).'.';
+            } else {
+                $add('face', 'Selfie check', 'pass', 'Selfie matches the ID and passed liveness'.$score);
+            }
         }
 
         // 7. Tampering, confidence, duplicates

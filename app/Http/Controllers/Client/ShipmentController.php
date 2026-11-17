@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Http/Controllers/Client/ShipmentController.php
+ * Feature: Client portal
+ * Purpose: Client "My Shipments" list and the read-only shipment details page.
+ */
+
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;

@@ -1,3 +1,10 @@
+/*
+ * FILE PURPOSE
+ * File   : public/assets/js/client_documents.js
+ * Feature: Documents
+ * Purpose: Document uploads (photo to PDF), Gemini document check, document and shipment requests.
+ */
+
 /* Client document uploads, photo → PDF capture, Gemini document checks, staff document requests,
    and client shipment requests. Used on the client shipment page, the staff shipment page and the
    client Shipment Requests page. */

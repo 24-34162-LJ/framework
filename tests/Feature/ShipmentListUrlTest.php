@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : tests/Feature/ShipmentListUrlTest.php
+ * Feature: Testing - Shipments
+ * Purpose: Tests that "Back to Shipments" returns to the same list.
+ */
+
 namespace Tests\Feature;
 
 use App\Models\User;

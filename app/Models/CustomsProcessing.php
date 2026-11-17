@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Models/CustomsProcessing.php
+ * Feature: Database model
+ * Purpose: Table customs_processing: customs steps and results recorded for a shipment.
+ */
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;

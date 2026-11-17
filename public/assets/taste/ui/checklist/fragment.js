@@ -1,3 +1,12 @@
+/*
+ * FILE PURPOSE
+ * File   : public/assets/taste/ui/checklist/fragment.js
+ * Feature: Landing page - design kit
+ * Purpose: Part of the third-party "taste-skill" design kit used by the landing page
+ *          (resources/views/landing/index.blade.php). fragment.js is a kit file, not AstraTrack
+ *          business logic.
+ */
+
 // checklist: one cycle (about 3.2 s): back to the page's own state, then the open items tick in turn
 // (check draws, label strikes), the bar fills; it holds on all done, then starts again. The count keeps
 // the page's words: only its first figure follows ("2 of 5" reads "3 of 5").

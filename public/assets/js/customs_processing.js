@@ -1,3 +1,10 @@
+/*
+ * FILE PURPOSE
+ * File   : public/assets/js/customs_processing.js
+ * Feature: Shipments
+ * Purpose: Customs processing editor: add / edit customs records.
+ */
+
 (() => {
     const dialog = document.getElementById('customsDialog');
     const form = document.getElementById('customsForm');

@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : database/seeders/DatabaseSeeder.php
+ * Feature: Database
+ * Purpose: Starting data for php artisan db:seed (creates a test user).
+ */
+
 namespace Database\Seeders;
 
 use App\Models\User;

@@ -1,3 +1,10 @@
+{{--
+    FILE PURPOSE
+    File   : resources/views/components/sidebar.blade.php
+    Feature: Core
+    Purpose: Sidebar menu component; shows the links for the user's role.
+--}}
+
 @props(['active' => ''])
 
 @php

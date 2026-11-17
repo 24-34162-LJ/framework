@@ -1,3 +1,10 @@
+/*
+ * FILE PURPOSE
+ * File   : public/assets/js/login.js
+ * Feature: Login / Auth
+ * Purpose: Login page script: show/hide password, Caps Lock warning, loading state.
+ */
+
 // AstraTrack - Login page scripts
 (function () {
     'use strict';

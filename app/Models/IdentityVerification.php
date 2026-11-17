@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Models/IdentityVerification.php
+ * Feature: ID Recognition
+ * Purpose: Table identity_verifications: one row per client ID check (status, reader result, DocuPass
+ *          link, review decision).
+ */
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
@@ -17,6 +25,12 @@ class IdentityVerification extends Model
     /** Uploaded; the background job has not finished reading it yet. */
     public const STATUS_PROCESSING = 'processing';
 
+    /** A DocuPass live check was started; waiting for the client to finish it on ID Analyzer's page. */
+    public const STATUS_PENDING = 'pending';
+
+    /** After this many hours an unfinished DocuPass check no longer blocks starting a new one. */
+    public const PENDING_EXPIRY_HOURS = 24;
+
     /** After this many minutes a still-processing ID is shown to admins (e.g. no queue worker running). */
     public const STALE_PROCESSING_MINUTES = 10;
 
@@ -32,9 +46,10 @@ class IdentityVerification extends Model
         'id_number_hash', 'id_number_last4', 'extracted', 'checks', 'file_path', 'file_mime', 'original_name',
         'consent_version', 'consent_at', 'consent_ip', 'reviewed_by', 'reviewed_at', 'review_note',
         'purge_after', 'file_purged_at',
+        'provider_reference', 'provider_transaction_id', 'provider_url', 'selfie_path',
     ];
 
-    protected $hidden = ['id_number_hash', 'file_path'];
+    protected $hidden = ['id_number_hash', 'file_path', 'selfie_path', 'provider_url'];
 
     protected function casts(): array
     {
@@ -69,8 +84,17 @@ class IdentityVerification extends Model
             self::STATUS_VERIFIED => 'Verified',
             self::STATUS_REJECTED => 'Rejected',
             self::STATUS_PROCESSING => $this->isStaleProcessing() ? 'Waiting for reader' : 'Reading ID',
+            self::STATUS_PENDING => $this->isOpenPending() ? 'Not finished' : 'Expired',
             default => 'Under review',
         };
+    }
+
+    /** A DocuPass check the client can still finish (its link has not expired on our side). */
+    public function isOpenPending(): bool
+    {
+        return $this->status === self::STATUS_PENDING
+            && $this->created_at !== null
+            && $this->created_at->gte(now()->subHours(self::PENDING_EXPIRY_HOURS));
     }
 
     public function isStaleProcessing(): bool

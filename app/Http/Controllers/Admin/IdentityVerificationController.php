@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Http/Controllers/Admin/IdentityVerificationController.php
+ * Feature: ID Recognition
+ * Purpose: Admin side of ID recognition: review queue of client IDs, view one ID (image access is
+ *          logged), and approve or reject it.
+ */
+
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
@@ -40,16 +48,19 @@ class IdentityVerificationController extends Controller
     public function image(Request $request, int $verificationId, IdentityVerificationService $service, ActivityLogger $activity): Response
     {
         $verification = IdentityVerification::query()->findOrFail($verificationId);
-        $bytes = $service->imageBytes($verification);
-        abort_if($bytes === null, 404, 'The ID image has been deleted after the retention period.');
+        $kind = $request->query('kind') === 'selfie' ? 'selfie' : 'id';
+        $bytes = $service->imageBytes($verification, $kind);
+        abort_if($bytes === null, 404, 'The image has been deleted after the retention period.');
 
-        $activity->record($request->user(), 'ID Verification', 'Viewed ID image #'.$verification->verification_id, [
+        $activity->record($request->user(), 'ID Verification', 'Viewed '.($kind === 'selfie' ? 'selfie' : 'ID image').' #'.$verification->verification_id, [
             'verification_id' => $verification->verification_id,
             'client_id' => $verification->client_id,
         ]);
 
+        $mime = $kind === 'selfie' ? (string) (new \finfo(FILEINFO_MIME_TYPE))->buffer($bytes) : ($verification->file_mime ?: '');
+
         return response($bytes, 200, [
-            'Content-Type' => $verification->file_mime ?: 'application/octet-stream',
+            'Content-Type' => in_array($mime, ['image/jpeg', 'image/png', 'image/webp'], true) ? $mime : 'application/octet-stream',
             'Cache-Control' => 'no-store, private',
             'X-Content-Type-Options' => 'nosniff',
             'Content-Disposition' => 'inline',

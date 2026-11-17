@@ -1,3 +1,10 @@
+/*
+ * FILE PURPOSE
+ * File   : public/assets/js/client_dashbroad.js
+ * Feature: Client portal
+ * Purpose: Client dashboard script: tracking search and shipment popup.
+ */
+
 /* client_dashbroad.js — AstraTrack Client Dashboard */
 
 document.addEventListener("DOMContentLoaded", () => {

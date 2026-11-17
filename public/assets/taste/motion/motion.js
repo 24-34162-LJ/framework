@@ -1,4 +1,13 @@
 /*
+ * FILE PURPOSE
+ * File   : public/assets/taste/motion/motion.js
+ * Feature: Landing page - design kit
+ * Purpose: Part of the third-party "taste-skill" design kit used by the landing page
+ *          (resources/views/landing/index.blade.php). motion.js is a kit file, not AstraTrack business
+ *          logic.
+ */
+
+/*
   taste-skill motion.js - the moving half of the micro-interaction layer (motion.css is the rest).
   Load it once, after system.js (motion.css needs no attribute; <html data-motion="off"> turns the layer off, JS too):
     <script type="module" src="assets/motion/motion.js"></script>

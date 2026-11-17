@@ -1,3 +1,10 @@
+/*
+ * FILE PURPOSE
+ * File   : public/assets/css/billing.css
+ * Feature: Billing
+ * Purpose: Styles for the billing pages.
+ */
+
 .bill-page { gap: 20px; }
 .bill-head { align-items: flex-end; }
 .bill-head-actions { display:flex; align-items:center; gap:10px; }

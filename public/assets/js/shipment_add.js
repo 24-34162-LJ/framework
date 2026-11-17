@@ -1,3 +1,10 @@
+/*
+ * FILE PURPOSE
+ * File   : public/assets/js/shipment_add.js
+ * Feature: Shipments
+ * Purpose: Add Shipment script: manual entry, PDF reading draft, containers table.
+ */
+
 /* Shipment add: manual entry and PDF assisted draft review. */
 document.addEventListener("DOMContentLoaded", () => {
     const $ = id => document.getElementById(id);

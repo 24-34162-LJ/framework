@@ -1,3 +1,10 @@
+{{--
+    FILE PURPOSE
+    File   : resources/views/admin/identity/show.blade.php
+    Feature: ID Recognition
+    Purpose: Admin page for one ID check: ID image, selfie, what was read, and approve / reject.
+--}}
+
 <x-app-layout title="ID Check #{{ $verification->verification_id }}" active="identity"
     :breadcrumbs="[['Dashboard', '/account-management/admin.php'], ['ID Verification', route('admin.identity.index')], ['#'.$verification->verification_id, null]]">
     @push('styles')
@@ -43,7 +50,19 @@
                         <p>The image was deleted on {{ $verification->file_purged_at?->format('M d, Y') }} after the retention period. The decision record is kept.</p>
                     @endif
                 </div>
-                <p class="idv-footnote">Every view of this image is recorded in Recent Activity.</p>
+                @if ($verification->selfie_path)
+                    <div class="idv-card-head">
+                        <h3>Selfie (live check)</h3>
+                        <a href="{{ route('admin.identity.image', ['verificationId' => $verification->verification_id, 'kind' => 'selfie']) }}" target="_blank" rel="noopener">Open full size<span class="idv-sr"> (opens in a new tab)</span></a>
+                    </div>
+                    <div class="idv-frame">
+                        <img src="{{ route('admin.identity.image', ['verificationId' => $verification->verification_id, 'kind' => 'selfie']) }}" alt="Selfie taken by {{ $verification->user?->full_name ?? 'the client' }} during the live check" decoding="async">
+                    </div>
+                    @if (isset($fields['face_score']))
+                        <p class="idv-footnote">Face match with the ID photo: {{ number_format((float) $fields['face_score'] * 100) }}%.</p>
+                    @endif
+                @endif
+                <p class="idv-footnote">Every view of these images is recorded in Recent Activity.</p>
             </section>
 
             <div>

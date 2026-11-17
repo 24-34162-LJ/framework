@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Http/Middleware/LegacyCsrfToken.php
+ * Feature: Security
+ * Purpose: Accepts the CSRF token field/header names used by the old PHP pages, then runs Laravel's
+ *          normal CSRF check.
+ */
+
 namespace App\Http\Middleware;
 
 use Closure;

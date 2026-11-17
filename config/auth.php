@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : config/auth.php
+ * Feature: Config
+ * Purpose: Login settings: guards, user provider and password reset.
+ */
+
 use App\Models\User;
 
 return [

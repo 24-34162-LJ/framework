@@ -1,3 +1,10 @@
+/*
+ * FILE PURPOSE
+ * File   : public/assets/js/shipments.js
+ * Feature: Shipments
+ * Purpose: Shipment list and details: filters, row menu, table actions.
+ */
+
 /* shipments.js — AstraTrack shipment list and details pages */
 
 // Chrome can restore nested horizontal scroll after the first paint. Reset on

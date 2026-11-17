@@ -1,3 +1,10 @@
+/*
+ * FILE PURPOSE
+ * File   : public/assets/js/notifications.js
+ * Feature: Notifications
+ * Purpose: Bell menu script: open the menu and mark notifications as read.
+ */
+
 (() => {
   const menu = document.querySelector('[data-notification-menu]');
   const csrf = document.querySelector('meta[name="csrf"]')?.content || menu?.dataset.csrf || '';

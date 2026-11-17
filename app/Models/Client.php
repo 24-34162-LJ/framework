@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Models/Client.php
+ * Feature: Database model
+ * Purpose: Table clients: a client company, with its users, shipments, bills and transactions.
+ */
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;

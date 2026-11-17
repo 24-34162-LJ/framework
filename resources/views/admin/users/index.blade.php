@@ -1,3 +1,10 @@
+{{--
+    FILE PURPOSE
+    File   : resources/views/admin/users/index.blade.php
+    Feature: Admin - User management
+    Purpose: Admin user management page.
+--}}
+
 <x-app-layout title="User Management" active="users" legacy-dashboard :show-notifications="false">
     @push('styles')
         <link href="{{ asset('assets/css/admin.css') }}?v=9" rel="stylesheet">

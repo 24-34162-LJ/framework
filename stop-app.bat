@@ -1,7 +1,7 @@
 @echo off
 rem ==================================================================
 rem  AstraTrack - stop
-rem  Stops the queue worker and PHP 8.5. Apache and MySQL keep running
+rem  Stops the queue worker, the scheduler and PHP 8.5. Apache and MySQL keep running
 rem  (other XAMPP sites may use them); stop those in the XAMPP Control
 rem  Panel if you want, or run:  stop-app.bat all
 rem ==================================================================
@@ -9,6 +9,9 @@ setlocal
 
 echo  [Queue]  stopping...
 powershell -NoProfile -Command "Get-CimInstance Win32_Process -Filter \"Name='php.exe'\" | Where-Object { $_.CommandLine -like '*queue:work*' } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force }"
+
+echo  [Sched]  stopping...
+powershell -NoProfile -Command "Get-CimInstance Win32_Process -Filter \"Name='php.exe'\" | Where-Object { $_.CommandLine -like '*schedule:work*' } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force }"
 
 echo  [PHP]    stopping...
 taskkill /F /IM php-cgi.exe >nul 2>&1

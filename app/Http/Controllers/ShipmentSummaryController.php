@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Http/Controllers/ShipmentSummaryController.php
+ * Feature: Shipments
+ * Purpose: Printable one-page summary sheet of a shipment.
+ */
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;

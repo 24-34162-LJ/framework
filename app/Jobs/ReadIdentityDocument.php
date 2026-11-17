@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Jobs/ReadIdentityDocument.php
+ * Feature: ID Recognition
+ * Purpose: Background job that reads an uploaded ID photo (Gemini or ID Analyzer) so the client does
+ *          not wait for the result.
+ */
+
 namespace App\Jobs;
 
 use App\Models\IdentityVerification;

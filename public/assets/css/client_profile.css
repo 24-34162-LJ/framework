@@ -1,3 +1,10 @@
+/*
+ * FILE PURPOSE
+ * File   : public/assets/css/client_profile.css
+ * Feature: Client portal
+ * Purpose: Styles for the client My Profile page.
+ */
+
 .profile-main { min-width: 0; }
 .profile-topbar { margin-bottom: 22px; }
 .profile-heading { display: flex; align-items: center; gap: 14px; }

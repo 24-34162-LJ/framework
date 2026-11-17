@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : tests/Feature/ShipmentClosedGuardsTest.php
+ * Feature: Testing - Shipments
+ * Purpose: Tests that delivered / cancelled / archived shipments cannot be changed.
+ */
+
 namespace Tests\Feature;
 
 use App\Models\Shipment;

@@ -1,3 +1,10 @@
+/*
+ * FILE PURPOSE
+ * File   : public/assets/css/user_management.css
+ * Feature: Admin - User management
+ * Purpose: Styles for the admin user management page.
+ */
+
 /* user_management.css — page-specific styles. Load AFTER admin.css */
 
 [hidden] { display: none !important; }

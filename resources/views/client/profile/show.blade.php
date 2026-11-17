@@ -1,3 +1,10 @@
+{{--
+    FILE PURPOSE
+    File   : resources/views/client/profile/show.blade.php
+    Feature: Client portal
+    Purpose: Client My Profile page (includes the ID verification panel).
+--}}
+
 <x-app-layout title="My Profile" active="profile" profile-header>
     @push('styles')
         <link href="{{ asset('assets/css/client_dashbroad.css') }}?v=12" rel="stylesheet">

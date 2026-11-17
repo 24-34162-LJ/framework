@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : tests/Unit/MailConfigTest.php
+ * Feature: Testing - Notifications
+ * Purpose: Tests the mail settings (timeout, sender address).
+ */
+
 namespace Tests\Unit;
 
 use Tests\TestCase;

@@ -1,3 +1,10 @@
+{{--
+    FILE PURPOSE
+    File   : resources/views/billing/index.blade.php
+    Feature: Billing
+    Purpose: Billing pages: list, create bill and bill details.
+--}}
+
 @php($isClientTitle = auth()->user()->role === 'client')
 <x-app-layout :title="$view === 'detail' ? $bill->billing_no : ($view === 'create' ? 'Create Bill' : ($view === 'review' ? 'Payment Review' : ($view === 'record' ? 'Record Payment' : ($view === 'submit' ? 'Submit Payment Evidence' : ($isClientTitle ? 'My Billing & Payments' : 'Billing Overview')))))" active="billing">
     @push('styles')

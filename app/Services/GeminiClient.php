@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Services/GeminiClient.php
+ * Feature: AI - Gemini
+ * Purpose: Sends one file + prompt to Google Gemini and returns its JSON answer. Shared by all Gemini
+ *          features.
+ */
+
 namespace App\Services;
 
 use Illuminate\Http\Client\ConnectionException;

@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : tests/Feature/RealMailDomainTest.php
+ * Feature: Testing
+ * Purpose: Tests the email domain check rule.
+ */
+
 namespace Tests\Feature;
 
 use App\Http\Requests\Admin\SaveClientRequest;

@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Models/Shipment.php
+ * Feature: Database model
+ * Purpose: Table shipments: the main shipment record, with client, staff, stage, containers, customs,
+ *          deliveries.
+ */
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;

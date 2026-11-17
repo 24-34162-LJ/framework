@@ -1,3 +1,10 @@
+{{--
+    FILE PURPOSE
+    File   : resources/views/components/page-header.blade.php
+    Feature: Core
+    Purpose: Top header component: breadcrumbs, user menu, bell.
+--}}
+
 @props([
     'title' => 'AstraTrack',
     'breadcrumbs' => [],

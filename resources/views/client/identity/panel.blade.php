@@ -1,15 +1,24 @@
+{{--
+    FILE PURPOSE
+    File   : resources/views/client/identity/panel.blade.php
+    Feature: ID Recognition
+    Purpose: Client ID verification panel on My Profile: upload / live check button, status and history.
+--}}
+
 {{-- ID verification panel, shown on the client's My Profile page. Needs: $latest, $history, $companyVerified, $idTypes. --}}
 @php
     $resultMessages = [
         'verified' => ['ok', 'pass', 'Your ID is verified', 'Thank you. No further action is needed.'],
         'needs_review' => ['info', 'info', 'Your ID is with our team', 'An admin needs to check it by hand. You will get a notification when it is done.'],
-        'rejected' => ['bad', 'fail', 'Your ID was not accepted', 'See the reason below, then upload a new photo.'],
+        'rejected' => ['bad', 'fail', 'Your ID was not accepted', 'See the reason below, then try again.'],
     ];
     $reading = $latest && $latest->status === 'processing' && ! $latest->isStaleProcessing();
     $waiting = $latest && $latest->isStaleProcessing();
     // The "processing" flash is replaced by the live reading notice below.
-    $result = $resultMessages[session('identity_result')] ?? null;
-    $showForm = ! $companyVerified && (! $latest || $latest->status === 'rejected');
+    $result = $resultMessages[(string) session('identity_result')] ?? null;
+    $live = \App\Services\Identity\DocupassService::enabled();
+    $openLive = $latest && $latest->isOpenPending();
+    $showForm = ! $companyVerified && (! $latest || $latest->status === 'rejected' || ($latest->status === 'pending' && ! $openLive));
     $reasons = $latest && $latest->status === 'rejected'
         ? ($latest->review_note ? [$latest->review_note] : ($latest->checks['reasons'] ?? []))
         : [];
@@ -18,6 +27,18 @@
     <section class="profile-card" aria-labelledby="id-status-heading">
         <h2 id="id-status-heading">ID verification</h2>
 
+        @if (session('identity_error'))
+            <div class="idv-notice idv-notice-bad" role="alert">
+                @include('partials.identity-icon', ['name' => 'fail'])
+                <p><strong>Something went wrong</strong>{{ session('identity_error') }}</p>
+            </div>
+        @endif
+        @if (session('identity_pending'))
+            <div class="idv-notice idv-notice-info" role="status">
+                @include('partials.identity-icon', ['name' => 'info'])
+                <p><strong>No result yet</strong>We could not find a finished check. Continue the live check, or try "Check my result" again in a minute.</p>
+            </div>
+        @endif
         @if ($result)
             <div class="idv-notice idv-notice-{{ $result[0] }}" role="status">
                 @include('partials.identity-icon', ['name' => $result[1]])
@@ -28,7 +49,7 @@
         @if ($companyVerified)
             <p class="idv-status"><span class="idv-badge idv-verified">Verified</span><span>Your company's authorized representative has been verified.</span></p>
         @elseif (! $latest)
-            <p class="idv-status"><span class="idv-badge idv-none">Not verified</span><span>Upload one government ID to verify your account.</span></p>
+            <p class="idv-status"><span class="idv-badge idv-none">Not verified</span><span>{{ $live ? 'Verify your account with one government ID and a selfie.' : 'Upload one government ID to verify your account.' }}</span></p>
         @else
             <p class="idv-status">
                 <span class="idv-badge idv-{{ $latest->status }}">{{ $latest->statusLabel() }}</span>
@@ -78,7 +99,85 @@
         @endif
     </section>
 
-    @if ($showForm)
+    @if ($live && $openLive && ! $companyVerified)
+        <section class="profile-card idv-verify" aria-labelledby="id-live-open-heading">
+            <div class="idv-verify-head">
+                <span class="idv-verify-mark">@include('partials.identity-icon', ['name' => 'face'])</span>
+                <div>
+                    <h2 id="id-live-open-heading">Finish your live ID check</h2>
+                    <p class="profile-note">You started a live ID check but we have no result yet. Continue where you left off, or if you already finished, check your result.</p>
+                </div>
+            </div>
+            <div class="idv-actions">
+                <form method="post" action="{{ route('client.identity.live') }}">
+                    @csrf
+                    <input type="hidden" name="live_consent" value="1">
+                    <button type="submit" class="profile-save">Continue live check</button>
+                </form>
+                <form method="post" action="{{ route('client.identity.live.check') }}">
+                    @csrf
+                    <button type="submit" class="profile-secondary">Check my result</button>
+                </form>
+            </div>
+        </section>
+    @endif
+
+    @if ($showForm && $live)
+        @php
+            $retention = (int) config('services.identity.retention_days', 90);
+        @endphp
+        <section class="idv-choose" aria-labelledby="id-choose-heading">
+            <div class="idv-choose-head">
+                <h2 id="id-choose-heading">{{ $latest ? 'Verify your identity again' : 'Verify your identity' }}</h2>
+                <ol class="idv-stepper" aria-label="Progress">
+                    <li class="active" aria-current="step"><b>1</b>Scan ID and selfie</li>
+                    <li class="idv-stepper-line" aria-hidden="true"></li>
+                    <li><b>2</b>Get your result</li>
+                </ol>
+            </div>
+
+            <article class="idv-start-card idv-live-card" aria-labelledby="id-live-heading">
+                <div class="idv-start-head">
+                    <span class="idv-start-icon">@include('partials.identity-icon', ['name' => 'face'])</span>
+                    <div>
+                        <h3 id="id-live-heading">Live check with your camera</h3>
+                        <p>Scan your ID and take a selfie on our verification partner's secure page. Takes about 2 minutes.</p>
+                    </div>
+                </div>
+
+                <div class="idv-start-body">
+                    <ol class="idv-flow">
+                        <li><span class="idv-flow-icon">@include('partials.identity-icon', ['name' => 'idcard'])</span>
+                            <span><strong>Scan your ID</strong>Hold the front of one valid government ID up to the camera.</span></li>
+                        <li><span class="idv-flow-icon">@include('partials.identity-icon', ['name' => 'face'])</span>
+                            <span><strong>Take a selfie</strong>We match it with the photo on your ID and check it's really you.</span></li>
+                        <li><span class="idv-flow-icon">@include('partials.identity-icon', ['name' => 'pass'])</span>
+                            <span><strong>Get your result</strong>Usually right away, here on My Profile.</span></li>
+                    </ol>
+
+                    <form method="post" action="{{ route('client.identity.live') }}" class="idv-start-form" novalidate>
+                        @csrf
+                        <p class="idv-tip">@include('partials.identity-icon', ['name' => 'info'])<span>No good camera on this computer? You can continue on your phone by scanning a QR code.</span></p>
+                        <label class="profile-check idv-consent">
+                            <input type="checkbox" name="live_consent" value="1" @checked(old('live_consent')) @error('live_consent') aria-invalid="true" aria-describedby="liveConsentError" @enderror>
+                            <span>I agree that AstraTrack may process my ID and a selfie (read by ID Analyzer, with face match and liveness check) to verify my identity for customs brokerage services.
+                                Images are encrypted, seen only by authorized admins, and deleted {{ $retention }} days after the decision (Data Privacy Act, RA 10173).</span>
+                        </label>
+                        @error('live_consent')<small id="liveConsentError" class="profile-error">{{ $message }}</small>@enderror
+                        <button type="submit" class="idv-btn">Start live ID check @include('partials.identity-icon', ['name' => 'arrow'])</button>
+                    </form>
+                </div>
+            </article>
+
+            <div class="idv-choose-foot">
+                <div class="idv-accepted">
+                    <span>Accepted IDs</span>
+                    <ul>@foreach ($idTypes as $type)<li>{{ $type }}</li>@endforeach</ul>
+                </div>
+                <p class="idv-control">@include('partials.identity-icon', ['name' => 'shield'])<span><strong>Your data stays protected.</strong> Only one valid ID is needed. Images are stored encrypted and deleted after {{ $retention }} days.</span></p>
+            </div>
+        </section>
+    @elseif ($showForm)
         <section class="profile-card" aria-labelledby="id-upload-heading">
             <div>
                 <h2 id="id-upload-heading">{{ $latest ? 'Upload a new photo of your ID' : 'Upload your ID' }}</h2>

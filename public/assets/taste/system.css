@@ -1,4 +1,13 @@
 /*
+ * FILE PURPOSE
+ * File   : public/assets/taste/system.css
+ * Feature: Landing page - design kit
+ * Purpose: Part of the third-party "taste-skill" design kit used by the landing page
+ *          (resources/views/landing/index.blade.php). system.css is a kit file, not AstraTrack business
+ *          logic.
+ */
+
+/*
   taste-skill system.css - the one system for the page. Link it first, then assets/ui/cards.css (the
   feature card, its panel and the fragment placements), then set the palette (--p-*), the fonts and
   the radius set on :root in the page (node scripts/start.mjs prints that block).

@@ -1,3 +1,10 @@
+{{--
+    FILE PURPOSE
+    File   : resources/views/partials/document-ai-check.blade.php
+    Feature: Documents
+    Purpose: Shows the Gemini document check result for one document.
+--}}
+
 {{-- Gemini document check result for one document. $audience: staff | client --}}
 @php
     $check = is_array($document->ai_check) ? $document->ai_check : null;

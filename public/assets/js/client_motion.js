@@ -1,3 +1,10 @@
+/*
+ * FILE PURPOSE
+ * File   : public/assets/js/client_motion.js
+ * Feature: Client portal
+ * Purpose: Client page animations that need a script.
+ */
+
 // AstraTrack client portal: the motion that needs a script (client_motion.css has the rest).
 // - "Show more" sections open with a height reveal (closing stays instant: exits are quicker than entrances)
 // - the shipment popup's progress list arrives as a short cascade each time it is filled

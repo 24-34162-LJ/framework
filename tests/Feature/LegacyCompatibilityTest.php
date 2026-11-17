@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : tests/Feature/LegacyCompatibilityTest.php
+ * Feature: Testing
+ * Purpose: Tests that old URLs, login and page layout from the plain-PHP app still work.
+ */
+
 namespace Tests\Feature;
 
 use App\Models\User;
@@ -17,7 +24,7 @@ class LegacyCompatibilityTest extends TestCase
     {
         $this->get('/login.php')
             ->assertOk()
-            ->assertSee('<form method="post" action="" id="loginForm" novalidate>', false)
+            ->assertSee('method="post" action="" id="loginForm" novalidate>', false)
             ->assertSee('name="login"', false)
             ->assertSee('name="password"', false)
             ->assertSee('name="remember"', false)

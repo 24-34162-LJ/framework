@@ -1,3 +1,8 @@
+-- FILE PURPOSE
+-- File   : database/legacy-schema/2026_10_shipment_audit_details.sql
+-- Feature: Legacy database
+-- Purpose: Old SQL patch: adds before/after details to shipment audit entries. Kept for reference.
+
 -- Add optional before/after field details for shipment edit audit entries.
 -- Safe to rerun. Existing activity_log rows remain valid with NULL details.
 SET @ddl := IF(

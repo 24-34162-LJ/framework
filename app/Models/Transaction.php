@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : app/Models/Transaction.php
+ * Feature: Database model
+ * Purpose: Table transactions: a money transaction linked to a client, shipment and bill.
+ */
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;

@@ -1,4 +1,13 @@
 /*
+ * FILE PURPOSE
+ * File   : public/assets/taste/diagrams/diagram.js
+ * Feature: Landing page - design kit
+ * Purpose: Part of the third-party "taste-skill" design kit used by the landing page
+ *          (resources/views/landing/index.blade.php). diagram.js is a kit file, not AstraTrack business
+ *          logic.
+ */
+
+/*
   taste-skill diagram.js - node-and-line visuals for a card panel or a section (references/diagrams.md).
   One ES module, no dependencies. diagram.css draws it from the palette tokens around it
   (--ink, --muted, --accent, --accent-ink, --card or --bg; --frag for the node fill if set).

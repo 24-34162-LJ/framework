@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * FILE PURPOSE
+ * File   : tests/Feature/Notifications/MigrationTest.php
+ * Feature: Testing - Notifications
+ * Purpose: Tests the SMS/email migration on SQLite.
+ */
+
 namespace Tests\Feature\Notifications;
 
 use Illuminate\Support\Facades\Schema;

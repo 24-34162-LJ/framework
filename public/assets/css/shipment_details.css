@@ -1,3 +1,10 @@
+/*
+ * FILE PURPOSE
+ * File   : public/assets/css/shipment_details.css
+ * Feature: Shipments
+ * Purpose: Styles for the shipment details page (sections, delivery editor).
+ */
+
 /* Shipment detail accordions and delivery editor. */
 .collapse-card { gap: 0; padding: 12px 14px; }
 .collapse-head { display: flex; align-items: center; justify-content: space-between; gap: 14px; min-width: 0; }

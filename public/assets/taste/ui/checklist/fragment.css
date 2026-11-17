@@ -1,3 +1,12 @@
+/*
+ * FILE PURPOSE
+ * File   : public/assets/taste/ui/checklist/fragment.css
+ * Feature: Landing page - design kit
+ * Purpose: Part of the third-party "taste-skill" design kit used by the landing page
+ *          (resources/views/landing/index.blade.php). fragment.css is a kit file, not AstraTrack
+ *          business logic.
+ */
+
 /* checklist: items tick one after another and the progress bar fills */
 .ui-checks { width: 340px; padding-bottom: 8px; }
 .ui-checks__head { display: flex; align-items: center; height: 48px; padding: 0 16px; }
