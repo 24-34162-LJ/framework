@@ -2,7 +2,7 @@
 <x-app-layout title="Volume Forecasting" active="reports">
     @push('styles')
         <link href="{{ asset('assets/css/staff.css') }}?v=10" rel="stylesheet">
-        <link href="{{ asset('assets/css/shipments.css') }}?v=9" rel="stylesheet">
+        <link href="{{ asset('assets/css/shipments.css') }}?v=10" rel="stylesheet">
         <link href="{{ asset('assets/css/reports.css') }}?v=9" rel="stylesheet">
         <style>
             .fc-note { color: #4f5f78; font-size: 13px; line-height: 1.5; margin: 0; }

@@ -1,7 +1,7 @@
 <x-app-layout :title="$view === 'create' ? 'Link Transaction' : ($view === 'correct' ? 'Correct Transaction' : ($view === 'detail' ? 'Transaction Details' : 'Transactions'))" active="transactions">
     @push('styles')
         <link href="{{ asset('assets/css/staff.css') }}?v=10" rel="stylesheet">
-        <link href="{{ asset('assets/css/shipments.css') }}?v=9" rel="stylesheet">
+        <link href="{{ asset('assets/css/shipments.css') }}?v=10" rel="stylesheet">
         <link href="{{ asset('assets/css/transactions.css') }}?v=9" rel="stylesheet">
     @endpush
     @push('scripts')<script src="{{ asset('assets/js/transactions.js') }}" defer></script>@endpush

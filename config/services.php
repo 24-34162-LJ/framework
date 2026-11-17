@@ -23,6 +23,22 @@ return [
         'timeout' => 10,
     ],
 
+    // WhatsApp Cloud API (app/Services/WhatsAppIntegration.php). Tried first for client mobile notifications;
+    // SMS is the backup when WhatsApp is off or fails. WHATSAPP_DRIVER: off | log | meta.
+    'whatsapp' => [
+        'driver' => env('WHATSAPP_DRIVER', 'off'),
+        'token' => env('WHATSAPP_TOKEN'),
+        'phone_number_id' => env('WHATSAPP_PHONE_NUMBER_ID'),
+        'api_version' => env('WHATSAPP_API_VERSION', 'v25.0'),
+        'base_url' => env('WHATSAPP_BASE_URL', 'https://graph.facebook.com'),
+        // Approved message template. hello_world (Meta's sample) has no variables;
+        // set WHATSAPP_TEMPLATE_HAS_MESSAGE=true for your own template whose body has one {{1}} for the update text.
+        'template' => env('WHATSAPP_TEMPLATE', 'hello_world'),
+        'template_language' => env('WHATSAPP_TEMPLATE_LANGUAGE', 'en_US'),
+        'template_has_message' => (bool) env('WHATSAPP_TEMPLATE_HAS_MESSAGE', false),
+        'timeout' => 10,
+    ],
+
     'postmark' => [
         'key' => env('POSTMARK_API_KEY'),
     ],
@@ -38,6 +54,28 @@ return [
         // CA bundle for HTTPS to Google when PHP's curl.cainfo is not set (cURL error 60 on Windows PHP).
         // Defaults to the bundle XAMPP ships, which the prototype used through XAMPP's php.ini.
         'ca_bundle' => env('GEMINI_CA_BUNDLE', is_file('C:\xampp\apache\bin\curl-ca-bundle.crt') ? 'C:\xampp\apache\bin\curl-ca-bundle.crt' : null),
+    ],
+
+    // ID recognition for client onboarding (app/Services/Identity).
+    'identity' => [
+        // Which IdDocumentReader reads the ID image: "idanalyzer" (ID Analyzer API) or "gemini".
+        'reader' => env('IDENTITY_READER', 'gemini'),
+        // Fuzzy name match (0-1) between the name on the ID and the account / company contact name.
+        'name_match_threshold' => (float) env('IDENTITY_NAME_MATCH', 0.85),
+        // Below this reader confidence (0-1) the ID goes to admin review instead of passing automatically.
+        'min_confidence' => (float) env('IDENTITY_MIN_CONFIDENCE', 0.7),
+        'max_attempts_per_day' => (int) env('IDENTITY_MAX_ATTEMPTS', 5),
+        // Days after a decision before the ID image is deleted (the decision record is kept).
+        'retention_days' => (int) env('IDENTITY_RETENTION_DAYS', 90),
+    ],
+
+    // ID Analyzer v2 (https://developer.idanalyzer.com), used when IDENTITY_READER=idanalyzer.
+    'idanalyzer' => [
+        'api_key' => env('IDANALYZER_API_KEY'),
+        // A preset (security_low / security_medium / security_high) or your KYC profile ID from the portal.
+        'profile' => env('IDANALYZER_PROFILE', 'security_medium'),
+        // US region by default; EU data residency: https://api2-eu.idanalyzer.com
+        'base_url' => env('IDANALYZER_BASE_URL', 'https://api2.idanalyzer.com'),
     ],
 
     'resend' => [

@@ -1,7 +1,7 @@
 <x-app-layout :title="$client?->client_name ?? 'Client Management'" active="clients">
     @push('styles')
         <link href="{{ asset('assets/css/staff.css') }}?v=10" rel="stylesheet">
-        <link href="{{ asset('assets/css/shipments.css') }}?v=9" rel="stylesheet">
+        <link href="{{ asset('assets/css/shipments.css') }}?v=10" rel="stylesheet">
         <link href="{{ asset('assets/css/client_management.css') }}?v=10" rel="stylesheet">
     @endpush
     @push('scripts')<script src="{{ asset('assets/js/client_management.js') }}" defer></script>@endpush

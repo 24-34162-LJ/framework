@@ -62,6 +62,7 @@ class ShipmentManagementController extends Controller
         if ($request->boolean('export')) {
             return $this->export($listQuery);
         }
+        \App\Support\ShipmentListUrl::remember($request);
 
         $total = (clone $listQuery)->count();
         $perPage = 8;
@@ -98,10 +99,14 @@ class ShipmentManagementController extends Controller
                 return ['status' => 422, 'error' => 'Choose an active staff member.'];
             }
 
-            $shipments = Shipment::query()->whereIn('shipment_id', $data['shipment_ids'])
+            $shipments = Shipment::query()->with('stage')->whereIn('shipment_id', $data['shipment_ids'])
                 ->orderBy('shipment_id')->lockForUpdate()->get();
             if ($shipments->count() !== count($data['shipment_ids'])) {
                 return ['status' => 404, 'error' => 'One or more shipments could not be found. Refresh the list and try again.'];
+            }
+            $finished = $shipments->first(fn (Shipment $shipment): bool => ! $shipment->isOpen());
+            if ($finished) {
+                return ['status' => 409, 'error' => $finished->reference_no.' is closed or archived and can no longer be assigned. Refresh the list and try again.'];
             }
             $alreadyAssigned = $shipments->first(fn (Shipment $shipment): bool => $shipment->assigned_staff_id !== null);
             if ($alreadyAssigned) {

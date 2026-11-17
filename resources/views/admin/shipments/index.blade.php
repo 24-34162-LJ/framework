@@ -1,7 +1,7 @@
 <x-app-layout title="Shipment Management" active="shipments">
     @push('styles')
         <link href="{{ asset('assets/css/staff.css') }}?v=10" rel="stylesheet">
-        <link href="{{ asset('assets/css/shipments.css') }}?v=9" rel="stylesheet">
+        <link href="{{ asset('assets/css/shipments.css') }}?v=10" rel="stylesheet">
     @endpush
     @push('scripts')<script src="{{ asset('assets/js/shipments.js') }}?v=2" defer></script>@endpush
 
@@ -36,14 +36,14 @@
                         @php($status = $shipment->dashboard_status)
                         @php($lastUpdated = $shipment->status_updates_max_updated_at ? \Illuminate\Support\Carbon::parse($shipment->status_updates_max_updated_at) : $shipment->created_at)
                         <tr data-shipment-row="{{ $shipment->shipment_id }}" data-reference="{{ $shipment->reference_no }}">
-                            <td class="select-col" data-label="Select">@if (! $shipment->assigned_staff_id)<input type="checkbox" class="shipment-select" value="{{ $shipment->shipment_id }}" aria-label="Select {{ $shipment->reference_no }} for assignment">@endif</td>
+                            <td class="select-col" data-label="Select">@if (! $shipment->assigned_staff_id && $shipment->isOpen())<input type="checkbox" class="shipment-select" value="{{ $shipment->shipment_id }}" aria-label="Select {{ $shipment->reference_no }} for assignment">@endif</td>
                             <td class="ref" data-label="Shipment Reference"><a href="{{ route('shipments.show', $shipment->shipment_id) }}">{{ $shipment->reference_no }}</a></td>
                             <td data-label="Client Name">{{ $shipment->client?->client_name ?? '—' }}</td>
                             <td class="soft" data-label="Shipment Date">{{ $shipment->created_at?->format('M d, Y') ?? '—' }}</td>
                             <td class="soft" data-label="ETA">{{ $shipment->eta_date?->format('M d, Y') ?? '—' }}@if ($shipment->first_free_day)<small class="row-date-note">Free day · {{ $shipment->first_free_day->format('M d, Y') }}</small>@endif @if ($shipment->dashboard_overdue)<small class="row-overdue">Delivery overdue</small>@endif @if ($scope === 'archived')<small class="row-archived">Archived {{ $shipment->archived_at?->format('M d, Y') ?? '—' }}</small>@endif</td>
                             <td data-label="Type">{{ ucfirst((string) $shipment->transaction_type) }}</td><td data-label="Mode">{{ ucfirst((string) $shipment->mode) }}</td><td class="soft" data-label="B/L or AWB No.">{{ $shipment->bl_awb_no ?: '—' }}</td>
                             <td data-label="Current Status"><span class="badge badge-{{ $status['class'] }}">{{ $status['label'] }}</span></td>
-                            <td data-label="Assigned Staff">@if ($shipment->assignedStaff)<span class="staff-chip"><span class="chip-av">{{ collect(preg_split('/\s+/', trim($shipment->assignedStaff->full_name)))->filter()->take(2)->map(fn ($part) => mb_strtoupper(mb_substr($part, 0, 1)))->implode('') }}</span>{{ $shipment->assignedStaff->full_name }}</span>@else<button type="button" class="assign-row" data-assign-one="{{ $shipment->shipment_id }}" data-reference="{{ $shipment->reference_no }}">● Unassigned <span>Assign</span></button>@endif</td>
+                            <td data-label="Assigned Staff">@if ($shipment->assignedStaff)<span class="staff-chip"><span class="chip-av">{{ collect(preg_split('/\s+/', trim($shipment->assignedStaff->full_name)))->filter()->take(2)->map(fn ($part) => mb_strtoupper(mb_substr($part, 0, 1)))->implode('') }}</span>{{ $shipment->assignedStaff->full_name }}</span>@elseif (! $shipment->isOpen())<span class="soft-text">Unassigned</span>@else<button type="button" class="assign-row" data-assign-one="{{ $shipment->shipment_id }}" data-reference="{{ $shipment->reference_no }}">● Unassigned <span>Assign</span></button>@endif</td>
                             <td class="soft" data-label="Last Updated">{{ $lastUpdated?->format('M d, Y') ?? '—' }}</td>
                             <td data-label="Actions"><div class="row-actions"><a class="btn-sm btn-sm-view" href="{{ route('shipments.show', $shipment->shipment_id) }}">View</a>@if (! $shipment->archived_at)<a class="btn-sm btn-sm-edit" href="{{ route('shipments.edit', $shipment->shipment_id) }}">Edit</a>@else<span class="btn-sm btn-sm-edit is-disabled" aria-disabled="true" title="Archived shipments are read-only">Edit</span>@endif<div class="more"><button type="button" class="btn-sm btn-sm-more" data-more aria-haspopup="true" aria-expanded="false" aria-label="More actions for {{ $shipment->reference_no }}">⋮</button><div class="more-menu" role="menu" hidden><a role="menuitem" href="{{ route('shipments.show', $shipment->shipment_id) }}">View details</a><button role="menuitem" type="button" data-copy="{{ $shipment->reference_no }}">Copy reference</button></div></div></div></td>
                         </tr>

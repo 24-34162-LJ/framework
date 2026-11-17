@@ -20,6 +20,9 @@ class NotificationDelivery extends Model
 
     public const CHANNEL_EMAIL = 'email';
 
+    /** An "sms" delivery that was actually sent by WhatsApp (see SendNotificationDeliveries). */
+    public const CHANNEL_WHATSAPP = 'whatsapp';
+
     protected $table = 'notification_deliveries';
 
     protected $primaryKey = 'delivery_id';

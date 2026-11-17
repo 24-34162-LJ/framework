@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\ActivityController;
 use App\Http\Controllers\Admin\ClientManagementController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\IdentityVerificationController as AdminIdentityVerificationController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\SearchController;
 use App\Http\Controllers\Admin\ShipmentManagementController as AdminShipmentManagementController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\Admin\UserManagementController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BillingController;
 use App\Http\Controllers\Client\DashboardController as ClientDashboardController;
+use App\Http\Controllers\Client\IdentityVerificationController as ClientIdentityVerificationController;
 use App\Http\Controllers\Client\ProfileController as ClientProfileController;
 use App\Http\Controllers\Client\ShipmentController as ClientShipmentController;
 use App\Http\Controllers\LandingController;
@@ -169,6 +171,18 @@ Route::middleware(['auth', 'role:client'])->prefix('client')->name('client.')->g
     Route::get('/shipment-requests', [ShipmentRequestController::class, 'clientIndex'])->name('shipment-requests');
     Route::post('/shipment-requests', [ShipmentRequestController::class, 'clientStore'])->middleware('throttle:10,1')->name('shipment-requests.store');
     Route::post('/shipment-requests/{requestId}/cancel', [ShipmentRequestController::class, 'clientCancel'])->whereNumber('requestId')->name('shipment-requests.cancel');
+    // ID recognition (client onboarding)
+    Route::get('/identity', [ClientIdentityVerificationController::class, 'show'])->name('identity');
+    Route::post('/identity', [ClientIdentityVerificationController::class, 'store'])->middleware('throttle:5,1')->name('identity.store');
+    Route::get('/identity/status', [ClientIdentityVerificationController::class, 'status'])->middleware('throttle:60,1')->name('identity.status');
+});
+
+// Admin review of client IDs
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function (): void {
+    Route::get('/identity', [AdminIdentityVerificationController::class, 'index'])->name('identity.index');
+    Route::get('/identity/{verificationId}', [AdminIdentityVerificationController::class, 'show'])->whereNumber('verificationId')->name('identity.show');
+    Route::get('/identity/{verificationId}/image', [AdminIdentityVerificationController::class, 'image'])->whereNumber('verificationId')->name('identity.image');
+    Route::post('/identity/{verificationId}/decision', [AdminIdentityVerificationController::class, 'decide'])->whereNumber('verificationId')->name('identity.decide');
 });
 
 // Staff side of client documents and shipment requests
@@ -326,5 +340,6 @@ Route::post('/operations/notifications_action.php', [NotificationController::cla
 Route::get('/operations/reports.php', [ReportController::class, 'index'])->middleware(['auth', 'role:admin']);
 Route::get('/operations/search.php', [SearchController::class, 'index'])->middleware(['auth', 'role:admin']);
 Route::get('/dashboard.php', [AuthController::class, 'dashboard'])->middleware('auth');
-Route::get('/logout.php', [AuthController::class, 'logout']);
+// Old bookmarks/links: no longer signs out (a GET logout can be triggered by any site). Logout is POST /logout.
+Route::get('/logout.php', fn () => redirect(auth()->check() ? '/dashboard.php' : '/login'));
 Route::get('/process.php', fn () => response('', 200));

@@ -76,6 +76,68 @@ class DeliverySendingTest extends TestCase
         $this->assertSame(['sent', 'sent'], $this->statuses('email'));
     }
 
+    private function useWhatsApp(): void
+    {
+        config(['services.whatsapp' => [
+            'driver' => 'meta', 'token' => 'test-token-123','phone_number_id' => '111', 'api_version' => 'v25.0',
+            'base_url' => 'https://wa.test', 'template' => 'hello_world', 'template_language' => 'en_US',
+            'template_has_message' => false, 'timeout' => 10,
+        ]]);
+    }
+
+    public function test_whatsapp_is_tried_first_and_sms_is_not_sent(): void
+    {
+        $this->useWhatsApp();
+        Http::fake([
+            'wa.test/*' => Http::response(['messages' => [['id' => 'wamid.OK']]]),
+            'sms.test/*' => Http::response([['message_id' => 1]]),
+        ]);
+        Mail::fake();
+
+        $this->notifyStatus();
+
+        $row = NotificationDelivery::query()->where('channel', 'whatsapp')->sole();
+        $this->assertSame('sent', $row->status);
+        $this->assertSame('wamid.OK', $row->provider_message_id);
+        $this->assertSame('639171111111', $row->recipient);
+        $this->assertSame([], $this->statuses('sms'));
+        Http::assertNotSent(fn ($request) => str_contains($request->url(), 'sms.test'));
+    }
+
+    public function test_sms_is_the_backup_when_whatsapp_fails(): void
+    {
+        $this->useWhatsApp();
+        Http::fake([
+            'wa.test/*' => Http::response(['error' => ['message' => 'not allowed']], 400),
+            'sms.test/*' => Http::response([['message_id' => 777]]),
+        ]);
+        Mail::fake();
+
+        $this->notifyStatus();
+
+        $row = NotificationDelivery::query()->where('channel', 'sms')->sole();
+        $this->assertSame('sent', $row->status);
+        $this->assertSame('777', $row->provider_message_id);
+        $this->assertNull($row->error);
+    }
+
+    public function test_both_whatsapp_and_sms_failing_records_both_errors(): void
+    {
+        $this->useWhatsApp();
+        Http::fake([
+            'wa.test/*' => Http::response(['error' => ['message' => 'not allowed']], 400),
+            'sms.test/*' => Http::response('oops', 500),
+        ]);
+        Mail::fake();
+
+        $this->notifyStatus();
+
+        $row = NotificationDelivery::query()->where('channel', 'sms')->sole();
+        $this->assertSame('failed', $row->status);
+        $this->assertSame('WhatsApp HTTP 400: not allowed | SMS backup: Semaphore HTTP 500', $row->error);
+        $this->assertSame(['sent', 'sent'], $this->statuses('email'));
+    }
+
     public function test_smtp_failure_marks_email_failed(): void
     {
         Http::fake(['sms.test/*' => Http::response([['message_id' => 1]])]);

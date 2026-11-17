@@ -33,6 +33,8 @@
 .sidebar .sidebar-user strong { display: block; overflow: hidden; color: #fff; font-size: 14px; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
 .sidebar .sidebar-user small { display: block; margin-top: 2px; color: #b4c3dd; font-size: 12.5px; }
 .sidebar .sidebar-bottom > .menu-item { flex: none; }
+.sidebar .logout-form { margin: 0; }
+.sidebar button.menu-item { width: 100%; background: none; font-family: inherit; text-align: left; cursor: pointer; }
 @media(max-width:860px) {
     .sidebar { position: fixed; z-index: 50; left: 0; top: 0; width: min(var(--sidebar-w),calc(100vw - 48px)); min-width: 0; height: 100vh; height: 100dvh; padding-top: max(24px,env(safe-area-inset-top)); transform: translateX(-102%); visibility: hidden; transition: transform .25s ease, visibility 0s linear .25s; }
     .sidebar.open { transform: translateX(0); visibility: visible; transition: transform .25s ease, visibility 0s; box-shadow: 18px 0 36px rgba(15,24,40,.2); }

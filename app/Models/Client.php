@@ -11,7 +11,7 @@ class Client extends Model
 
     protected $primaryKey = 'client_id';
 
-    protected $fillable = ['client_name', 'contact_person', 'email', 'phone', 'address', 'tin', 'status'];
+    protected $fillable = ['client_name', 'contact_person', 'email', 'phone', 'address', 'tin', 'status', 'identity_verified_at'];
 
     public $timestamps = false;
 

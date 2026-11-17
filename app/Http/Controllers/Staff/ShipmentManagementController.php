@@ -36,6 +36,7 @@ class ShipmentManagementController extends Controller
         ];
         $arrivalKey = array_key_exists((string) $request->query('arrival', ''), $arrivalOptions) ? (string) $request->query('arrival', '') : '';
         $search = trim((string) $request->query('q', ''));
+        \App\Support\ShipmentListUrl::remember($request);
 
         $baseQuery = Shipment::query()->with(['client', 'stage'])->withMax('statusUpdates', 'updated_at')
             ->whereNull('archived_at');
