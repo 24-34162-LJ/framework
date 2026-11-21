@@ -94,6 +94,44 @@ class PaymentReviewTest extends TestCase
         return DB::table('payments')->insertGetId(['billing_id' => $billingId, 'amount' => $amount]);
     }
 
+    public function test_admin_cannot_verify_a_payment_they_recorded_alone(): void
+    {
+        $paymentId = $this->pendingPayment($this->staff->user_id);
+        DB::table('payments')->where('payment_id', $paymentId)->update(['recorded_by' => $this->admin->user_id]);
+
+        $this->actingAs($this->admin)->post('/billing/payments/review', ['payment_id' => $paymentId, 'decision' => 'verified'])
+            ->assertSessionHas('error', 'You recorded this payment, so another person must verify it: the assigned staff member or another administrator.');
+        $this->assertDatabaseHas('payments', ['payment_id' => $paymentId, 'verification_status' => 'pending', 'verified_by' => null]);
+        $this->assertDatabaseHas('billings', ['billing_no' => 'BL-2026-000003', 'payment_status' => 'unpaid']);
+
+        // The assigned staff member is the second person.
+        $this->actingAs($this->staff)->post('/billing/payments/review', ['payment_id' => $paymentId, 'decision' => 'verified'])
+            ->assertSessionHas('success');
+        $this->assertDatabaseHas('payments', ['payment_id' => $paymentId, 'verification_status' => 'verified', 'verified_by' => $this->staff->user_id]);
+    }
+
+    public function test_admin_can_reject_their_own_entry(): void
+    {
+        $paymentId = $this->pendingPayment($this->staff->user_id);
+        DB::table('payments')->where('payment_id', $paymentId)->update(['recorded_by' => $this->admin->user_id]);
+
+        $this->actingAs($this->admin)->post('/billing/payments/review', ['payment_id' => $paymentId, 'decision' => 'rejected'])
+            ->assertSessionHas('success');
+        $this->assertDatabaseHas('payments', ['payment_id' => $paymentId, 'verification_status' => 'rejected']);
+    }
+
+    public function test_admin_gives_final_approval_on_own_large_entry_after_a_staff_check(): void
+    {
+        $paymentId = $this->pendingPayment($this->staff->user_id, '60000.00', '60000.00');
+        DB::table('payments')->where('payment_id', $paymentId)->update(['recorded_by' => $this->admin->user_id]);
+
+        $this->actingAs($this->staff)->post('/billing/payments/review', ['payment_id' => $paymentId, 'decision' => 'verified'])
+            ->assertSessionHas('success');
+        $this->actingAs($this->admin)->post('/billing/payments/review', ['payment_id' => $paymentId, 'decision' => 'verified'])
+            ->assertSessionHas('success');
+        $this->assertDatabaseHas('payments', ['payment_id' => $paymentId, 'verification_status' => 'verified', 'verified_by' => $this->admin->user_id]);
+    }
+
     public function test_assigned_staff_can_verify_and_returns_to_review(): void
     {
         $paymentId = $this->pendingPayment($this->staff->user_id);

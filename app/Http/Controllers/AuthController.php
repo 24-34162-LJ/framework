@@ -29,6 +29,7 @@ class AuthController extends Controller
         return view('auth.login', [
             'error' => (string) session('legacy_login_error', ''),
             'old' => (string) old('login', ''),
+            'notice' => (string) session('auth_notice', ''),
         ]);
     }
 

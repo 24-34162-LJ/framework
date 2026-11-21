@@ -315,6 +315,12 @@ class BillingController extends Controller
                         throw new RuntimeException('This payment was already checked and is waiting for an administrator\'s final approval.');
                     }
                 }
+                // Two-person rule for administrators too: whoever entered a payment cannot be the only one
+                // to approve it. A staff first check by someone else counts as the second person.
+                if ($actor->role === 'admin' && $data['decision'] === 'verified' && (int) $payment->recorded_by === (int) $actor->user_id
+                    && (! $payment->staff_checked_by || (int) $payment->staff_checked_by === (int) $actor->user_id)) {
+                    throw new RuntimeException('You recorded this payment, so another person must verify it: the assigned staff member or another administrator.');
+                }
                 $paidCents = (int) round((float) Payment::query()->where('billing_id', $bill->billing_id)->where('verification_status', 'verified')->sum('amount') * 100);
                 $paymentCents = (int) round((float) $payment->amount * 100);
                 $totalCents = (int) round((float) $bill->total_amount * 100);

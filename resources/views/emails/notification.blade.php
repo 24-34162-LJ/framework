@@ -26,8 +26,7 @@
                 <p style="margin:0 0 20px;font-size:15px;line-height:1.5;">{{ $body }}</p>
                 @if ($link)
                     <a href="{{ $link }}"
-                        style="display:inline-block;padding:10px 18px;background:#1e3a5f;color:#ffffff;text-decoration:none;border-radius:6px;font-size:14px;">View
-                        in AstraTrack</a>
+                        style="display:inline-block;padding:10px 18px;background:#1e3a5f;color:#ffffff;text-decoration:none;border-radius:6px;font-size:14px;">{{ $linkLabel }}</a>
                 @endif
             </td>
         </tr>

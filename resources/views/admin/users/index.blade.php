@@ -17,7 +17,7 @@
                 total: {{ $total }}
             };
         </script>
-        <script src="{{ asset('assets/js/user_management.js') }}?v=5" defer></script>
+        <script src="{{ asset('assets/js/user_management.js') }}?v=6" defer></script>
     @endpush
 
     <div class="user-management-page">
@@ -215,7 +215,7 @@
             <div class="field" data-field="password"><label for="fPassword" id="pwLabel">Password *</label>
                 <div class="pw-wrap"><input type="password" name="password" id="fPassword" placeholder="Enter password" maxlength="72"
                         autocomplete="new-password"><button type="button" class="pw-toggle" id="pwToggle">Show</button></div>
-                <p class="hint" data-hint="Use at least 8 characters."></p>
+                <p class="hint" data-hint="{{ \App\Rules\StrongPassword::HINT }}"></p>
             </div>
             <div class="two">
                 <div class="field" data-field="role"><label for="fRole">Role *</label><select name="role" id="fRole">

@@ -100,10 +100,38 @@ class AccountPageTest extends TestCase
             ->assertSessionHasErrorsIn('password', 'current_password');
         $this->assertTrue(Hash::check('old-password-1', $this->admin->refresh()->password_hash));
 
-        $this->actingAs($this->admin)->post('/account/password', ['current_password' => 'old-password-1', 'password' => 'new-password-2', 'password_confirmation' => 'new-password-2'])
+        $this->actingAs($this->admin)->post('/account/password', ['current_password' => 'old-password-1', 'password' => 'New-Password-2', 'password_confirmation' => 'New-Password-2'])
             ->assertSessionHas('password_success');
-        $this->assertTrue(Hash::check('new-password-2', $this->admin->refresh()->password_hash));
+        $this->assertTrue(Hash::check('New-Password-2', $this->admin->refresh()->password_hash));
         $this->assertDatabaseHas('activity_log', ['description' => 'Own password changed', 'performed_by' => $this->admin->user_id]);
+    }
+
+    public function test_weak_new_passwords_are_rejected(): void
+    {
+        foreach (['11111111', 'short1A', 'alllowercase123', 'ALLUPPERCASE123', 'NoDigitsHere', 'Password123'] as $weak) {
+            $this->actingAs($this->admin)->from('/account')->post('/account/password', ['current_password' => 'old-password-1', 'password' => $weak, 'password_confirmation' => $weak])
+                ->assertSessionHasErrorsIn('password', 'password');
+        }
+        $this->assertTrue(Hash::check('old-password-1', $this->admin->refresh()->password_hash));
+    }
+
+    public function test_password_change_signs_out_other_sessions(): void
+    {
+        // Another device's session remembers the password hash from when it signed in.
+        $oldHash = $this->admin->password_hash;
+        $this->actingAs($this->admin)->withSession(['password_hash_web' => $oldHash])->get('/account')->assertOk();
+
+        $this->admin->forceFill(['password_hash' => Hash::make('Brand-New-Pass-9')])->save();
+
+        $this->actingAs($this->admin->refresh())->withSession(['password_hash_web' => $oldHash])
+            ->get('/account')->assertRedirect();
+        $this->assertGuest();
+    }
+
+    public function test_pages_send_security_headers(): void
+    {
+        $this->get('/login')->assertHeader('X-Frame-Options', 'SAMEORIGIN')->assertHeader('X-Content-Type-Options', 'nosniff')
+            ->assertHeader('Referrer-Policy', 'strict-origin-when-cross-origin')->assertHeader('Content-Security-Policy', "frame-ancestors 'self'");
     }
 
     public function test_password_confirmation_must_match(): void

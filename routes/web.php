@@ -53,6 +53,14 @@ Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,
 Route::get('/login.php', [AuthController::class, 'showLogin'])->name('legacy.login');
 Route::post('/login.php', [AuthController::class, 'login'])->middleware('throttle:5,1');
 
+// Forgot password: email a reset link, then choose a new password
+Route::middleware('guest')->group(function (): void {
+    Route::get('/forgot-password', [\App\Http\Controllers\PasswordResetController::class, 'request'])->name('password.request');
+    Route::post('/forgot-password', [\App\Http\Controllers\PasswordResetController::class, 'email'])->middleware('throttle:5,1')->name('password.email');
+    Route::get('/reset-password/{token}', [\App\Http\Controllers\PasswordResetController::class, 'edit'])->name('password.reset');
+    Route::post('/reset-password', [\App\Http\Controllers\PasswordResetController::class, 'update'])->middleware('throttle:5,1')->name('password.update');
+});
+
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth')->name('logout');
 Route::post('/logout.php', [AuthController::class, 'logout'])->middleware('auth');
 
@@ -180,6 +188,7 @@ Route::middleware(['auth', 'role:client'])->prefix('client')->name('client.')->g
     Route::get('/shipments/{shipmentId}', [ClientShipmentController::class, 'show'])->whereNumber('shipmentId')->name('shipments.show');
     Route::get('/profile', [ClientProfileController::class, 'show'])->name('profile');
     Route::post('/profile/contact', [ClientProfileController::class, 'updateContact'])->name('profile.contact');
+    Route::post('/profile/password', [ClientProfileController::class, 'updatePassword'])->middleware('throttle:6,1')->name('profile.password');
     // Client document uploads and shipment requests
     Route::post('/shipments/{shipmentId}/documents', [DocumentWorkflowController::class, 'clientUpload'])->whereNumber('shipmentId')->middleware('throttle:30,1')->name('shipments.documents.upload');
     Route::delete('/documents/{documentId}', [DocumentWorkflowController::class, 'clientWithdraw'])->whereNumber('documentId')->name('documents.withdraw');

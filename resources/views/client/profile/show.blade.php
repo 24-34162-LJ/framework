@@ -58,5 +58,44 @@
                 <div><button type="submit" class="profile-save">Save</button></div>
             </form>
         </section>
+
+        @php($passwordErrors = $errors->getBag('password'))
+        <section class="profile-card" id="password" aria-labelledby="change-password-heading">
+            <div>
+                <h2 id="change-password-heading">Change password</h2>
+                <p class="profile-note">Changing it signs you out on your other devices.</p>
+            </div>
+            @if (session('password_success'))
+                <p class="profile-alert profile-alert-ok" role="status">{{ session('password_success') }}</p>
+            @endif
+            <form method="post" action="{{ route('client.profile.password') }}" class="profile-form" novalidate>
+                @csrf
+                <div class="profile-form-field">
+                    <label for="currentPassword">Current password</label>
+                    <input id="currentPassword" name="current_password" type="password" autocomplete="current-password" required
+                        @if ($passwordErrors->has('current_password')) aria-invalid="true" aria-describedby="currentPasswordError" @endif>
+                    @if ($passwordErrors->has('current_password'))
+                        <small id="currentPasswordError" class="profile-error">{{ $passwordErrors->first('current_password') }}</small>
+                    @endif
+                </div>
+                <div class="profile-form-field">
+                    <label for="newPassword">New password</label>
+                    <input id="newPassword" name="password" type="password" autocomplete="new-password" required
+                        minlength="{{ \App\Rules\StrongPassword::MIN }}" maxlength="{{ \App\Rules\StrongPassword::MAX }}"
+                        @if ($passwordErrors->has('password')) aria-invalid="true" aria-describedby="newPasswordError" @endif>
+                    @if ($passwordErrors->has('password'))
+                        <small id="newPasswordError" class="profile-error">{{ $passwordErrors->first('password') }}</small>
+                    @else
+                        <small>{{ \App\Rules\StrongPassword::HINT }}</small>
+                    @endif
+                </div>
+                <div class="profile-form-field">
+                    <label for="confirmPassword">Confirm new password</label>
+                    <input id="confirmPassword" name="password_confirmation" type="password" autocomplete="new-password" required
+                        maxlength="{{ \App\Rules\StrongPassword::MAX }}">
+                </div>
+                <div><button type="submit" class="profile-save">Change password</button></div>
+            </form>
+        </section>
     </div>
 </x-app-layout>

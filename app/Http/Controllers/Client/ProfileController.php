@@ -79,4 +79,13 @@ class ProfileController extends Controller
 
         return back()->with('success', 'Contact settings saved.');
     }
+
+    /** Change the client's own password (same rules as My Account for admins and staff). */
+    public function updatePassword(Request $request, \App\Services\PasswordChanger $passwords): RedirectResponse
+    {
+        $passwords->changeOwn($request);
+
+        return redirect()->route('client.profile')->withFragment('password')
+            ->with('password_success', 'Password changed. Any other devices signed in to your account were signed out.');
+    }
 }

@@ -98,7 +98,7 @@
             <section class="acct-card" id="password" aria-labelledby="acctPasswordTitle">
                 <header class="acct-card-head">
                     <h2 id="acctPasswordTitle">Change password</h2>
-                    <p>Changing it signs out "Remember me" on your other devices.</p>
+                    <p>Changing it signs you out on your other devices.</p>
                 </header>
                 @if (session('password_success'))
                     <p class="acct-alert acct-alert-ok" role="status">{{ session('password_success') }}</p>
@@ -113,15 +113,14 @@
                         @endif
                     </label>
                     <label>New password
-                        <input type="password" name="password" required minlength="8" maxlength="72" autocomplete="new-password"
+                        <input type="password" name="password" required minlength="10" maxlength="72" autocomplete="new-password"
                             @if ($passwordErrors->has('password')) aria-invalid="true" @endif>
                         @if ($passwordErrors->has('password'))
-                        <span class="acct-error">{{ $passwordErrors->first('password') }}</span>@else<span class="acct-hint">8 to 72
-                                characters.</span>
+                        <span class="acct-error">{{ $passwordErrors->first('password') }}</span>@else<span class="acct-hint">{{ \App\Rules\StrongPassword::HINT }}</span>
                         @endif
                     </label>
                     <label>Confirm new password
-                        <input type="password" name="password_confirmation" required minlength="8" maxlength="72"
+                        <input type="password" name="password_confirmation" required minlength="10" maxlength="72"
                             autocomplete="new-password">
                     </label>
                     <div class="acct-actions"><button type="submit" class="btn btn-primary">Change password</button></div>

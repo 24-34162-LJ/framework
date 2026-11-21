@@ -334,6 +334,8 @@
                         <footer class="bill-review-foot">
                             <a class="btn btn-secondary" href="{{ route('billing.index', ['view' => 'detail', 'id' => $p->billing_id]) }}#payment-{{ $p->payment_id }}">Open bill</a>
                             @php($ownPayment = auth()->user()->role === 'staff' && (int) $p->recorded_by === (int) auth()->user()->user_id)
+                            @php($adminOwn = $role === 'admin' && (int) $p->recorded_by === (int) auth()->user()->user_id
+                                && (! $p->staff_checked_by || (int) $p->staff_checked_by === (int) auth()->user()->user_id))
                             @if ($ownPayment)
                                 <span class="bill-muted">You recorded this payment, so another person must verify it.</span>
                             @elseif ($role === 'staff' && $p->staff_checked_by)
@@ -347,7 +349,9 @@
                                             placeholder="e.g. Reference number not found in our bank account"></label>
                                     <button class="btn btn-secondary bill-reject" name="decision" value="rejected"
                                         data-confirm="Reject this payment? The bill balance will remain unchanged.">Reject</button>
-                                    @if ($role === 'staff' && $large)
+                                    @if ($adminOwn)
+                                        <span class="bill-muted">You recorded this payment, so another person must verify it.</span>
+                                    @elseif ($role === 'staff' && $large)
                                         <button class="btn btn-primary bill-verify-primary" name="decision" value="verified" @disabled($exceeds)
                                             data-confirm="Send ₱{{ number_format((float) $p->amount, 2) }} to an administrator for final approval? The bill balance does not change yet.">Check &amp; send to admin</button>
                                     @else
@@ -544,9 +548,11 @@
                                                 @elseif (in_array(auth()->user()->role, ['admin', 'staff'], true) && $payment->verification_status === 'pending')
                                                     <form method="post" action="{{ route('billing.payments.review') }}"
                                                         class="bill-review-actions">@csrf<input type="hidden" name="payment_id"
-                                                            value="{{ $payment->payment_id }}"><button name="decision" value="verified"
+                                                            value="{{ $payment->payment_id }}">@if (auth()->user()->role === 'admin' && (int) $payment->recorded_by === (int) auth()->user()->user_id
+                                                                && (! $payment->staff_checked_by || (int) $payment->staff_checked_by === (int) auth()->user()->user_id))<span
+                                                                class="bill-muted">Recorded by you · needs another reviewer</span>@else<button name="decision" value="verified"
                                                             class="bill-verify"
-                                                            data-confirm="Verify ₱{{ number_format((float) $payment->amount, 2) }}? This reduces the bill balance.">Verify</button><button
+                                                            data-confirm="Verify ₱{{ number_format((float) $payment->amount, 2) }}? This reduces the bill balance.">Verify</button>@endif<button
                                                             name="decision" value="rejected" class="bill-reject"
                                                             data-confirm="Reject this payment? The bill balance will remain unchanged.">Reject</button>
                                                     </form>

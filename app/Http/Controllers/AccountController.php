@@ -14,11 +14,10 @@ namespace App\Http\Controllers;
 use App\Models\ActivityLog;
 use App\Models\Shipment;
 use App\Services\ActivityLogger;
+use App\Services\PasswordChanger;
 use App\Support\PhoneNumber;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class AccountController extends Controller
@@ -58,30 +57,11 @@ class AccountController extends Controller
         return redirect()->route('account')->with('account_success', 'Account details saved.');
     }
 
-    public function updatePassword(Request $request, ActivityLogger $logger): RedirectResponse
+    public function updatePassword(Request $request, PasswordChanger $passwords): RedirectResponse
     {
-        $user = $request->user();
-        $data = $request->validateWithBag('password', [
-            'current_password' => ['required', 'string', function (string $attribute, mixed $value, \Closure $fail) use ($user): void {
-                if (! Hash::check((string) $value, (string) $user->getAuthPassword())) {
-                    $fail('Your current password is incorrect.');
-                }
-            }],
-            'password' => ['required', 'string', 'min:8', 'max:72', 'confirmed', 'different:current_password'],
-        ], [
-            'password.min' => 'Password must be 8 to 72 characters.',
-            'password.max' => 'Password must be 8 to 72 characters.',
-            'password.confirmed' => 'The new passwords do not match.',
-            'password.different' => 'Choose a password different from your current one.',
-        ]);
+        $passwords->changeOwn($request);
 
-        $user->password_hash = Hash::make($data['password']);
-        // Signs out "Remember me" logins on other devices.
-        $user->setRememberToken(Str::random(60));
-        $user->save();
-        $request->session()->regenerate();
-        $logger->record($user, 'Profile Update', 'Own password changed');
-
-        return redirect()->route('account')->withFragment('password')->with('password_success', 'Password changed.');
+        return redirect()->route('account')->withFragment('password')
+            ->with('password_success', 'Password changed. Any other devices signed in to your account were signed out.');
     }
 }

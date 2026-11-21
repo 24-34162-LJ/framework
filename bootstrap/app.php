@@ -10,6 +10,7 @@
 use App\Http\Middleware\LegacyCsrfToken;
 use App\Http\Middleware\LegacyRoleMiddleware;
 use App\Http\Middleware\RoleMiddleware;
+use App\Http\Middleware\SecurityHeaders;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -25,7 +26,10 @@ return Application::configure(basePath: dirname(__DIR__))
         // Trust the HTTPS tunnel (VS Code Dev Tunnels / ngrok) so links use https and the public host.
         // Apache only listens on 127.0.0.1, so only a local tunnel can reach the app with these headers.
         $middleware->trustProxies(at: '*');
+        $middleware->append(SecurityHeaders::class);
         $middleware->prependToGroup('web', LegacyCsrfToken::class);
+        // Ends a user's other sessions (and "Remember me" logins) as soon as their password changes.
+        $middleware->authenticateSessions();
         $middleware->encryptCookies(except: ['ASTRASESSID']);
         $middleware->alias([
             'role' => RoleMiddleware::class,

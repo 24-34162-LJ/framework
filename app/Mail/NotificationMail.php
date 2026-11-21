@@ -20,6 +20,7 @@ class NotificationMail extends Mailable
         public string $subjectLine,
         public string $body,
         public ?string $link = null,
+        public string $linkLabel = 'View in AstraTrack',
     ) {}
 
     public function envelope(): Envelope

@@ -116,8 +116,8 @@ document.addEventListener("DOMContentLoaded", () => {
         $("pwLabel").textContent = mode === "add" ? "Password *" : "New Password";
         f.password.placeholder = mode === "add" ? "Enter password" : "Leave blank to keep current password";
         box("password").querySelector(".hint").dataset.hint = mode === "add"
-            ? "Use at least 8 characters."
-            : "Optional. Enter a new password (8+ characters) to reset it.";
+            ? "Use 10 to 72 characters with an uppercase letter, a lowercase letter and a number."
+            : "Optional. Enter a new password (10+ characters, upper and lower case, a number) to reset it.";
         clearErrors();
         $("formTitle").textContent = mode === "add" ? "Add User" : "Edit User";
         $("formSub").textContent = mode === "add"
@@ -156,8 +156,8 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!/^[^\s@.]+(\.[^\s@.]+)*@[^\s@.]+(\.[^\s@.]+)+$/.test(f.email.value.trim()))
             e.email = "Enter a valid email address, e.g. riley@logistics.example.";
         const pw = f.password.value;
-        if (($("fAction").value === "add" || pw !== "") && (pw.length < 8 || pw.length > 72))
-            e.password = "Password must be 8 to 72 characters.";
+        if (($("fAction").value === "add" || pw !== "") && (pw.length < 10 || pw.length > 72 || !/[A-Z]/.test(pw) || !/[a-z]/.test(pw) || !/\d/.test(pw)))
+            e.password = "Use 10 to 72 characters with an uppercase letter, a lowercase letter and a number.";
         if (!f.role.value) e.role = "Role is required. Choose Admin, Staff, or Client.";
         if (f.role.value === "client" && !f.client_id.value) e.client_id = "Choose the client company for this account.";
         const phone = f.phone.value.replace(/[\s\-.()]/g, "");
