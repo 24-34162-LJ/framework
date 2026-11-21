@@ -5,34 +5,192 @@
  * Purpose: Styles for the client My Profile page.
  */
 
-.profile-main { min-width: 0; }
-.profile-topbar { margin-bottom: 22px; }
-.profile-heading { display: flex; align-items: center; gap: 14px; }
-.profile-heading h1 { font: 700 26px/1.2 "Libre Franklin",sans-serif; color: #1e2f4d; }
-.profile-heading p { margin-top: 4px; color: #4f5f78; }
-.profile-heading .menu-toggle { margin: 0; }
-.profile-content { display: grid; gap: 18px; max-width: 1050px; }
-.profile-card { display: grid; gap: 18px; padding: 24px; border: 1px solid #e5eaf6; border-radius: 12px; background: #fff; box-shadow: 0 2px 8px rgba(30,47,77,.035); }
-.profile-card h2 { color: #1e2f4d; font: 600 17px/1.4 "Libre Franklin",sans-serif; }
-.profile-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 20px 28px; }
-.profile-field { display: grid; gap: 5px; min-width: 0; }
-.profile-field span { color: #4f5f78; font-size: 12px; }
-.profile-field strong { color: #17243b; font-size: 14px; font-weight: 500; overflow-wrap: anywhere; }
+.profile-main {
+    min-width: 0;
+}
+
+.profile-topbar {
+    margin-bottom: 22px;
+}
+
+.profile-heading {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.profile-heading h1 {
+    font: 700 26px/1.2 "Libre Franklin",sans-serif;
+    color: #1e2f4d;
+}
+
+.profile-heading p {
+    margin-top: 4px;
+    color: #4f5f78;
+}
+
+.profile-heading .menu-toggle {
+    margin: 0;
+}
+
+.profile-content {
+    display: grid;
+    gap: 18px;
+    max-width: 1050px;
+}
+
+.profile-card {
+    display: grid;
+    gap: 18px;
+    padding: 24px;
+    border: 1px solid #e5eaf6;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(30,47,77,.035);
+}
+
+.profile-card h2 {
+    color: #1e2f4d;
+    font: 600 17px/1.4 "Libre Franklin",sans-serif;
+}
+
+.profile-grid {
+    display: grid;
+    grid-template-columns: repeat(2,minmax(0,1fr));
+    gap: 20px 28px;
+}
+
+.profile-field {
+    display: grid;
+    gap: 5px;
+    min-width: 0;
+}
+
+.profile-field span {
+    color: #4f5f78;
+    font-size: 12px;
+}
+
+.profile-field strong {
+    color: #17243b;
+    font-size: 14px;
+    font-weight: 500;
+    overflow-wrap: anywhere;
+}
+
 /* SMS updates card */
-.profile-note { margin-top: 6px; color: #4f5f78; font-size: 13px; line-height: 1.5; max-width: 62ch; }
-.profile-form { display: grid; gap: 16px; max-width: 420px; }
-.profile-form-field { display: grid; gap: 6px; }
-.profile-form-field label { color: #17243b; font-size: 13px; font-weight: 600; }
-.profile-form-field input { min-height: 42px; padding: 0 12px; border: 1px solid #cfd7e6; border-radius: 8px; font: inherit; font-size: 14px; color: #17243b; background: #fff; }
-.profile-form-field input:focus-visible { outline: 2px solid #2f5ea8; outline-offset: 1px; border-color: #2f5ea8; }
-.profile-form-field input[aria-invalid="true"] { border-color: #b42318; }
-.profile-form-field small { color: #4f5f78; font-size: 12px; }
-.profile-form-field small.profile-error { color: #b42318; }
-.profile-check { display: flex; align-items: center; gap: 10px; color: #17243b; font-size: 14px; cursor: pointer; }
-.profile-check input { width: 18px; height: 18px; accent-color: #1e2f4d; }
-.profile-save { min-height: 40px; padding: 0 20px; border: 0; border-radius: 8px; background: #1e2f4d; color: #fff; font: 600 14px/1 "Libre Franklin",sans-serif; cursor: pointer; }
-.profile-save:hover { background: #2a4170; }
-.profile-save:focus-visible { outline: 2px solid #2f5ea8; outline-offset: 2px; }
-.profile-alert { padding: 10px 14px; border-radius: 8px; font-size: 13px; }
-.profile-alert-ok { background: #ecf7ef; color: #1d5b33; border: 1px solid #c4e5cf; }
-@media(max-width:560px) { .profile-main { padding-inline: 18px; } .profile-grid { grid-template-columns: 1fr; gap: 16px; } .profile-card { padding: 19px; } }
+
+.profile-note {
+    margin-top: 6px;
+    color: #4f5f78;
+    font-size: 13px;
+    line-height: 1.5;
+    max-width: 62ch;
+}
+
+.profile-form {
+    display: grid;
+    gap: 16px;
+    max-width: 420px;
+}
+
+.profile-form-field {
+    display: grid;
+    gap: 6px;
+}
+
+.profile-form-field label {
+    color: #17243b;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.profile-form-field input {
+    min-height: 42px;
+    padding: 0 12px;
+    border: 1px solid #cfd7e6;
+    border-radius: 8px;
+    font: inherit;
+    font-size: 14px;
+    color: #17243b;
+    background: #fff;
+}
+
+.profile-form-field input:focus-visible {
+    outline: 2px solid #2f5ea8;
+    outline-offset: 1px;
+    border-color: #2f5ea8;
+}
+
+.profile-form-field input[aria-invalid="true"] {
+    border-color: #b42318;
+}
+
+.profile-form-field small {
+    color: #4f5f78;
+    font-size: 12px;
+}
+
+.profile-form-field small.profile-error {
+    color: #b42318;
+}
+
+.profile-check {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #17243b;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.profile-check input {
+    width: 18px;
+    height: 18px;
+    accent-color: #1e2f4d;
+}
+
+.profile-save {
+    min-height: 40px;
+    padding: 0 20px;
+    border: 0;
+    border-radius: 8px;
+    background: #1e2f4d;
+    color: #fff;
+    font: 600 14px/1 "Libre Franklin",sans-serif;
+    cursor: pointer;
+}
+
+.profile-save:hover {
+    background: #2a4170;
+}
+
+.profile-save:focus-visible {
+    outline: 2px solid #2f5ea8;
+    outline-offset: 2px;
+}
+
+.profile-alert {
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+}
+
+.profile-alert-ok {
+    background: #ecf7ef;
+    color: #1d5b33;
+    border: 1px solid #c4e5cf;
+}
+
+@media(max-width:560px) {
+    .profile-main {
+        padding-inline: 18px;
+    }
+    .profile-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    .profile-card {
+        padding: 19px;
+    }
+}

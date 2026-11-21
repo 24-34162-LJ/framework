@@ -6,183 +6,1087 @@
  */
 
 /* Add Shipment v2: manual and document assisted shipment entry. */
-[hidden] { display:none !important; }
-.add-shell { width:100%; max-width:1180px; margin:0 auto; padding-bottom:90px; display:flex; flex-direction:column; gap:20px; }
-.add-page-head { display:flex; align-items:flex-start; justify-content:space-between; gap:18px; }
-.add-page-head h2 { color:#1e2f4d; font:600 26px/34px "Libre Franklin",sans-serif; }
-.add-page-head p { margin-top:3px; color:#4f5f78; font-size:14px; }
-.add-page-meta { display:flex; flex-direction:column; align-items:flex-end; gap:6px; }
-.add-page-meta small { color:#4f5f78; font-size:12px; }
-.add-state { padding:5px 10px; border-radius:99px; color:#314b72; background:#e9edf5; font-size:12px; font-weight:600; }
-.add-steps { display:flex; align-items:center; gap:14px; min-height:32px; color:#4f5f78; }
-.add-step-caption { margin-right:3px; color:#4f5f78; font-size:12px; font-weight:600; letter-spacing:.06em; }
-.add-step { display:flex; align-items:center; gap:9px; font-size:12px; }
-.add-step b { display:grid; width:27px; height:27px; place-items:center; border-radius:50%; color:#4f5f78; background:#e9edf8; font-size:12px; }
-.add-step strong { font-weight:500; }
-.add-step.active { color:#1e2f4d; }
-.add-step.active b,.add-step.complete b { color:#fff; background:#395886; }
-.add-step.complete b { font-size:0; }
-.add-step.complete b::after { content:"✓"; font-size:13px; }
-.add-step-line { width:75px; height:2px; background:#dfe5f1; }
-.start-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:20px; }
-.start-card { min-width:0; min-height:460px; display:flex; flex-direction:column; padding:26px 28px; border:1px solid #e8ecf5; border-radius:16px; background:#fff; box-shadow:0 2px 8px rgba(29,46,76,.04); }
-.start-card-head { margin:-26px -28px 0; padding:26px 28px 22px; border-bottom:1px solid #e9edf5; }
-.start-icon { display:grid; width:48px; height:48px; margin-bottom:15px; place-items:center; border-radius:12px; color:#395886; background:#e9edf5; font-size:28px; }
-.start-card h3 { color:#1e2f4d; font:600 19px/27px "Libre Franklin",sans-serif; }
-.start-card h3 span { font:inherit; }
-.start-card-head p { margin-top:9px; color:#4f5f78; font-size:13px; line-height:20px; }
-.drop-zone { display:flex; flex:1; min-height:185px; flex-direction:column; align-items:center; justify-content:center; gap:9px; margin-top:0; padding:20px; border:1.5px dashed #395886; border-radius:12px; color:#1e2f4d; background:#f3f5fb; text-align:center; cursor:pointer; }
-.drop-zone.dragging { border-style:solid; background:#ecf0fa; }
-.upload-symbol { color:#395886; font-size:30px; line-height:32px; }
-.drop-zone strong { font-size:13px; font-weight:500; }
-.drop-zone > span:not(.upload-symbol) { color:#4f5f78; font-size:12px; }
-.btn-primary,.btn-outline { display:inline-flex; min-height:40px; align-items:center; justify-content:center; padding:9px 18px; border-radius:9px; font:500 13px/20px "Libre Franklin",sans-serif; text-decoration:none; cursor:pointer; white-space:nowrap; }
-.btn-primary { border:1px solid #395886; color:#fff; background:#395886; }
-.btn-primary:hover { background:#314b72; }
-.btn-primary:disabled { opacity:.55; cursor:not-allowed; }
-.btn-outline { border:1px solid #c9d4ea; color:#1e2f4d; background:#fff; }
-.btn-outline:hover { background:#eff2fa; }
-.start-card .btn-primary { margin-top:auto; align-self:flex-start; }
-.start-points { display:flex; flex-direction:column; gap:9px; padding-top:0; color:#4f5f78; font-size:12px; }
-.start-points li::before { content:"✓"; display:inline-grid; width:17px; height:17px; margin-right:10px; place-items:center; border:1px solid #395886; border-radius:50%; color:#395886; font-size:12px; font-weight:700; }
-.start-info-strip,.add-info-strip { padding:13px 17px; border-radius:10px; color:#253a5e; background:#e9edf5; font-size:12px; line-height:18px; }
-.start-info-strip strong,.add-info-strip strong { color:#1e2f4d; }
-.add-info-strip::before { content:"ⓘ"; margin-right:10px; color:#395886; font-weight:700; }
-.upload-state { flex:1; padding-top:10px; }
-.file-summary { display:flex; align-items:center; gap:11px; }
-.pdf-icon { display:grid; width:46px; height:46px; flex:none; place-items:center; border-radius:10px; color:#395886; background:#e9edf5; font-size:12px; font-weight:700; }
-.file-summary div { min-width:0; display:flex; flex-direction:column; gap:3px; }
-.file-summary strong { overflow:hidden; color:#1e2f4d; font-size:12px; text-overflow:ellipsis; white-space:nowrap; }
-.file-summary small { color:#4f5f78; font-size:12px; }
-.upload-feedback { margin:14px 0 8px; padding:9px 11px; border-radius:8px; color:#314b72; background:#eff3fb; font-size:12px; line-height:18px; }
-.upload-feedback.error { border:1px solid #f2b6b8; color:#b42d34; background:#fff0f0; }
-.upload-feedback.success { padding:4px 0; color:#23804a; background:transparent; }
-.progress-track { height:7px; overflow:hidden; border-radius:99px; background:#e9edf8; }
-.progress-track span { display:block; width:0; height:100%; border-radius:inherit; background:#395886; transition:width .15s; }
-.upload-state-note { margin:9px 0 12px; color:#4f5f78; font-size:12px; line-height:16px; }
-.upload-state-actions { display:flex; flex-wrap:wrap; gap:10px; }
-.upload-state-actions button { margin:0 !important; }
-.cancel-upload { margin-top:4px; }
-.start-footer { position:fixed; z-index:20; right:0; bottom:0; left:var(--sidebar-w); display:flex; align-items:center; justify-content:space-between; gap:14px; min-height:64px; padding:10px 32px; border-top:1px solid #e5eaf6; background:#fff; }
-.start-footer span { color:#4f5f78; font-size:12px; }
-.start-footer span::before { content:"●"; margin-right:9px; color:#395886; font-size:12px; }
-.review-layout { display:grid; grid-template-columns:minmax(0,1fr) 320px; align-items:start; gap:16px 20px; padding-bottom:82px; }
-.review-main { min-width:0; display:flex; flex-direction:column; gap:15px; }
-.review-card,.checks-card { min-width:0; padding:18px 19px; border:1px solid #e8ecf5; border-radius:14px; background:#fff; box-shadow:0 2px 8px rgba(29,46,76,.04); }
-.review-card-head { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:14px; }
-.review-card-head h3 { display:flex; align-items:center; gap:9px; color:#1e2f4d; font:600 16px/23px "Libre Franklin",sans-serif; }
-.review-card-head h3 span { display:grid; width:27px; height:27px; place-items:center; border-radius:8px; color:#395886; background:#e9edf5; font:600 12px/1 "Libre Franklin",sans-serif; }
-.review-card-head small { color:#4f5f78; font-size:12px; text-align:right; }
-.review-grid { display:grid; gap:12px 14px; }
-.three-col { grid-template-columns:repeat(3,minmax(0,1fr)); }
-.field { display:flex; min-width:0; flex-direction:column; gap:5px; color:#1e2f4d; font-size:12px; font-weight:500; }
-.field input,.field select,.field textarea { width:100%; min-width:0; min-height:38px; padding:8px 10px; border:1px solid #c9d4ea; border-radius:8px; outline:0; color:#1e2f4d; background:#fff; font:400 12px/18px "Libre Franklin",sans-serif; }
-.field textarea { min-height:52px; resize:vertical; }
-.field input:focus,.field select:focus,.field textarea:focus { border-color:#395886; box-shadow:0 0 0 2px rgba(60,92,140,.1); }
-.field input[aria-invalid=true] { border-color:#d23c42; }
-.field-span-three { grid-column:span 3; }
-.mode-segments { display:flex; min-height:38px; overflow:hidden; border:1px solid #c9d4ea; border-radius:8px; background:#f0f3fa; }
-.mode-segments button { flex:1; border:0; color:#4f5f78; background:transparent; font:400 12px/18px "Libre Franklin",sans-serif; cursor:pointer; }
-.mode-segments button.selected { margin:2px; border-radius:6px; color:#fff; background:#395886; font-weight:600; }
-.client-hint { margin-top:11px; padding:8px 10px; border-radius:8px; color:#395886; background:#eff3fb; font-size:12px; line-height:17px; }
-.client-hint.warn { color:#9a6200; background:#fff7e8; }
-.inline-error { color:#bd2d35; font-size:12px; font-weight:400; }
-.container-section { margin-top:16px; padding-top:14px; border-top:1px solid #ebeff8; }
-.subsection-head { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:10px; }
-.subsection-head h4 { color:#1e2f4d; font:600 14px/20px "Libre Franklin",sans-serif; }
-.subsection-head small { display:block; margin-top:3px; color:#4f5f78; font-size:12px; }
-.subsection-head .btn-outline { min-height:32px; padding:5px 12px; font-size:12px; }
-#containerTable { width:100%; min-width:500px; border-collapse:separate; border-spacing:0 5px; }
-#containerTable th { padding:4px 7px; color:#4f5f78; font-size:12px; font-weight:500; text-align:left; }
-#containerTable td { padding:0 4px; }
-#containerTable input { width:100%; min-width:0; min-height:35px; padding:7px 8px; border:1px solid #c9d4ea; border-radius:7px; color:#1e2f4d; font:400 12px/17px "Libre Franklin",sans-serif; }
-.btn-link-danger { border:0; color:#bd343a; background:transparent; font-size:12px; cursor:pointer; }
-.btn-link-danger:hover { text-decoration:underline; }
-.checks-card { position:sticky; top:18px; }
-.checks-head { display:flex; align-items:center; justify-content:space-between; gap:10px; padding-bottom:12px; border-bottom:1px solid #ebeff8; }
-.checks-head h3 { color:#1e2f4d; font:600 16px/23px "Libre Franklin",sans-serif; }
-.checks-badge { padding:4px 9px; border-radius:99px; color:#9a6200; background:#fff1d8; font-size:12px; font-weight:600; white-space:nowrap; }
-.checks-badge.passed { color:#207445; background:#e6f4eb; }
-.checks-intro { margin:11px 0; color:#4f5f78; font-size:12px; line-height:16px; }
-.checks-dynamic { display:flex; flex-direction:column; gap:12px; }
-.check-item strong { display:block; color:#9a6200; font-size:12px; font-weight:600; line-height:16px; }
-.check-item strong::first-letter { font-size:14px; }
-.check-item p { margin:3px 0 0 18px; color:#4f5f78; font-size:12px; line-height:15px; }
-.check-item.ok strong { color:#208148; }
-.hs-confirm { display:flex; gap:9px; margin-top:14px; padding:10px; border:1px solid #e9edf8; border-radius:9px; cursor:pointer; }
-.hs-confirm input { margin-top:2px; accent-color:#395886; }
-.hs-confirm span { display:flex; flex-direction:column; gap:3px; }
-.hs-confirm strong { color:#1e2f4d; font-size:12px; }
-.hs-confirm small { color:#4f5f78; font-size:12px; line-height:14px; }
-.source-document { display:flex; flex-direction:column; gap:4px; margin-top:14px; padding:11px; border-radius:9px; background:#f0f3fa; }
-.source-document small { color:#4f5f78; font-size:12px; font-weight:600; text-transform:uppercase; }
-.source-document strong { overflow:hidden; color:#1e2f4d; font-size:12px; text-overflow:ellipsis; white-space:nowrap; }
-.source-document span { color:#4f5f78; font-size:12px; }
-.checks { display:flex; flex-direction:column; gap:5px; margin-top:9px; }
-.checks li { color:#4f5f78; font-size:12px; line-height:15px; }
-.checks .ok { color:#23804a; }
-.checks .bad,.checks .warn { color:#9a6200; }
-.review-footer { position:fixed; z-index:30; right:0; bottom:0; left:var(--sidebar-w); display:flex; align-items:center; justify-content:space-between; gap:16px; min-height:64px; padding:10px 32px; border-top:1px solid #e5eaf6; background:#fff; }
-.review-footer-status { min-width:0; color:#4f5f78; font-size:12px; line-height:17px; }
-.review-footer-status::before { content:"●"; margin-right:9px; color:#c48500; font-size:12px; }
-.review-footer-status.error { color:#bd343a; }
-.review-footer-status.error::before { color:#bd343a; }
-.review-footer > div { display:flex; gap:10px; }
-.success-card { padding:38px 32px; border:1px solid #e8ecf5; border-radius:16px; background:#fff; box-shadow:0 2px 8px rgba(29,46,76,.04); text-align:center; }
-.success-check { display:grid; width:54px; height:54px; margin:0 auto 18px; place-items:center; border-radius:50%; color:#23804a; background:#e6f4eb; font-size:25px; }
-.success-card h2 { color:#1e2f4d; font:600 23px/32px "Libre Franklin",sans-serif; }
-.success-card > p { margin-top:8px; color:#4f5f78; font-size:13px; }
-.success-card > p strong { color:#1e2f4d; }
-.success-summary { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:15px; margin:24px 0; padding:18px 20px; border-radius:10px; background:#f0f3fa; text-align:left; }
-.success-summary div,.success-stage div { display:flex; flex-direction:column; gap:5px; }
-.success-summary small,.success-stage small { color:#4f5f78; font-size:12px; font-weight:600; text-transform:uppercase; }
-.success-summary strong,.success-stage strong { color:#1e2f4d; font-size:13px; font-weight:500; overflow-wrap:anywhere; }
-.success-stage { display:flex; align-items:center; justify-content:space-between; text-align:left; }
-.success-status { padding:5px 10px; border-radius:99px; color:#9a6200 !important; background:#fff1d8; }
-.success-note { max-width:700px; margin:20px auto 0 !important; font-size:12px !important; line-height:18px; }
-.success-actions { display:flex; justify-content:center; gap:10px; margin-top:21px; }
+
+[hidden] {
+    display: none !important;
+}
+
+.add-shell {
+    width: 100%;
+    max-width: 1180px;
+    margin: 0 auto;
+    padding-bottom: 90px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.add-page-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 18px;
+}
+
+.add-page-head h2 {
+    color: #1e2f4d;
+    font: 600 26px/34px "Libre Franklin",sans-serif;
+}
+
+.add-page-head p {
+    margin-top: 3px;
+    color: #4f5f78;
+    font-size: 14px;
+}
+
+.add-page-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+}
+
+.add-page-meta small {
+    color: #4f5f78;
+    font-size: 12px;
+}
+
+.add-state {
+    padding: 5px 10px;
+    border-radius: 99px;
+    color: #314b72;
+    background: #e9edf5;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.add-steps {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-height: 32px;
+    color: #4f5f78;
+}
+
+.add-step-caption {
+    margin-right: 3px;
+    color: #4f5f78;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .06em;
+}
+
+.add-step {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 12px;
+}
+
+.add-step b {
+    display: grid;
+    width: 27px;
+    height: 27px;
+    place-items: center;
+    border-radius: 50%;
+    color: #4f5f78;
+    background: #e9edf8;
+    font-size: 12px;
+}
+
+.add-step strong {
+    font-weight: 500;
+}
+
+.add-step.active {
+    color: #1e2f4d;
+}
+
+.add-step.active b,.add-step.complete b {
+    color: #fff;
+    background: #395886;
+}
+
+.add-step.complete b {
+    font-size: 0;
+}
+
+.add-step.complete b::after {
+    content: "✓";
+    font-size: 13px;
+}
+
+.add-step-line {
+    width: 75px;
+    height: 2px;
+    background: #dfe5f1;
+}
+
+.start-grid {
+    display: grid;
+    grid-template-columns: repeat(2,minmax(0,1fr));
+    gap: 20px;
+}
+
+.start-card {
+    min-width: 0;
+    min-height: 460px;
+    display: flex;
+    flex-direction: column;
+    padding: 26px 28px;
+    border: 1px solid #e8ecf5;
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(29,46,76,.04);
+}
+
+.start-card-head {
+    margin: -26px -28px 0;
+    padding: 26px 28px 22px;
+    border-bottom: 1px solid #e9edf5;
+}
+
+.start-icon {
+    display: grid;
+    width: 48px;
+    height: 48px;
+    margin-bottom: 15px;
+    place-items: center;
+    border-radius: 12px;
+    color: #395886;
+    background: #e9edf5;
+    font-size: 28px;
+}
+
+.start-card h3 {
+    color: #1e2f4d;
+    font: 600 19px/27px "Libre Franklin",sans-serif;
+}
+
+.start-card h3 span {
+    font: inherit;
+}
+
+.start-card-head p {
+    margin-top: 9px;
+    color: #4f5f78;
+    font-size: 13px;
+    line-height: 20px;
+}
+
+.drop-zone {
+    display: flex;
+    flex: 1;
+    min-height: 185px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    margin-top: 0;
+    padding: 20px;
+    border: 1.5px dashed #395886;
+    border-radius: 12px;
+    color: #1e2f4d;
+    background: #f3f5fb;
+    text-align: center;
+    cursor: pointer;
+}
+
+.drop-zone.dragging {
+    border-style: solid;
+    background: #ecf0fa;
+}
+
+.upload-symbol {
+    color: #395886;
+    font-size: 30px;
+    line-height: 32px;
+}
+
+.drop-zone strong {
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.drop-zone > span:not(.upload-symbol) {
+    color: #4f5f78;
+    font-size: 12px;
+}
+
+.btn-primary,.btn-outline {
+    display: inline-flex;
+    min-height: 40px;
+    align-items: center;
+    justify-content: center;
+    padding: 9px 18px;
+    border-radius: 9px;
+    font: 500 13px/20px "Libre Franklin",sans-serif;
+    text-decoration: none;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.btn-primary {
+    border: 1px solid #395886;
+    color: #fff;
+    background: #395886;
+}
+
+.btn-primary:hover {
+    background: #314b72;
+}
+
+.btn-primary:disabled {
+    opacity: .55;
+    cursor: not-allowed;
+}
+
+.btn-outline {
+    border: 1px solid #c9d4ea;
+    color: #1e2f4d;
+    background: #fff;
+}
+
+.btn-outline:hover {
+    background: #eff2fa;
+}
+
+.start-card .btn-primary {
+    margin-top: auto;
+    align-self: flex-start;
+}
+
+.start-points {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    padding-top: 0;
+    color: #4f5f78;
+    font-size: 12px;
+}
+
+.start-points li::before {
+    content: "✓";
+    display: inline-grid;
+    width: 17px;
+    height: 17px;
+    margin-right: 10px;
+    place-items: center;
+    border: 1px solid #395886;
+    border-radius: 50%;
+    color: #395886;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.start-info-strip,.add-info-strip {
+    padding: 13px 17px;
+    border-radius: 10px;
+    color: #253a5e;
+    background: #e9edf5;
+    font-size: 12px;
+    line-height: 18px;
+}
+
+.start-info-strip strong,.add-info-strip strong {
+    color: #1e2f4d;
+}
+
+.add-info-strip::before {
+    content: "ⓘ";
+    margin-right: 10px;
+    color: #395886;
+    font-weight: 700;
+}
+
+.upload-state {
+    flex: 1;
+    padding-top: 10px;
+}
+
+.file-summary {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+}
+
+.pdf-icon {
+    display: grid;
+    width: 46px;
+    height: 46px;
+    flex: none;
+    place-items: center;
+    border-radius: 10px;
+    color: #395886;
+    background: #e9edf5;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.file-summary div {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.file-summary strong {
+    overflow: hidden;
+    color: #1e2f4d;
+    font-size: 12px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.file-summary small {
+    color: #4f5f78;
+    font-size: 12px;
+}
+
+.upload-feedback {
+    margin: 14px 0 8px;
+    padding: 9px 11px;
+    border-radius: 8px;
+    color: #314b72;
+    background: #eff3fb;
+    font-size: 12px;
+    line-height: 18px;
+}
+
+.upload-feedback.error {
+    border: 1px solid #f2b6b8;
+    color: #b42d34;
+    background: #fff0f0;
+}
+
+.upload-feedback.success {
+    padding: 4px 0;
+    color: #23804a;
+    background: transparent;
+}
+
+.progress-track {
+    height: 7px;
+    overflow: hidden;
+    border-radius: 99px;
+    background: #e9edf8;
+}
+
+.progress-track span {
+    display: block;
+    width: 0;
+    height: 100%;
+    border-radius: inherit;
+    background: #395886;
+    transition: width .15s;
+}
+
+.upload-state-note {
+    margin: 9px 0 12px;
+    color: #4f5f78;
+    font-size: 12px;
+    line-height: 16px;
+}
+
+.upload-state-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.upload-state-actions button {
+    margin: 0 !important;
+}
+
+.cancel-upload {
+    margin-top: 4px;
+}
+
+.start-footer {
+    position: fixed;
+    z-index: 20;
+    right: 0;
+    bottom: 0;
+    left: var(--sidebar-w);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    min-height: 64px;
+    padding: 10px 32px;
+    border-top: 1px solid #e5eaf6;
+    background: #fff;
+}
+
+.start-footer span {
+    color: #4f5f78;
+    font-size: 12px;
+}
+
+.start-footer span::before {
+    content: "●";
+    margin-right: 9px;
+    color: #395886;
+    font-size: 12px;
+}
+
+.review-layout {
+    display: grid;
+    grid-template-columns: minmax(0,1fr) 320px;
+    align-items: start;
+    gap: 16px 20px;
+    padding-bottom: 82px;
+}
+
+.review-main {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.review-card,.checks-card {
+    min-width: 0;
+    padding: 18px 19px;
+    border: 1px solid #e8ecf5;
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(29,46,76,.04);
+}
+
+.review-card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.review-card-head h3 {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    color: #1e2f4d;
+    font: 600 16px/23px "Libre Franklin",sans-serif;
+}
+
+.review-card-head h3 span {
+    display: grid;
+    width: 27px;
+    height: 27px;
+    place-items: center;
+    border-radius: 8px;
+    color: #395886;
+    background: #e9edf5;
+    font: 600 12px/1 "Libre Franklin",sans-serif;
+}
+
+.review-card-head small {
+    color: #4f5f78;
+    font-size: 12px;
+    text-align: right;
+}
+
+.review-grid {
+    display: grid;
+    gap: 12px 14px;
+}
+
+.three-col {
+    grid-template-columns: repeat(3,minmax(0,1fr));
+}
+
+.field {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 5px;
+    color: #1e2f4d;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.field input,.field select,.field textarea {
+    width: 100%;
+    min-width: 0;
+    min-height: 38px;
+    padding: 8px 10px;
+    border: 1px solid #c9d4ea;
+    border-radius: 8px;
+    outline: 0;
+    color: #1e2f4d;
+    background: #fff;
+    font: 400 12px/18px "Libre Franklin",sans-serif;
+}
+
+.field textarea {
+    min-height: 52px;
+    resize: vertical;
+}
+
+.field input:focus,.field select:focus,.field textarea:focus {
+    border-color: #395886;
+    box-shadow: 0 0 0 2px rgba(60,92,140,.1);
+}
+
+.field input[aria-invalid=true] {
+    border-color: #d23c42;
+}
+
+.field-span-three {
+    grid-column: span 3;
+}
+
+.mode-segments {
+    display: flex;
+    min-height: 38px;
+    overflow: hidden;
+    border: 1px solid #c9d4ea;
+    border-radius: 8px;
+    background: #f0f3fa;
+}
+
+.mode-segments button {
+    flex: 1;
+    border: 0;
+    color: #4f5f78;
+    background: transparent;
+    font: 400 12px/18px "Libre Franklin",sans-serif;
+    cursor: pointer;
+}
+
+.mode-segments button.selected {
+    margin: 2px;
+    border-radius: 6px;
+    color: #fff;
+    background: #395886;
+    font-weight: 600;
+}
+
+.client-hint {
+    margin-top: 11px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    color: #395886;
+    background: #eff3fb;
+    font-size: 12px;
+    line-height: 17px;
+}
+
+.client-hint.warn {
+    color: #9a6200;
+    background: #fff7e8;
+}
+
+.inline-error {
+    color: #bd2d35;
+    font-size: 12px;
+    font-weight: 400;
+}
+
+.container-section {
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid #ebeff8;
+}
+
+.subsection-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+.subsection-head h4 {
+    color: #1e2f4d;
+    font: 600 14px/20px "Libre Franklin",sans-serif;
+}
+
+.subsection-head small {
+    display: block;
+    margin-top: 3px;
+    color: #4f5f78;
+    font-size: 12px;
+}
+
+.subsection-head .btn-outline {
+    min-height: 32px;
+    padding: 5px 12px;
+    font-size: 12px;
+}
+
+#containerTable {
+    width: 100%;
+    min-width: 500px;
+    border-collapse: separate;
+    border-spacing: 0 5px;
+}
+
+#containerTable th {
+    padding: 4px 7px;
+    color: #4f5f78;
+    font-size: 12px;
+    font-weight: 500;
+    text-align: left;
+}
+
+#containerTable td {
+    padding: 0 4px;
+}
+
+#containerTable input {
+    width: 100%;
+    min-width: 0;
+    min-height: 35px;
+    padding: 7px 8px;
+    border: 1px solid #c9d4ea;
+    border-radius: 7px;
+    color: #1e2f4d;
+    font: 400 12px/17px "Libre Franklin",sans-serif;
+}
+
+.btn-link-danger {
+    border: 0;
+    color: #bd343a;
+    background: transparent;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.btn-link-danger:hover {
+    text-decoration: underline;
+}
+
+.checks-card {
+    position: sticky;
+    top: 18px;
+}
+
+.checks-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #ebeff8;
+}
+
+.checks-head h3 {
+    color: #1e2f4d;
+    font: 600 16px/23px "Libre Franklin",sans-serif;
+}
+
+.checks-badge {
+    padding: 4px 9px;
+    border-radius: 99px;
+    color: #9a6200;
+    background: #fff1d8;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.checks-badge.passed {
+    color: #207445;
+    background: #e6f4eb;
+}
+
+.checks-intro {
+    margin: 11px 0;
+    color: #4f5f78;
+    font-size: 12px;
+    line-height: 16px;
+}
+
+.checks-dynamic {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.check-item strong {
+    display: block;
+    color: #9a6200;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 16px;
+}
+
+.check-item strong::first-letter {
+    font-size: 14px;
+}
+
+.check-item p {
+    margin: 3px 0 0 18px;
+    color: #4f5f78;
+    font-size: 12px;
+    line-height: 15px;
+}
+
+.check-item.ok strong {
+    color: #208148;
+}
+
+.hs-confirm {
+    display: flex;
+    gap: 9px;
+    margin-top: 14px;
+    padding: 10px;
+    border: 1px solid #e9edf8;
+    border-radius: 9px;
+    cursor: pointer;
+}
+
+.hs-confirm input {
+    margin-top: 2px;
+    accent-color: #395886;
+}
+
+.hs-confirm span {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.hs-confirm strong {
+    color: #1e2f4d;
+    font-size: 12px;
+}
+
+.hs-confirm small {
+    color: #4f5f78;
+    font-size: 12px;
+    line-height: 14px;
+}
+
+.source-document {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 14px;
+    padding: 11px;
+    border-radius: 9px;
+    background: #f0f3fa;
+}
+
+.source-document small {
+    color: #4f5f78;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.source-document strong {
+    overflow: hidden;
+    color: #1e2f4d;
+    font-size: 12px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.source-document span {
+    color: #4f5f78;
+    font-size: 12px;
+}
+
+.checks {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-top: 9px;
+}
+
+.checks li {
+    color: #4f5f78;
+    font-size: 12px;
+    line-height: 15px;
+}
+
+.checks .ok {
+    color: #23804a;
+}
+
+.checks .bad,.checks .warn {
+    color: #9a6200;
+}
+
+.review-footer {
+    position: fixed;
+    z-index: 30;
+    right: 0;
+    bottom: 0;
+    left: var(--sidebar-w);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 64px;
+    padding: 10px 32px;
+    border-top: 1px solid #e5eaf6;
+    background: #fff;
+}
+
+.review-footer-status {
+    min-width: 0;
+    color: #4f5f78;
+    font-size: 12px;
+    line-height: 17px;
+}
+
+.review-footer-status::before {
+    content: "●";
+    margin-right: 9px;
+    color: #c48500;
+    font-size: 12px;
+}
+
+.review-footer-status.error {
+    color: #bd343a;
+}
+
+.review-footer-status.error::before {
+    color: #bd343a;
+}
+
+.review-footer > div {
+    display: flex;
+    gap: 10px;
+}
+
+.success-card {
+    padding: 38px 32px;
+    border: 1px solid #e8ecf5;
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(29,46,76,.04);
+    text-align: center;
+}
+
+.success-check {
+    display: grid;
+    width: 54px;
+    height: 54px;
+    margin: 0 auto 18px;
+    place-items: center;
+    border-radius: 50%;
+    color: #23804a;
+    background: #e6f4eb;
+    font-size: 25px;
+}
+
+.success-card h2 {
+    color: #1e2f4d;
+    font: 600 23px/32px "Libre Franklin",sans-serif;
+}
+
+.success-card > p {
+    margin-top: 8px;
+    color: #4f5f78;
+    font-size: 13px;
+}
+
+.success-card > p strong {
+    color: #1e2f4d;
+}
+
+.success-summary {
+    display: grid;
+    grid-template-columns: repeat(3,minmax(0,1fr));
+    gap: 15px;
+    margin: 24px 0;
+    padding: 18px 20px;
+    border-radius: 10px;
+    background: #f0f3fa;
+    text-align: left;
+}
+
+.success-summary div,.success-stage div {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.success-summary small,.success-stage small {
+    color: #4f5f78;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.success-summary strong,.success-stage strong {
+    color: #1e2f4d;
+    font-size: 13px;
+    font-weight: 500;
+    overflow-wrap: anywhere;
+}
+
+.success-stage {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    text-align: left;
+}
+
+.success-status {
+    padding: 5px 10px;
+    border-radius: 99px;
+    color: #9a6200 !important;
+    background: #fff1d8;
+}
+
+.success-note {
+    max-width: 700px;
+    margin: 20px auto 0 !important;
+    font-size: 12px !important;
+    line-height: 18px;
+}
+
+.success-actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 21px;
+}
+
 @media (max-width:1150px) {
-  .review-layout { grid-template-columns:minmax(0,1fr) 285px; gap:14px; }
-  .three-col { gap:10px; }
-  .review-card { padding:16px; }
+    .review-layout {
+        grid-template-columns: minmax(0,1fr) 285px;
+        gap: 14px;
+    }
+    .three-col {
+        gap: 10px;
+    }
+    .review-card {
+        padding: 16px;
+    }
 }
+
 @media (max-width:900px) {
-  .review-layout { grid-template-columns:minmax(0,1fr); }
-  .review-aside { grid-row:1; }
-  .checks-card { position:static; }
-  .checks-dynamic { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); }
-  .start-card { min-height:420px; padding:22px; }
-  .start-card-head { margin:-22px -22px 0; padding:22px; }
+    .review-layout {
+        grid-template-columns: minmax(0,1fr);
+    }
+    .review-aside {
+        grid-row: 1;
+    }
+    .checks-card {
+        position: static;
+    }
+    .checks-dynamic {
+        display: grid;
+        grid-template-columns: repeat(2,minmax(0,1fr));
+    }
+    .start-card {
+        min-height: 420px;
+        padding: 22px;
+    }
+    .start-card-head {
+        margin: -22px -22px 0;
+        padding: 22px;
+    }
 }
+
 @media (max-width:640px) {
-  .main { padding-inline:16px; }
-  .topbar { margin-inline:-16px; padding-inline:16px; }
-  .add-shell { gap:15px; padding-bottom:84px; }
-  .add-page-head h2 { font-size:22px; }
-  .add-page-meta small { text-align:right; }
-  .add-steps { gap:8px; flex-wrap:wrap; }
-  .add-step-caption { display:none; }
-  .add-step-line { width:24px; }
-  .start-grid { grid-template-columns:minmax(0,1fr); }
-  .start-card { min-height:0; }
-  .drop-zone { min-height:170px; margin-top:14px; }
-  .manual-start .btn-primary { margin-top:28px; }
-  .three-col { grid-template-columns:repeat(2,minmax(0,1fr)); }
-  .field-span-three { grid-column:span 2; }
-  .review-card-head { align-items:flex-start; }
-  .review-card-head h3 { font-size:14px; }
-  .review-card-head small { max-width:100px; }
-  .checks-dynamic { grid-template-columns:minmax(0,1fr); }
-  .review-footer,.start-footer { left:0; padding:9px 14px; }
-  .review-footer { align-items:flex-start; }
-  .review-footer-status { font-size:12px; }
-  .review-footer > div { gap:6px; }
-  .review-footer .btn-primary,.review-footer .btn-outline { min-height:38px; padding:8px 10px; font-size:12px; }
-  .start-footer .btn-outline { min-height:36px; padding:7px 10px; font-size:12px; }
-  .start-footer span { max-width:55%; font-size:12px; }
-  .success-card { padding:28px 16px; }
-  .success-card h2 { font-size:19px; }
-  .success-summary { grid-template-columns:minmax(0,1fr); gap:12px; }
-  .success-stage { gap:12px; align-items:flex-start; }
-  #containerTable { min-width:470px; }
+    .main {
+        padding-inline: 16px;
+    }
+    .topbar {
+        margin-inline: -16px;
+        padding-inline: 16px;
+    }
+    .add-shell {
+        gap: 15px;
+        padding-bottom: 84px;
+    }
+    .add-page-head h2 {
+        font-size: 22px;
+    }
+    .add-page-meta small {
+        text-align: right;
+    }
+    .add-steps {
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+    .add-step-caption {
+        display: none;
+    }
+    .add-step-line {
+        width: 24px;
+    }
+    .start-grid {
+        grid-template-columns: minmax(0,1fr);
+    }
+    .start-card {
+        min-height: 0;
+    }
+    .drop-zone {
+        min-height: 170px;
+        margin-top: 14px;
+    }
+    .manual-start .btn-primary {
+        margin-top: 28px;
+    }
+    .three-col {
+        grid-template-columns: repeat(2,minmax(0,1fr));
+    }
+    .field-span-three {
+        grid-column: span 2;
+    }
+    .review-card-head {
+        align-items: flex-start;
+    }
+    .review-card-head h3 {
+        font-size: 14px;
+    }
+    .review-card-head small {
+        max-width: 100px;
+    }
+    .checks-dynamic {
+        grid-template-columns: minmax(0,1fr);
+    }
+    .review-footer,.start-footer {
+        left: 0;
+        padding: 9px 14px;
+    }
+    .review-footer {
+        align-items: flex-start;
+    }
+    .review-footer-status {
+        font-size: 12px;
+    }
+    .review-footer > div {
+        gap: 6px;
+    }
+    .review-footer .btn-primary,.review-footer .btn-outline {
+        min-height: 38px;
+        padding: 8px 10px;
+        font-size: 12px;
+    }
+    .start-footer .btn-outline {
+        min-height: 36px;
+        padding: 7px 10px;
+        font-size: 12px;
+    }
+    .start-footer span {
+        max-width: 55%;
+        font-size: 12px;
+    }
+    .success-card {
+        padding: 28px 16px;
+    }
+    .success-card h2 {
+        font-size: 19px;
+    }
+    .success-summary {
+        grid-template-columns: minmax(0,1fr);
+        gap: 12px;
+    }
+    .success-stage {
+        gap: 12px;
+        align-items: flex-start;
+    }
+    #containerTable {
+        min-width: 470px;
+    }
 }

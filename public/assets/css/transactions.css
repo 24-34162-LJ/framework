@@ -5,128 +5,626 @@
  * Purpose: Styles for the transactions page.
  */
 
-.txn-page { gap: 18px; }
-.txn-flash { padding: 13px 16px; border-radius: 10px; background: #eaeff9; color: #24395d; border: 1px solid #ccd7f0; }
-.txn-flash-error { color: #9d2b31; background: #fff0f0; border-color: #f4c7c9; }
-.txn-flash-success { color: #22683e; background: #eaf7ee; border-color: #c5e6cf; }
-.txn-stats { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 14px; }
-.txn-stats.three { grid-template-columns: repeat(3,minmax(0,1fr)); }
-.txn-stats .fcard { gap: 5px; padding: 17px 20px; }
-.txn-stats span, .txn-stats small { color: #4f5f78; font-size: 13px; }
-.txn-stats strong { color: #19273f; font-size: 26px; line-height: 1.25; }
-.txn-list { gap: 14px; }
-.txn-filters { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-.txn-search { flex: 1 1 290px; }
-.txn-search input, .txn-filters select, .txn-filters input[type=date], .txn-form select, .txn-form textarea { width: 100%; min-width: 0; border: 1px solid #d1daea; border-radius: 9px; padding: 11px 13px; color: #1e2f4d; background: #fff; font: inherit; }
-.txn-filters select, .txn-filters input[type=date] { width: auto; min-width: 150px; }
-.txn-search input:focus, .txn-filters select:focus, .txn-filters input:focus, .txn-form select:focus, .txn-form textarea:focus { outline: 2px solid #ccdbf1; border-color: #395886; }
-.txn-table-scroll { overflow-x: auto; width: 100%; }
-.txn-table { width: 100%; min-width: 830px; border-collapse: separate; border-spacing: 0; }
-.txn-table th { background: #f0f3fa; color: #4f5f78; font-size: 12px; font-weight: 600; padding: 12px; text-align: left; white-space: nowrap; }
-.txn-table th:first-child { border-radius: 8px 0 0 8px; }
-.txn-table th:last-child { border-radius: 0 8px 8px 0; }
-.txn-table td { padding: 14px 12px; border-bottom: 1px solid #eaeef8; color: #1e2f4d; font-size: 14px; white-space: nowrap; }
-.txn-table a, .txn-overview a, .txn-linked > a:not(.btn) { color: #395886; font-weight: 500; }
-.txn-code { font-weight: 600 !important; }
-.txn-empty { text-align: center; padding: 34px !important; color: #4f5f78 !important; }
-.txn-badge { display: inline-flex; align-items: center; gap: 6px; border-radius: 99px; padding: 5px 10px; font-size: 12px; font-weight: 600; white-space: nowrap; }
-.txn-badge::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
-.txn-pending { color: #94640a; background: #fff3d8; }
-.txn-ongoing { color: #2e476b; background: #e7ecf8; }
-.txn-completed { color: #26734a; background: #e4f4e9; }
-.txn-pager { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; color: #4f5f78; font-size: 13px; }
-.txn-pager nav { display: flex; align-items: center; gap: 12px; }
-.txn-pager a { color: #395886; font-weight: 600; }
-.txn-note, .txn-warning { padding: 14px 17px; border-radius: 10px; color: #2e476b; background: #eaeff9; border: 1px solid #d4ddf3; line-height: 1.55; }
-.txn-warning { color: #7d5a12; background: #fff6df; border-color: #f0dfa9; }
-.txn-form { width: min(100%,760px); gap: 12px; }
-.txn-form label { display: grid; gap: 7px; color: #223658; font-weight: 600; }
-.txn-hint { color: #4f5f78; font-size: 13px; margin: -5px 0 4px; line-height: 1.5; }
-.txn-form footer { display: flex; justify-content: flex-end; gap: 10px; margin-top: 8px; }
-.txn-form button:disabled { opacity: .55; cursor: not-allowed; }
-.txn-overview { gap: 18px; }
-.txn-overview-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
-.txn-overview h2, .txn-detail-grid h2 { color: #1e2f4d; font: 600 18px/1.4 "Libre Franklin",sans-serif; }
-.txn-overview dl { margin: 0; display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 18px 24px; }
-.txn-overview dl div { min-width: 0; }
-.txn-overview dt { color: #4f5f78; font-size: 12px; margin-bottom: 6px; }
-.txn-overview dd { color: #1d2d4a; margin: 0; font-size: 14px; overflow-wrap: anywhere; }
-.txn-detail-grid { display: grid; grid-template-columns: minmax(0,1.8fr) minmax(260px,1fr); gap: 16px; align-items: start; }
-.txn-detail-grid > .fcard { min-width: 0; }
-.txn-history { list-style: none; margin: 6px 0 0; padding: 0 0 0 8px; }
-.txn-history li { position: relative; border-left: 2px solid #e8ecf5; padding: 0 0 22px 20px; }
-.txn-history li:last-child { border-left-color: transparent; padding-bottom: 0; }
-.txn-history-dot { position: absolute; left: -7px; top: 2px; width: 12px; height: 12px; border-radius: 50%; background: #395886; border: 2px solid white; box-shadow: 0 0 0 1px #395886; }
-.txn-history strong { display: block; color: #1e304e; }
-.txn-history p { margin: 5px 0; color: #4f5f78; line-height: 1.5; }
-.txn-history small { color: #4f5f78; }
-.txn-linked { gap: 12px; }
-.txn-linked p { margin: 0; color: #4f5f78; line-height: 1.5; }
-.txn-linked .btn { width: 100%; }
-.txn-correction-states { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 15px; border-radius: 10px; background: #f0f3fa; }
-.txn-correction-states div { display: grid; gap: 7px; }
-.txn-correction-states span { color: #4f5f78; font-size: 12px; text-transform: uppercase; }
-.txn-correction-states strong { color: #1d2d4a; }
-.txn-form textarea { min-height: 100px; resize: vertical; }
-.txn-confirm { display: flex !important; align-items: flex-start; gap: 9px !important; font-weight: 400 !important; font-size: 14px; }
-.txn-confirm input { margin-top: 4px; }
-@media(max-width:900px) { .txn-stats,.txn-stats.three { grid-template-columns: repeat(2,minmax(0,1fr)); } .txn-detail-grid { grid-template-columns: 1fr; } }
+.txn-page {
+    gap: 18px;
+}
+
+.txn-flash {
+    padding: 13px 16px;
+    border-radius: 10px;
+    background: #eaeff9;
+    color: #24395d;
+    border: 1px solid #ccd7f0;
+}
+
+.txn-flash-error {
+    color: #9d2b31;
+    background: #fff0f0;
+    border-color: #f4c7c9;
+}
+
+.txn-flash-success {
+    color: #22683e;
+    background: #eaf7ee;
+    border-color: #c5e6cf;
+}
+
+.txn-stats {
+    display: grid;
+    grid-template-columns: repeat(4,minmax(0,1fr));
+    gap: 14px;
+}
+
+.txn-stats.three {
+    grid-template-columns: repeat(3,minmax(0,1fr));
+}
+
+.txn-stats .fcard {
+    gap: 5px;
+    padding: 17px 20px;
+}
+
+.txn-stats span, .txn-stats small {
+    color: #4f5f78;
+    font-size: 13px;
+}
+
+.txn-stats strong {
+    color: #19273f;
+    font-size: 26px;
+    line-height: 1.25;
+}
+
+.txn-list {
+    gap: 14px;
+}
+
+.txn-filters {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.txn-search {
+    flex: 1 1 290px;
+}
+
+.txn-search input, .txn-filters select, .txn-filters input[type=date], .txn-form select, .txn-form textarea {
+    width: 100%;
+    min-width: 0;
+    border: 1px solid #d1daea;
+    border-radius: 9px;
+    padding: 11px 13px;
+    color: #1e2f4d;
+    background: #fff;
+    font: inherit;
+}
+
+.txn-filters select, .txn-filters input[type=date] {
+    width: auto;
+    min-width: 150px;
+}
+
+.txn-search input:focus, .txn-filters select:focus, .txn-filters input:focus, .txn-form select:focus, .txn-form textarea:focus {
+    outline: 2px solid #ccdbf1;
+    border-color: #395886;
+}
+
+.txn-table-scroll {
+    overflow-x: auto;
+    width: 100%;
+}
+
+.txn-table {
+    width: 100%;
+    min-width: 830px;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.txn-table th {
+    background: #f0f3fa;
+    color: #4f5f78;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 12px;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.txn-table th:first-child {
+    border-radius: 8px 0 0 8px;
+}
+
+.txn-table th:last-child {
+    border-radius: 0 8px 8px 0;
+}
+
+.txn-table td {
+    padding: 14px 12px;
+    border-bottom: 1px solid #eaeef8;
+    color: #1e2f4d;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.txn-table a, .txn-overview a, .txn-linked > a:not(.btn) {
+    color: #395886;
+    font-weight: 500;
+}
+
+.txn-code {
+    font-weight: 600 !important;
+}
+
+.txn-empty {
+    text-align: center;
+    padding: 34px !important;
+    color: #4f5f78 !important;
+}
+
+.txn-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border-radius: 99px;
+    padding: 5px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.txn-badge::before {
+    content: '';
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+.txn-pending {
+    color: #94640a;
+    background: #fff3d8;
+}
+
+.txn-ongoing {
+    color: #2e476b;
+    background: #e7ecf8;
+}
+
+.txn-completed {
+    color: #26734a;
+    background: #e4f4e9;
+}
+
+.txn-pager {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    color: #4f5f78;
+    font-size: 13px;
+}
+
+.txn-pager nav {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.txn-pager a {
+    color: #395886;
+    font-weight: 600;
+}
+
+.txn-note, .txn-warning {
+    padding: 14px 17px;
+    border-radius: 10px;
+    color: #2e476b;
+    background: #eaeff9;
+    border: 1px solid #d4ddf3;
+    line-height: 1.55;
+}
+
+.txn-warning {
+    color: #7d5a12;
+    background: #fff6df;
+    border-color: #f0dfa9;
+}
+
+.txn-form {
+    width: min(100%,760px);
+    gap: 12px;
+}
+
+.txn-form label {
+    display: grid;
+    gap: 7px;
+    color: #223658;
+    font-weight: 600;
+}
+
+.txn-hint {
+    color: #4f5f78;
+    font-size: 13px;
+    margin: -5px 0 4px;
+    line-height: 1.5;
+}
+
+.txn-form footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.txn-form button:disabled {
+    opacity: .55;
+    cursor: not-allowed;
+}
+
+.txn-overview {
+    gap: 18px;
+}
+
+.txn-overview-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.txn-overview h2, .txn-detail-grid h2 {
+    color: #1e2f4d;
+    font: 600 18px/1.4 "Libre Franklin",sans-serif;
+}
+
+.txn-overview dl {
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(3,minmax(0,1fr));
+    gap: 18px 24px;
+}
+
+.txn-overview dl div {
+    min-width: 0;
+}
+
+.txn-overview dt {
+    color: #4f5f78;
+    font-size: 12px;
+    margin-bottom: 6px;
+}
+
+.txn-overview dd {
+    color: #1d2d4a;
+    margin: 0;
+    font-size: 14px;
+    overflow-wrap: anywhere;
+}
+
+.txn-detail-grid {
+    display: grid;
+    grid-template-columns: minmax(0,1.8fr) minmax(260px,1fr);
+    gap: 16px;
+    align-items: start;
+}
+
+.txn-detail-grid > .fcard {
+    min-width: 0;
+}
+
+.txn-history {
+    list-style: none;
+    margin: 6px 0 0;
+    padding: 0 0 0 8px;
+}
+
+.txn-history li {
+    position: relative;
+    border-left: 2px solid #e8ecf5;
+    padding: 0 0 22px 20px;
+}
+
+.txn-history li:last-child {
+    border-left-color: transparent;
+    padding-bottom: 0;
+}
+
+.txn-history-dot {
+    position: absolute;
+    left: -7px;
+    top: 2px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #395886;
+    border: 2px solid white;
+    box-shadow: 0 0 0 1px #395886;
+}
+
+.txn-history strong {
+    display: block;
+    color: #1e304e;
+}
+
+.txn-history p {
+    margin: 5px 0;
+    color: #4f5f78;
+    line-height: 1.5;
+}
+
+.txn-history small {
+    color: #4f5f78;
+}
+
+.txn-linked {
+    gap: 12px;
+}
+
+.txn-linked p {
+    margin: 0;
+    color: #4f5f78;
+    line-height: 1.5;
+}
+
+.txn-linked .btn {
+    width: 100%;
+}
+
+.txn-correction-states {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 15px;
+    border-radius: 10px;
+    background: #f0f3fa;
+}
+
+.txn-correction-states div {
+    display: grid;
+    gap: 7px;
+}
+
+.txn-correction-states span {
+    color: #4f5f78;
+    font-size: 12px;
+    text-transform: uppercase;
+}
+
+.txn-correction-states strong {
+    color: #1d2d4a;
+}
+
+.txn-form textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.txn-confirm {
+    display: flex !important;
+    align-items: flex-start;
+    gap: 9px !important;
+    font-weight: 400 !important;
+    font-size: 14px;
+}
+
+.txn-confirm input {
+    margin-top: 4px;
+}
+
+@media(max-width:900px) {
+    .txn-stats,.txn-stats.three {
+        grid-template-columns: repeat(2,minmax(0,1fr));
+    }
+    .txn-detail-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 /* The list card is a flex column: without min-width:0 the scroll box grows to the table's width
    and pushes the whole page sideways instead of scrolling inside the card */
-.txn-list > .txn-table-scroll { min-width: 0; }
+
+.txn-list > .txn-table-scroll {
+    min-width: 0;
+}
+
 /* Anchors the visually hidden phone header inside the scroll box, so it cannot widen the page */
-.txn-table-scroll { position: relative; }
+
+.txn-table-scroll {
+    position: relative;
+}
+
 @media(max-width:640px) {
     /* Phones: rows become labelled cards (layout from staff.css), so no sideways scrolling */
-    .txn-table { min-width: 0; }
-    .txn-table td { white-space: normal; padding: 6px 0; font-size: 14px; }
-    .txn-table tbody td.txn-empty { display: block; padding: 24px 0 !important; text-align: center; }
-    .txn-table tbody td.txn-empty::before { content: none; }
+    .txn-table {
+        min-width: 0;
+    }
+    .txn-table td {
+        white-space: normal;
+        padding: 6px 0;
+        font-size: 14px;
+    }
+    .txn-table tbody td.txn-empty {
+        display: block;
+        padding: 24px 0 !important;
+        text-align: center;
+    }
+    .txn-table tbody td.txn-empty::before {
+        content: none;
+    }
     /* The full-width filter rule below must not stretch the hidden screen-reader labels past the screen edge */
-    .txn-filters > .sr-only { width: 1px !important; }
+    .txn-filters > .sr-only {
+        width: 1px !important;
+    }
 }
-@media(max-width:640px) { .txn-stats,.txn-stats.three { grid-template-columns: 1fr 1fr; } .txn-overview dl { grid-template-columns: repeat(2,minmax(0,1fr)); } .txn-filters > * { width: 100% !important; } .txn-pager { align-items: flex-start; flex-direction: column; } .txn-form footer { flex-direction: column-reverse; } }
+
+@media(max-width:640px) {
+    .txn-stats,.txn-stats.three {
+        grid-template-columns: 1fr 1fr;
+    }
+    .txn-overview dl {
+        grid-template-columns: repeat(2,minmax(0,1fr));
+    }
+    .txn-filters > * {
+        width: 100% !important;
+    }
+    .txn-pager {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+    .txn-form footer {
+        flex-direction: column-reverse;
+    }
+}
+
 /* Bills for the transaction's shipment (one transaction covers every bill of its shipment) */
-.txn-bills { gap: 12px; min-width: 0; }
-.txn-bills > .txn-table-scroll { min-width: 0; }
-.txn-bills-table .num { text-align: right; font-variant-numeric: tabular-nums; }
-.txn-bills-table tfoot th { background: #f6f8fc; color: #1e2f4d; font-size: 13px; font-weight: 700; padding: 12px; text-align: left; }
-.txn-bill-cell { display: inline-flex; align-items: center; }
+
+.txn-bills {
+    gap: 12px;
+    min-width: 0;
+}
+
+.txn-bills > .txn-table-scroll {
+    min-width: 0;
+}
+
+.txn-bills-table .num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+.txn-bills-table tfoot th {
+    background: #f6f8fc;
+    color: #1e2f4d;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 12px;
+    text-align: left;
+}
+
+.txn-bill-cell {
+    display: inline-flex;
+    align-items: center;
+}
+
 /* Tablet and desktop. The shared table rules in sidebar.css are prefixed with body.fig #mainContent,
    so these use the same prefix; otherwise the shared left-aligned headings and padding win. */
+
 @media (min-width: 641px) {
     /* The Action column (heading and buttons) sits on the right edge, like the money columns */
-    body.fig #mainContent .txn-table thead th.txn-action,
-    body.fig #mainContent .txn-table tbody td.txn-action { text-align: right; }
+    body.fig #mainContent .txn-table thead th.txn-action, body.fig #mainContent .txn-table tbody td.txn-action {
+        text-align: right;
+    }
     /* The total row uses the same cell padding as the header and bill rows, so its figures line up */
-    body.fig #mainContent .txn-bills-table tfoot th { padding: 12px; }
-    body.fig #mainContent .txn-bills-table tfoot th:first-child { padding-left: 16px; }
-    body.fig #mainContent .txn-bills-table tfoot th:last-child { padding-right: 16px; }
-    body.fig #mainContent .txn-bills-table tfoot th.num { text-align: right; }
+    body.fig #mainContent .txn-bills-table tfoot th {
+        padding: 12px;
+    }
+    body.fig #mainContent .txn-bills-table tfoot th:first-child {
+        padding-left: 16px;
+    }
+    body.fig #mainContent .txn-bills-table tfoot th:last-child {
+        padding-right: 16px;
+    }
+    body.fig #mainContent .txn-bills-table tfoot th.num {
+        text-align: right;
+    }
 }
-.txn-more-bills { display: inline-block; margin-left: 6px; padding: 1px 7px; border-radius: 99px; background: #e7ecf8; color: #2e476b; font-size: 12px; font-weight: 600; }
-.txn-table a.txn-view-bills { display: inline-block; padding: 4px 12px; border: 1px solid #c9d4ec; border-radius: 8px; background: #fff; color: #395886; font-size: 13px; font-weight: 600; }
-.txn-table a.txn-view-bills:hover { background: #eef2fb; }
+
+.txn-more-bills {
+    display: inline-block;
+    margin-left: 6px;
+    padding: 1px 7px;
+    border-radius: 99px;
+    background: #e7ecf8;
+    color: #2e476b;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.txn-table a.txn-view-bills {
+    display: inline-block;
+    padding: 4px 12px;
+    border: 1px solid #c9d4ec;
+    border-radius: 8px;
+    background: #fff;
+    color: #395886;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.txn-table a.txn-view-bills:hover {
+    background: #eef2fb;
+}
+
 @media (pointer: coarse) {
     /* sidebar.css enlarges inline table links with padding plus a negative margin. On this bordered
-       button that made it taller than its row, so it gets a real 44px touch height instead. */
-    body.fig .txn-table a.txn-view-bills { display: inline-flex; align-items: center; min-height: 44px; padding: 0 14px; margin-block: 0; }
+           button that made it taller than its row, so it gets a real 44px touch height instead. */
+    body.fig .txn-table a.txn-view-bills {
+        display: inline-flex;
+        align-items: center;
+        min-height: 44px;
+        padding: 0 14px;
+        margin-block: 0;
+    }
 }
-.txn-head-actions { display: flex; flex-wrap: wrap; gap: 10px; }
-.txn-pay { display: inline-block; border-radius: 99px; padding: 4px 10px; font-size: 12px; font-weight: 600; }
-.txn-pay-unpaid { color: #a3323a; background: #fde8ea; }
-.txn-pay-partial { color: #94640a; background: #fff3d8; }
-.txn-pay-paid { color: #26734a; background: #e4f4e9; }
+
+.txn-head-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.txn-pay {
+    display: inline-block;
+    border-radius: 99px;
+    padding: 4px 10px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.txn-pay-unpaid {
+    color: #a3323a;
+    background: #fde8ea;
+}
+
+.txn-pay-partial {
+    color: #94640a;
+    background: #fff3d8;
+}
+
+.txn-pay-paid {
+    color: #26734a;
+    background: #e4f4e9;
+}
+
 @media(max-width:640px) {
-    .txn-bills-table .num { text-align: left; }
+    .txn-bills-table .num {
+        text-align: left;
+    }
     /* Phones show the per-bill cards; the shipment total is already in the overview */
-    .txn-bills-table tfoot { display: none; }
-    .txn-head-actions { width: 100%; }
-    .txn-head-actions .btn { flex: 1 1 auto; text-align: center; }
+    .txn-bills-table tfoot {
+        display: none;
+    }
+    .txn-head-actions {
+        width: 100%;
+    }
+    .txn-head-actions .btn {
+        flex: 1 1 auto;
+        text-align: center;
+    }
 }
+
 /* Payment state next to the progress status (detail overview) and the "No bills" payment badge */
-.txn-pay-none { color: #4f5f78; background: #eef1f6; }
-.txn-states { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; }
-.txn-state { display: inline-flex; align-items: center; gap: 8px; }
-.txn-state-label { color: #4f5f78; font-size: 12px; }
-@media(max-width:640px) { .txn-overview-head { flex-wrap: wrap; } }
+
+.txn-pay-none {
+    color: #4f5f78;
+    background: #eef1f6;
+}
+
+.txn-states {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 18px;
+}
+
+.txn-state {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.txn-state-label {
+    color: #4f5f78;
+    font-size: 12px;
+}
+
+@media(max-width:640px) {
+    .txn-overview-head {
+        flex-wrap: wrap;
+    }
+}
