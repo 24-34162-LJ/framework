@@ -33,7 +33,7 @@
         correct: $("#sfCorrect"), correctWrap: $("#sfCorrectWrap"),
         stageLabel: $("#sfStageLabel"), stage: $("#sfStage"), current: $("#sfCurrent"),
         note: $("#sfNote"), warn: $("#sfWarn"),
-        at: $("#sfAt"), arrival: $("#sfArrival"), reason: $("#sfReason"), reasonField: $("#sfReasonField"),
+        at: $("#sfAt"), arrival: $("#sfArrival"), arrivalHint: $("#sfArrivalHint"), arrivalHelp: $("#sfArrivalHelp"), reason: $("#sfReason"), reasonField: $("#sfReasonField"),
         remarks: $("#sfRemarks"), remarksHint: $("#sfRemarksHint"), remarksReq: $("#sfRemarksReq"),
         counter: $("#sfCounter"), notify: $("#sfNotify"),
         banner: $("#sfBanner"), save: $("#sfSave"), cancel: $("#sfCancel"),
@@ -126,6 +126,13 @@
     /* ---------- form state ---------- */
     function correcting() { return !!(els.correct && els.correct.checked); }
     function stageList() { return correcting() ? (state.correctionStages || []) : (state.stages || []); }
+    // Corrections (admin, with remarks) may override the connection rules to fix old records
+    function isBlocked(s) { return !correcting() && !!(s && s.needs && s.needs.length); }
+    function firstBlocked() {
+        var list = stageList();
+        for (var i = 0; i < list.length; i++) if (!list[i].exception && isBlocked(list[i])) return list[i];
+        return null;
+    }
     function pickedStage() {
         var name = els.stage.value, list = stageList();
         for (var i = 0; i < list.length; i++) if (list[i].name === name) return list[i];
@@ -159,8 +166,11 @@
         var main = list.filter(function (s) { return !s.exception; });
         var exc  = list.filter(function (s) { return s.exception; });
         function opt(s) {
-            var o = make("option", "", s.group && s.group !== s.name ? s.name + " · " + s.group : s.name);
-            o.value = s.name; return o;
+            var label = s.group && s.group !== s.name ? s.name + " · " + s.group : s.name;
+            var blocked = isBlocked(s);
+            // A stage whose Customs Details (or payment) are missing stays visible but cannot be picked
+            var o = make("option", "", blocked ? label + " — needs details" : label);
+            o.value = s.name; o.disabled = blocked; return o;
         }
         main.forEach(function (s) { sel.appendChild(opt(s)); });
         if (exc.length) {
@@ -183,10 +193,18 @@
             if (state.current.closed && !state.canCorrect) msg = "This shipment is closed (" + state.current.name + "). Only an administrator can correct it.";
             else if (state.current.closed) msg = 'This shipment is closed. Turn on "Correct a previous stage" to change it.';
             else msg = "No further stages are available.";
+        } else if (s && s.warning && !corr) {
+            msg = s.warning + " You can still move it, but collect payment before releasing the cargo.";
+            link = "View bills"; href = (state.links || {}).billing || "";
         } else if (s && s.helper === "delivery") {
             msg = "Review the trucking and drop-off details for this shipment."; link = "View delivery details"; href = (state.links || {}).delivery || "";
         } else if (s && s.helper === "customs") {
             msg = "Review the customs entry and duty details for this shipment."; link = "View customs details"; href = (state.links || {}).customs || "";
+        } else if (!s && firstBlocked()) {
+            var b = firstBlocked();
+            msg = b.name + " needs " + b.needs.join(", ") + " first.";
+            if (b.needsLink === "delivery") { link = "Set up delivery details"; href = (state.links || {}).delivery || ""; }
+            else { link = "Add customs details"; href = (state.links || {}).customs || ""; }
         }
         els.note.textContent = "";
         els.note.hidden = msg === "";
@@ -198,6 +216,19 @@
                 els.note.appendChild(a);
             }
         }
+
+        // Examination and later stages need the cargo to have arrived (the server checks the same rule)
+        var arrivalNeeded = !corr && !!(s && s.arrival);
+        if (els.arrivalHint) {
+            els.arrivalHint.textContent = arrivalNeeded ? "Required for " + s.name : "Optional";
+            els.arrivalHint.classList.toggle("is-required", arrivalNeeded);
+        }
+        if (els.arrivalHelp) {
+            els.arrivalHelp.textContent = arrivalNeeded
+                ? "The cargo must have arrived to be at " + s.name + ". Enter the date it arrived (today or earlier)."
+                : "Record the shipment's arrival date. Leave blank if it has not arrived.";
+        }
+        els.arrival.required = arrivalNeeded;
 
         var req = remarksRequired();
         var needsReason = !!(s && s.name === "On Hold");
@@ -221,6 +252,7 @@
         els.remarks.value = "";
         els.reason.value = "";
         els.arrival.value = state.actualArrival || "";
+        els.arrival.max = new Date(nowMs()).toISOString().slice(0, 10);   // the picker cannot choose a future date
         els.notify.checked = true;
         els.at.value = fmtLocal(nowMs());
         if (state.lastAt) els.at.min = String(state.lastAt).replace(" ", "T").slice(0, 16);
@@ -278,11 +310,14 @@
         if (r.length > 255) errs.remarks = "Remarks can be up to 255 characters.";
         else if (r === "" && remarksRequired()) {
             errs.remarks = correcting() ? "Remarks are required for every correction." : "Remarks are required when setting status to " + s.name + ".";
+        } else if (remarksRequired() && r.length < 10) {
+            errs.remarks = "Explain the reason in at least 10 characters (it is kept in the audit trail).";
         }
         var at = parseLocal(els.at.value);
         if (isNaN(at)) errs.occurred_at = "Enter a valid date and time.";
         else if (at > nowMs() + 5 * 60000) errs.occurred_at = "The date and time cannot be in the future.";
         if (els.arrival.value && els.arrival.value > new Date(nowMs()).toISOString().slice(0, 10)) errs.actual_arrival_date = "Actual arrival cannot be in the future.";
+        else if (!els.arrival.value && s && s.arrival && !correcting()) errs.actual_arrival_date = "Enter the Actual Arrival date: the cargo must have arrived to be at " + s.name + ".";
         return errs;
     }
 

@@ -159,7 +159,7 @@ CREATE TABLE customs_processing (
     duties_taxes_amount DECIMAL(15,2),
     duties_paid_date    DATE,
     assessment_status   ENUM('pending','assessed','paid') NOT NULL DEFAULT 'pending',
-    examination_lane    ENUM('green','yellow','red') NULL,
+    examination_lane    ENUM('green','yellow','orange','red') NULL,
     clearance_date      DATE,
     customs_remarks     TEXT,
     updated_by          INT UNSIGNED NULL,

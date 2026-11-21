@@ -14,6 +14,8 @@
     --idv-line: var(--line, #e9edf8);
     --idv-navy: var(--navy, #1e2f4d);
     --idv-focus: #2f5ea8;
+    --idv-accent: #395886;     --idv-accent-hover: #314b72;
+    --idv-rule: #cfd8e8;       --idv-soft: #f5f7fb; --idv-soft-hover: #eef2fa;
     --idv-ok-bg: #e0f4e8;      --idv-ok-fg: #1d6b3e;
     --idv-warn-bg: #fcf1dc;    --idv-warn-fg: #8a5a0f;
     --idv-bad-bg: #fde7e8;     --idv-bad-fg: #a92d32;
@@ -36,77 +38,45 @@
 .idv-processing { background: var(--idv-info-bg); color: var(--idv-info-fg); }
 .idv-pending { background: var(--idv-neutral-bg); color: var(--idv-neutral-fg); }
 
-/* Choose how to verify: live check vs photo upload (same layout as Add Shipment's start cards) */
-.idv-choose { display: grid; gap: 18px; min-width: 0; }
-.idv-choose-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; }
-.idv-choose-head h2 { margin: 0; color: var(--idv-navy); font: 600 19px/1.35 "Libre Franklin", sans-serif; }
-.idv-stepper { display: flex; align-items: center; gap: 12px; margin: 0; padding: 0; list-style: none; color: var(--idv-muted); font-size: 13px; }
-.idv-stepper li { display: flex; align-items: center; gap: 8px; white-space: nowrap; }
-.idv-stepper b { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: #e9edf5; color: var(--idv-navy); font-size: 13px; }
-.idv-stepper li.active { color: var(--idv-navy); font-weight: 500; }
-.idv-stepper li.active b { background: #395886; color: #fff; }
-.idv-stepper-line { width: 56px; height: 2px; background: #dfe5f1; }
+/* ID verification card: heading + status, then the live check, the digital ID option and accepted IDs */
+.idv-main { gap: 16px; }
+.idv-main-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.idv-main-head h2 { margin: 0; }
+.idv-status { margin: -8px 0 0; color: var(--idv-text); font-size: 14px; line-height: 1.5; }
 
-.idv-start-card { display: flex; flex-direction: column; gap: 18px; min-width: 0; padding: 0 28px 26px; border: 1px solid #e8ecf5; border-radius: 16px; background: #fff; box-shadow: 0 2px 8px rgba(29, 46, 76, .04); }
-.idv-start-head { margin: 0 -28px; padding: 26px 28px 22px; border-bottom: 1px solid #e9edf5; }
-.idv-start-icon { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 12px; background: #e9edf5; color: #395886; }
-.idv-start-icon .idv-icon { width: 24px; height: 24px; }
-.idv-start-head h3 { margin: 0; color: var(--idv-navy); font: 600 19px/27px "Libre Franklin", sans-serif; }
-.idv-start-head p { margin: 9px 0 0; color: var(--idv-muted); font-size: 13px; line-height: 20px; }
-
-
-.idv-start-form { display: flex; flex: 1; flex-direction: column; gap: 14px; }
-.idv-start-form .idv-consent { max-width: none; margin-top: auto; }
-.idv-start-form .idv-consent span { font-size: 12.5px; color: var(--idv-muted); }
-.idv-btn { display: inline-flex; align-self: flex-start; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 20px; border: 1px solid #395886; border-radius: 9px; background: #395886; color: #fff; font: 600 14px/20px "Libre Franklin", sans-serif; cursor: pointer; }
-.idv-btn:hover { background: #314b72; }
+.idv-btn { display: inline-flex; align-self: flex-start; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 20px; border: 1px solid var(--idv-accent); border-radius: 9px; background: var(--idv-accent); color: #fff; font: 600 14px/20px "Libre Franklin", sans-serif; cursor: pointer; transition: background-color .15s ease-out; }
+.idv-btn:hover { background: var(--idv-accent-hover); }
 .idv-btn:disabled { opacity: .6; cursor: progress; }
-.idv-btn .idv-icon { width: 18px; height: 18px; transition: transform .15s ease; }
+.idv-btn .idv-icon { width: 18px; height: 18px; transition: transform .15s ease-out; }
 .idv-btn:hover .idv-icon { transform: translateX(2px); }
 
+/* Live check: what happens on the left, consent + start on the right */
+.idv-live { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 20px 40px; padding-top: 20px; border-top: 1px solid var(--idv-line); }
+.idv-live-intro h3 { margin: 0; color: var(--idv-navy); font: 600 16px/1.4 "Libre Franklin", sans-serif; }
+.idv-live-intro > p { margin: 4px 0 0; max-width: 52ch; color: var(--idv-muted); font-size: 13.5px; line-height: 1.5; }
+.idv-steps { display: grid; gap: 10px; margin: 18px 0 0; padding: 0; list-style: none; counter-reset: idv-step; }
+.idv-steps li { position: relative; padding-left: 30px; color: var(--idv-muted); font-size: 13.5px; line-height: 1.5; counter-increment: idv-step; }
+.idv-steps li::before { content: counter(idv-step); position: absolute; top: 1px; left: 0; display: grid; place-items: center; width: 20px; height: 20px; border: 1px solid var(--idv-rule); border-radius: 50%; color: var(--idv-navy); font-size: 11.5px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.idv-steps strong { color: var(--idv-text); font-weight: 600; }
+.idv-live-form { display: flex; flex-direction: column; gap: 14px; }
+.idv-live-form .idv-consent { max-width: none; }
+.idv-live-form .idv-consent span { color: var(--idv-muted); font-size: 12.5px; }
+.idv-hint { margin: 0; color: var(--idv-muted); font-size: 12.5px; line-height: 1.5; }
 
-.idv-choose-foot { display: grid; gap: 14px; padding: 16px 20px; border-radius: 12px; background: #eef1f8; }
-.idv-accepted { display: grid; gap: 8px; }
-.idv-accepted > span { color: var(--idv-muted); font-size: 12px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }
-.idv-accepted ul { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
-.idv-accepted li { padding: 4px 10px; border: 1px solid #dfe5f1; border-radius: 999px; background: #fff; color: var(--idv-text); font-size: 12.5px; line-height: 18px; }
-.idv-control { display: flex; align-items: flex-start; gap: 8px; margin: 0; color: var(--idv-muted); font-size: 12.5px; line-height: 1.5; }
-.idv-control .idv-icon { color: #395886; }
-.idv-control strong { color: var(--idv-text); font-weight: 600; }
+.idv-accepted { margin: 0; padding-top: 14px; border-top: 1px solid var(--idv-line); color: var(--idv-muted); font-size: 12.5px; line-height: 1.6; }
+.idv-accepted strong { margin-right: 6px; color: var(--idv-text); font-weight: 600; }
 
-/* Single live-check card: icon + title on top, steps left, consent + button right */
-.idv-live-card .idv-start-head { display: flex; align-items: flex-start; gap: 16px; }
-.idv-live-card .idv-start-head .idv-start-icon { flex: none; }
-.idv-live-card .idv-start-head p { max-width: 60ch; }
-.idv-start-body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 28px; padding-top: 4px; }
-.idv-flow { display: grid; gap: 0; margin: 0; padding: 0; list-style: none; }
-.idv-flow li { position: relative; display: flex; align-items: flex-start; gap: 14px; padding-bottom: 20px; }
-.idv-flow li:last-child { padding-bottom: 0; }
-.idv-flow li:not(:last-child)::after { content: ""; position: absolute; top: 42px; bottom: 4px; left: 19px; width: 2px; background: #e3e8f2; }
-.idv-flow-icon { display: grid; place-items: center; flex: none; width: 40px; height: 40px; border-radius: 10px; background: #e9edf5; color: #395886; }
-.idv-flow-icon .idv-icon { width: 20px; height: 20px; }
-.idv-flow li > span:last-child { display: grid; gap: 2px; padding-top: 2px; color: var(--idv-muted); font-size: 13px; line-height: 1.45; }
-.idv-flow strong { color: var(--idv-text); font-size: 14px; font-weight: 600; }
-.idv-live-card .idv-start-form { padding: 20px; border: 1px solid #e9edf5; border-radius: 12px; background: #f8f9fc; }
-.idv-live-card .idv-start-form .idv-consent { margin-top: 0; }
-.idv-tip { display: flex; align-items: flex-start; gap: 8px; margin: 0; color: var(--idv-text); font-size: 13px; line-height: 1.45; }
-.idv-tip .idv-icon { color: #395886; }
 @media (max-width: 900px) {
-    .idv-start-body { grid-template-columns: 1fr; gap: 20px; }
+    .idv-live { grid-template-columns: minmax(0, 1fr); }
 }
 
 /* "Finish your live ID check" card */
-.idv-verify-head { display: flex; align-items: flex-start; gap: 14px; }
+.idv-verify-head { display: grid; gap: 4px; }
 .idv-verify-head h2 { margin: 0; }
 .idv-verify-head .profile-note { margin-top: 4px; }
-.idv-verify-mark { display: grid; place-items: center; flex: none; width: 44px; height: 44px; border-radius: 12px; background: #e9edf5; color: #395886; }
-.idv-verify-mark .idv-icon { width: 24px; height: 24px; }
 
 @media (max-width: 560px) {
-    .idv-start-card { padding: 0 20px 22px; }
-    .idv-start-head { margin: 0 -20px; padding: 22px 20px 18px; }
     .idv-btn { align-self: stretch; }
-    .idv-stepper-line { width: 28px; }
 }
 @media (prefers-reduced-motion: reduce) {
     .idv-btn .idv-icon { transition: none; }
@@ -160,7 +130,7 @@
 .idv-empty strong { color: var(--idv-text); font-size: 15px; font-weight: 600; }
 .report-pager { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; color: var(--idv-muted); font-size: 13px; }
 .report-pager nav { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
-.report-pager a { color: #395886; font-weight: 500; }
+.report-pager a { color: var(--idv-accent); font-weight: 500; }
 
 /* Admin review */
 .idv-head-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
@@ -168,7 +138,7 @@
 .idv-review > div { display: grid; gap: 20px; min-width: 0; }
 .idv-review h2 { margin: 0; color: var(--idv-navy); font: 600 17px/1.4 "Libre Franklin", sans-serif; }
 .idv-card-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px 12px; }
-.idv-card-head a { color: #395886; font-size: 13px; font-weight: 500; }
+.idv-card-head a { color: var(--idv-accent); font-size: 13px; font-weight: 500; }
 .idv-frame { aspect-ratio: 1.586; display: grid; place-items: center; overflow: hidden; border-radius: 12px; background: #f4f6fb; border: 1px solid var(--idv-line); }
 .idv-frame img { width: 100%; height: 100%; object-fit: contain; }
 .idv-frame p { margin: 0; padding: 20px; color: var(--idv-muted); font-size: 14px; text-align: center; }
@@ -192,7 +162,8 @@
 .idv-field textarea[aria-invalid="true"] { border-color: var(--idv-bad-fg); }
 .idv-field small { color: var(--idv-muted); font-size: 12.5px; }
 .idv-field small.idv-error { color: var(--idv-bad-fg); }
-.idv-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.idv-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.idv-actions form { margin: 0; }
 .idv-actions .btn { min-height: 44px; border: 0; }
 .idv-actions .btn-primary { box-shadow: 0 4px 8px rgba(29, 46, 76, .2); }
 .idv-btn-danger { background: var(--idv-danger); color: #fff; }
@@ -205,3 +176,8 @@
     .idv-checks .idv-check-detail { grid-column: 2; }
     .idv-actions .btn { flex: 1 1 140px; }
 }
+
+/* Links from an ID check to the user account and client company */
+.idv-related { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 8px; font-size: 13px; }
+.idv-related a { color: #395886; font-weight: 600; }
+.idv-related a:hover { text-decoration: underline; }

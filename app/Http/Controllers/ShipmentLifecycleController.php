@@ -51,6 +51,9 @@ class ShipmentLifecycleController extends Controller
                 if (! $shipment) {
                     return ['status' => 404, 'body' => ['error' => 'Shipment not found.']];
                 }
+                if ($shipment->needsClaimBy($request->user())) {
+                    return ['status' => 409, 'body' => ['error' => 'Assign this shipment to yourself (Assign to me) before making changes.']];
+                }
                 if ($role === 'staff' && $shipment->assigned_staff_id && (int) $shipment->assigned_staff_id !== (int) $request->user()->user_id) {
                     return ['status' => 403, 'body' => ['error' => 'Only the assigned staff member or an administrator can update this shipment.']];
                 }
@@ -108,6 +111,7 @@ class ShipmentLifecycleController extends Controller
                         if ($transaction) {
                             $transaction->status = $stages->transactionStatus($resume, (string) $transaction->status);
                             $transaction->completed_at = null;
+                            $transaction->billing_id ??= $stages->firstBillId($shipment);
                             $transaction->save();
                             TransactionHistory::query()->create([
                                 'transaction_id' => $transaction->transaction_id,
@@ -143,16 +147,20 @@ class ShipmentLifecycleController extends Controller
                 $shipment->current_status = $targetName;
                 $shipment->save();
                 $transaction = Transaction::query()->where('shipment_id', $id)->orderByDesc('transaction_id')->lockForUpdate()->first();
-                $transactionStatus = $targetName === 'Cancelled' ? 'completed' : 'ongoing';
                 if ($transaction) {
                     $transactionStatus = $stages->transactionStatus($target, (string) $transaction->status);
                     $transaction->status = $transactionStatus;
                     $transaction->completed_at = $transactionStatus === 'completed' ? now() : null;
+                    $transaction->billing_id ??= $stages->firstBillId($shipment);
                     $transaction->save();
                 } else {
+                    // Same rule as an existing transaction: start from the status the shipment's
+                    // previous stage implies, then apply the hold/cancel stage on top of it.
+                    $transactionStatus = $stages->transactionStatus($target, $stages->transactionStatus($current, 'pending'));
                     $transaction = Transaction::query()->create([
                         'client_id' => $shipment->client_id,
                         'shipment_id' => $id,
+                        'billing_id' => $stages->firstBillId($shipment),
                         'status' => $transactionStatus,
                         'completed_at' => $transactionStatus === 'completed' ? now() : null,
                     ]);

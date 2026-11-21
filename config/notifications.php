@@ -35,5 +35,13 @@ return [
         'document_rejected' => ['email' => true, 'sms' => 'user'],
         'shipment_created_from_request' => ['email' => true, 'email_roles' => ['admin', 'staff'], 'sms' => null],
         'archive' => ['email' => false, 'sms' => null],
+        // Billing and payments (client only). Money messages go to the company mobile once;
+        // progress notes on a payment are email only.
+        'bill_created' => ['email' => true, 'sms' => 'company'],
+        'payment_verified' => ['email' => true, 'sms' => 'company'],
+        'payment_rejected' => ['email' => true, 'sms' => 'company'],
+        'payment_reversed' => ['email' => true, 'sms' => 'company'],
+        'payment_recorded' => ['email' => true, 'sms' => null],
+        'payment_escalated' => ['email' => true, 'sms' => null],
     ],
 ];

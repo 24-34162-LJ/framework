@@ -46,10 +46,10 @@ class IdentityVerification extends Model
         'id_number_hash', 'id_number_last4', 'extracted', 'checks', 'file_path', 'file_mime', 'original_name',
         'consent_version', 'consent_at', 'consent_ip', 'reviewed_by', 'reviewed_at', 'review_note',
         'purge_after', 'file_purged_at',
-        'provider_reference', 'provider_transaction_id', 'provider_url', 'selfie_path',
+        'provider_reference', 'provider_transaction_id', 'provider_url', 'selfie_path', 'document_source', 'provider_qr',
     ];
 
-    protected $hidden = ['id_number_hash', 'file_path', 'selfie_path', 'provider_url'];
+    protected $hidden = ['id_number_hash', 'file_path', 'selfie_path', 'provider_url', 'provider_qr'];
 
     protected function casts(): array
     {

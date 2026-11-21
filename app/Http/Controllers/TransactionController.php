@@ -35,6 +35,8 @@ class TransactionController extends Controller
         abort_if($view === 'correct' && $actor->role !== 'admin', 403);
         $record = null;
         $history = collect();
+        $bills = collect();
+        $payment = null;
         $shipmentsToLink = collect();
         $linkBills = collect();
         $suggestedStatus = null;
@@ -43,6 +45,10 @@ class TransactionController extends Controller
             $record = $this->transactionQuery($actor)->select('t.*', 'c.client_name', 's.reference_no', 's.current_status as shipment_status', 's.assigned_staff_id', 's.archived_at', 'b.billing_no')
                 ->where('t.transaction_id', $request->integer('id'))->first();
             abort_unless($record, 404, 'Transaction not found.');
+            $bills = DB::table('billings as b')->join('v_billing_balance as v', 'v.billing_id', '=', 'b.billing_id')
+                ->where('b.shipment_id', $record->shipment_id)->where('b.client_id', $record->client_id)->orderBy('b.billing_id')
+                ->get(['b.billing_id', 'b.billing_no', 'b.billing_date', 'b.due_date', 'b.total_amount', 'v.amount_paid', 'v.balance', 'v.payment_status']);
+            $payment = Transaction::paymentState($bills->count(), $bills->sum('total_amount'), $bills->sum('amount_paid'));
             $history = TransactionHistory::query()->with('performedBy')->where('transaction_id', $record->transaction_id)->orderByDesc('created_at')->orderByDesc('history_id')->get();
             if ($view === 'correct') {
                 $suggestedStatus = app(\App\Services\ShipmentStageService::class)->transactionStatus(
@@ -64,26 +70,44 @@ class TransactionController extends Controller
             'q' => trim((string) $request->query('q', '')), 'status' => (string) $request->query('status', ''),
             'client_id' => $request->integer('client_id'), 'start' => (string) $request->query('start', ''), 'end' => (string) $request->query('end', ''),
         ];
-        $baseQuery = $this->transactionQuery($actor)->when($actor->role === 'admin' && $filters['client_id'], fn ($query) => $query->where('t.client_id', $filters['client_id']));
-        $stats = (clone $baseQuery)->selectRaw('t.status, COUNT(*) AS total')->groupBy('t.status')->pluck('total', 'status')->all();
-        $stats = ['pending' => (int) ($stats['pending'] ?? 0), 'ongoing' => (int) ($stats['ongoing'] ?? 0), 'completed' => (int) ($stats['completed'] ?? 0)];
-        $stats['total'] = array_sum($stats);
+        $stats = ['pending' => 0, 'ongoing' => 0, 'completed' => 0, 'total' => 0];
         $transactions = null;
         $clients = collect();
         if ($view === 'list') {
-            $query = $this->transactionQuery($actor)->select('t.*', 'c.client_name', 's.reference_no', 's.current_status as shipment_status', 'b.billing_no')
+            // Client, search and date filters apply to both the summary cards and the table; the
+            // status filter only narrows the table, otherwise the other status cards would read 0.
+            $filtered = $this->transactionQuery($actor)
                 ->when($actor->role === 'admin' && $filters['client_id'], fn ($q) => $q->where('t.client_id', $filters['client_id']));
-            if (in_array($filters['status'], ['pending', 'ongoing', 'completed'], true)) {
-                $query->where('t.status', $filters['status']);
-            }
             if ($filters['q'] !== '') {
-                $term = '%'.$filters['q'].'%';
-                $query->where(fn ($q) => $q->where('t.transaction_id', 'like', $term)->orWhere('c.client_name', 'like', $term)->orWhere('s.reference_no', 'like', $term)->orWhere('b.billing_no', 'like', $term));
+                $term = '%'.addcslashes($filters['q'], '\\%_').'%';
+                // Accepts the displayed code (TXN-2026-0012) or a bare number (12, 0012).
+                $transactionId = preg_match('/^(?:TXN-\d{4}-)?0*(\d{1,18})$/i', $filters['q'], $match) ? (int) $match[1] : null;
+                // A transaction covers every bill of its shipment, so a bill number matches any of them.
+                $filtered->where(fn ($q) => $q->when($transactionId !== null, fn ($q) => $q->orWhere('t.transaction_id', $transactionId))
+                    ->orWhere('c.client_name', 'like', $term)->orWhere('s.reference_no', 'like', $term)
+                    ->orWhereExists(fn ($sub) => $sub->selectRaw('1')->from('billings as sb')->whereColumn('sb.shipment_id', 't.shipment_id')
+                        ->whereColumn('sb.client_id', 't.client_id')->where('sb.billing_no', 'like', $term)));
             }
             foreach (['start' => '>=', 'end' => '<='] as $key => $operator) {
                 if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $filters[$key]) && strtotime($filters[$key]) !== false) {
-                    $query->whereDate('t.created_at', $operator, $filters[$key]);
+                    $filtered->whereDate('t.created_at', $operator, $filters[$key]);
                 }
+            }
+            $counts = (clone $filtered)->selectRaw('t.status, COUNT(*) AS total')->groupBy('t.status')->pluck('total', 'status')->all();
+            $stats = ['pending' => (int) ($counts['pending'] ?? 0), 'ongoing' => (int) ($counts['ongoing'] ?? 0), 'completed' => (int) ($counts['completed'] ?? 0)];
+            $stats['total'] = array_sum($stats);
+
+            $shipmentBills = fn () => DB::table('billings as sb')->whereColumn('sb.shipment_id', 't.shipment_id')->whereColumn('sb.client_id', 't.client_id');
+            $query = $filtered->select('t.*', 'c.client_name', 's.reference_no', 's.current_status as shipment_status', 'b.billing_no')
+                ->selectSub($shipmentBills()->selectRaw('COUNT(*)'), 'bill_count')
+                ->selectSub($shipmentBills()->selectRaw('COALESCE(SUM(sb.total_amount), 0)'), 'bill_total')
+                // Verified payments only, the same rule as the Billing page's "Verified paid"
+                ->selectSub($shipmentBills()->join('payments as sp', 'sp.billing_id', '=', 'sb.billing_id')
+                    ->where('sp.verification_status', 'verified')->selectRaw('COALESCE(SUM(sp.amount), 0)'), 'bill_paid')
+                ->selectSub($shipmentBills()->orderBy('sb.billing_id')->limit(1)->select('sb.billing_id'), 'first_billing_id')
+                ->selectSub($shipmentBills()->orderBy('sb.billing_id')->limit(1)->select('sb.billing_no'), 'first_billing_no');
+            if (in_array($filters['status'], ['pending', 'ongoing', 'completed'], true)) {
+                $query->where('t.status', $filters['status']);
             }
             $transactions = $query->orderByDesc('t.created_at')->orderByDesc('t.transaction_id')->paginate(20)->withQueryString();
             if ($actor->role === 'admin') {
@@ -91,7 +115,7 @@ class TransactionController extends Controller
             }
         }
 
-        return view('transactions.index', compact('view', 'record', 'history', 'shipmentsToLink', 'linkBills', 'suggestedStatus', 'filters', 'stats', 'transactions', 'clients'));
+        return view('transactions.index', compact('view', 'record', 'history', 'bills', 'payment', 'shipmentsToLink', 'linkBills', 'suggestedStatus', 'filters', 'stats', 'transactions', 'clients'));
     }
 
     public function store(Request $request): RedirectResponse
@@ -113,7 +137,7 @@ class TransactionController extends Controller
                 if (Transaction::query()->where('shipment_id', $shipment->shipment_id)->lockForUpdate()->exists()) {
                     throw new RuntimeException('This shipment already has a transaction. Open its existing record instead.');
                 }
-                $billingId = $data['billing_id'] ?? null;
+                $billingId = $data['billing_id'] ?? app(\App\Services\ShipmentStageService::class)->firstBillId($shipment);
                 if ($billingId && ! Billing::query()->where('billing_id', $billingId)->where('shipment_id', $shipment->shipment_id)->where('client_id', $shipment->client_id)->exists()) {
                     throw new RuntimeException('The selected bill must belong to the shipment and its client.');
                 }
@@ -157,6 +181,9 @@ class TransactionController extends Controller
         try {
             DB::transaction(function () use ($request, $data, $visible): void {
                 $shipment = Shipment::query()->lockForUpdate()->findOrFail($visible->shipment_id);
+                if ($shipment->archived_at) {
+                    throw new RuntimeException('This shipment is archived. Reopen it before correcting its transaction.');
+                }
                 $transaction = Transaction::query()->lockForUpdate()->findOrFail($visible->transaction_id);
                 if ((int) $transaction->shipment_id !== (int) $shipment->shipment_id) {
                     throw new RuntimeException('The transaction no longer matches its shipment. Reload and try again.');
@@ -174,7 +201,8 @@ class TransactionController extends Controller
                 $transaction->completed_at = $targetStatus === 'completed' ? now() : null;
                 $transaction->save();
                 $description = 'Correction '.ucfirst($oldStatus).' → '.ucfirst($targetStatus).'; shipment stage: '.$shipment->current_status.'. Reason: ';
-                $description = mb_substr($description, 0, max(0, 255 - mb_strlen($data['reason']))).trim($data['reason']);
+                // Keep the status change in full and shorten the reason instead (column is 255).
+                $description = mb_substr($description.trim($data['reason']), 0, 255);
                 TransactionHistory::query()->create([
                     'transaction_id' => $transaction->transaction_id, 'event_type' => 'Authorized correction',
                     'description' => $description, 'performed_by' => $request->user()->user_id,

@@ -20,3 +20,9 @@
 .activity-page .report-pager nav { flex-wrap: wrap; }
 .activity-page .report-pager nav span { color: #4f5f78; }
 @media(max-width:720px) { .activity-page .page-head { align-items: flex-start; flex-direction: column; } .activity-search-controls { flex-wrap: wrap; } .activity-search-controls input { flex-basis: 100%; } }
+
+/* Tabs: All activity / Shipment updates (look comes from .report-tabs in reports.css) */
+.activity-tabs a { display: inline-flex; align-items: center; gap: 8px; }
+.activity-tab-count { min-width: 22px; padding: 1px 7px; border-radius: 999px; background: #eef1f8; color: #2d466a; font-size: 12px; font-weight: 600; text-align: center; font-variant-numeric: tabular-nums; }
+.activity-tabs a.active .activity-tab-count { background: rgba(255,255,255,.2); color: #fff; }
+.activity-tabs a:focus-visible { outline: 2px solid #395886; outline-offset: 2px; }

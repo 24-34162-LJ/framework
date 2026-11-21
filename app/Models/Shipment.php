@@ -123,12 +123,21 @@ class Shipment extends Model
      * Why an admin/staff user may not change this shipment's details, or null when they may.
      * Same rule as the Edit page: archived is read-only for everyone; closed is read-only except for admins.
      */
+    /** Staff may look at an unassigned shipment, but must claim it ("Assign to me") before changing it. */
+    public function needsClaimBy(User $user): bool
+    {
+        return $user->role === 'staff' && $this->assigned_staff_id === null;
+    }
+
     public function officeChangeBlockedFor(User $user): ?string
     {
         $this->loadMissing('stage');
 
         if ($this->archived_at !== null) {
             return $this->reference_no.' is archived and read-only.';
+        }
+        if ($this->needsClaimBy($user)) {
+            return 'No staff is assigned to '.$this->reference_no.'. Assign it to yourself (Assign to me) before making changes.';
         }
         if ((bool) $this->stage?->is_closed && $user->role !== 'admin') {
             return $this->reference_no.' is closed. Only an administrator can change it.';

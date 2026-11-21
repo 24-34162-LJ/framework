@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const index = rows.children.length;
         const row = document.createElement('div');
         row.className = 'bill-item-row';
-        row.innerHTML = `<select name="items[${index}][charge_type]" required><option value="">Select type</option><option>Freight</option><option>Handling</option><option>Documentation</option><option>Customs-related charge</option><option>Other expense</option><option>Orange lane</option><option>Red lane</option><option>DEA examination</option><option>BOC Task Force</option></select><input name="items[${index}][description]" maxlength="255" placeholder="Description"><input name="items[${index}][amount]" type="number" min="0.01" step="0.01" required placeholder="0.00"><button type="button" class="bill-remove" data-remove-bill-item aria-label="Remove charge">×</button>`;
+        row.innerHTML = `<select name="items[${index}][charge_type]" required><option value="">Select type</option><option>Freight</option><option>Handling</option><option>Documentation</option><option>Duties and taxes</option><option>Customs-related charge</option><option>Other expense</option><option>Orange lane</option><option>Red lane</option><option>DEA examination</option><option>BOC Task Force</option></select><input name="items[${index}][description]" maxlength="255" placeholder="Description"><input name="items[${index}][amount]" type="number" min="0.01" step="0.01" required placeholder="0.00"><button type="button" class="bill-remove" data-remove-bill-item aria-label="Remove charge">×</button>`;
         rows.append(row);
         recalc();
         row.querySelector('select').focus();

@@ -13,21 +13,29 @@
 @endphp
 @if ($checkable && ($isClientUpload || $check))
     <div class="cd-ai" data-ai-check-box>
-        @if (! $check)
+        @if (!$check)
             @if ($audience === 'staff')
-                <button type="button" class="link cd-ai-run" data-ai-check="{{ route('documents.ai-check', $document->document_id) }}">Run auto-check</button>
+                <button type="button" class="link cd-ai-run" data-ai-check="{{ route('documents.ai-check', $document->document_id) }}">Run
+                    auto-check</button>
             @else
-                <small class="cd-muted" data-ai-pending="{{ route('documents.ai-check', $document->document_id) }}">Auto-check not run yet</small>
+                <small class="cd-muted" data-ai-pending="{{ route('documents.ai-check', $document->document_id) }}">Auto-check not run
+                    yet</small>
             @endif
         @elseif (($check['status'] ?? '') === 'ok')
-            <small class="cd-ai-ok" title="{{ $check['summary'] ?? '' }}">✓ Auto-check: looks like {{ $check['detected_type'] ?? $document->doc_type }}@if (! empty($check['matched_numbers'])) · matches {{ implode(', ', array_slice($check['matched_numbers'], 0, 2)) }}@endif</small>
+            <small class="cd-ai-ok" title="{{ $check['summary'] ?? '' }}">✓ Auto-check: looks like
+                {{ $check['detected_type'] ?? $document->doc_type }}@if (!empty($check['matched_numbers']))
+                    · matches {{ implode(', ', array_slice($check['matched_numbers'], 0, 2)) }}
+                @endif
+            </small>
         @elseif (($check['status'] ?? '') === 'warning')
-            <small class="cd-ai-warn">! {{ $audience === 'staff' ? 'Auto-check' : 'Please check this file' }}: {{ implode(' ', array_slice($check['issues'] ?? [], 0, 2)) }}</small>
+            <small class="cd-ai-warn">! {{ $audience === 'staff' ? 'Auto-check' : 'Please check this file' }}:
+                {{ implode(' ', array_slice($check['issues'] ?? [], 0, 2)) }}</small>
         @else
             <small class="cd-muted">{{ $check['summary'] ?? 'Auto-check unavailable.' }}</small>
         @endif
         @if ($check && $audience === 'staff')
-            <button type="button" class="link cd-ai-run" data-ai-check="{{ route('documents.ai-check', $document->document_id) }}">Re-check</button>
+            <button type="button" class="link cd-ai-run"
+                data-ai-check="{{ route('documents.ai-check', $document->document_id) }}">Re-check</button>
         @endif
     </div>
 @endif

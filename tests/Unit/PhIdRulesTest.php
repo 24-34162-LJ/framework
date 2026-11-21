@@ -64,6 +64,17 @@ class PhIdRulesTest extends TestCase
         $this->assertSame('verified', $accepted['decision']);
     }
 
+    public function test_live_check_without_a_face_match_score_goes_to_review(): void
+    {
+        $result = $this->rules->evaluate($this->goodLicense(['face_expected' => true, 'face_score' => null]), ['Juan Dela Cruz'], $this->today);
+
+        $this->assertSame('needs_review', $result['decision']);
+        $this->assertStringContainsString('compares the faces', implode(' ', $result['reasons']));
+
+        $matched = $this->rules->evaluate($this->goodLicense(['face_expected' => true, 'face_checked' => true, 'face_score' => 0.9]), ['Juan Dela Cruz'], $this->today);
+        $this->assertSame('verified', $matched['decision']);
+    }
+
     public function test_expired_id_is_rejected(): void
     {
         $result = $this->rules->evaluate($this->goodLicense(['expiry_date' => '2025-01-01']), ['Juan Dela Cruz'], $this->today);

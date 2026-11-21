@@ -34,7 +34,9 @@ class CallSiteKeysTest extends TestCase
 
     public function test_status_call_sites_use_status_event_type(): void
     {
-        $this->assertStringContainsString("'status', 'Shipment status updated'", file_get_contents(app_path('Http/Controllers/ShipmentStatusController.php')));
+        // Update Status modal and delivery sync both notify through ShipmentStageService::applyChange().
+        $this->assertStringContainsString("'status', 'Shipment status updated'", file_get_contents(app_path('Services/ShipmentStageService.php')));
+        $this->assertStringContainsString('->applyChange(', file_get_contents(app_path('Http/Controllers/ShipmentStatusController.php')));
         $lifecycle = file_get_contents(app_path('Http/Controllers/ShipmentLifecycleController.php'));
         $this->assertStringContainsString("'status', 'Shipment reopened'", $lifecycle);
         $this->assertStringContainsString("'status', 'Shipment '.mb_strtolower(\$targetName)", $lifecycle);

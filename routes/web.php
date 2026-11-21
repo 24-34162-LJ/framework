@@ -110,7 +110,12 @@ Route::post('/shipment_assignment.php', [AdminShipmentManagementController::clas
 
 Route::middleware(['auth', 'role:admin,staff'])->group(function (): void {
     Route::post('/billing', [BillingController::class, 'storeBill'])->name('billing.store');
-    Route::post('/billing/payments/review', [BillingController::class, 'reviewPayment'])->middleware('role:admin')->name('billing.payments.review');
+    Route::post('/billing/payments/review', [BillingController::class, 'reviewPayment'])->middleware('role:admin,staff')->name('billing.payments.review');
+    Route::post('/billing/payments/reverse', [BillingController::class, 'reversePayment'])->middleware('role:admin')->name('billing.payments.reverse');
+    Route::get('/account', [\App\Http\Controllers\AccountController::class, 'show'])->name('account');
+    Route::post('/account/details', [\App\Http\Controllers\AccountController::class, 'updateDetails'])->middleware('throttle:20,1')->name('account.details');
+    Route::post('/account/password', [\App\Http\Controllers\AccountController::class, 'updatePassword'])->middleware('throttle:6,1')->name('account.password');
+    Route::get('/locations/search',\App\Http\Controllers\LocationSearchController::class)->middleware('throttle:120,1')->name('locations.search');
     Route::get('/shipments/create', [ShipmentCreationController::class, 'create'])->name('shipments.add');
     Route::post('/shipments/add/check-bl', [ShipmentCreationController::class, 'checkBl'])->middleware('throttle:60,1')->name('shipments.add.check');
     Route::post('/shipments/add/extract', [ShipmentCreationController::class, 'extract'])->middleware('throttle:20,1')->name('shipments.add.extract');
@@ -120,8 +125,10 @@ Route::middleware(['auth', 'role:admin,staff'])->group(function (): void {
     Route::post('/shipments/{shipmentId}/customs', [ShipmentDetailsController::class, 'saveCustoms'])->whereNumber('shipmentId')->name('shipments.customs.save');
     Route::post('/shipments/{shipmentId}/delivery', [ShipmentDetailsController::class, 'saveDelivery'])->whereNumber('shipmentId')->name('shipments.delivery.save');
     Route::post('/shipments/{shipmentId}/status', [ShipmentStatusController::class, 'update'])->whereNumber('shipmentId')->middleware('throttle:30,1')->name('shipments.status.update');
+    Route::post('/shipments/{shipmentId}/claim', [ShipmentDetailsController::class, 'claim'])->whereNumber('shipmentId')->middleware('role:staff')->name('shipments.claim');
     Route::post('/shipments/{shipmentId}/reassign', [ShipmentDetailsController::class, 'reassign'])->whereNumber('shipmentId')->middleware('role:admin')->name('shipments.reassign');
     Route::get('/shipments/{shipmentId}', [ShipmentDetailsController::class, 'show'])->whereNumber('shipmentId')->name('shipments.show');
+    Route::delete('/shipments/{shipmentId}', \App\Http\Controllers\ShipmentDeleteController::class)->whereNumber('shipmentId')->middleware(['role:admin', 'throttle:20,1'])->name('shipments.destroy');
     Route::post('/shipments/{shipmentId}/documents', [ShipmentDocumentController::class, 'store'])->whereNumber('shipmentId')->middleware('throttle:30,1')->name('shipments.documents.store');
     Route::delete('/shipment-documents/{documentId}', [ShipmentDocumentController::class, 'destroy'])->whereNumber('documentId')->name('shipments.documents.destroy');
 });
@@ -259,7 +266,6 @@ Route::get('/client-management/client_profile.php', [ClientProfileController::cl
 Route::get('/client-management/client_billing.php', [BillingController::class, 'index'])->middleware('legacy.role:client');
 Route::post('/client-management/client_billing.php', [BillingController::class, 'recordPayment'])->middleware('legacy.role:client');
 Route::get('/client-management/client_transactions.php', [TransactionController::class, 'index'])->middleware('legacy.role:client');
-Route::post('/client-management/client_transactions.php', [TransactionController::class, 'store'])->middleware('legacy.role:client');
 Route::get('/client-management/client_activity.php', [ActivityController::class, 'shipmentUpdates'])->middleware(['auth', 'role:admin']);
 Route::get('/client-management/clients.php', [ClientManagementController::class, 'index'])->middleware('legacy.role:admin,staff');
 Route::post('/client-management/clients.php', [ClientManagementController::class, 'save'])->middleware('legacy.role:admin');

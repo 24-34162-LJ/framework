@@ -9,9 +9,14 @@
 
 namespace App\Services;
 
+use App\Models\Billing;
 use App\Models\Shipment;
 use App\Models\ShipmentStage;
 use App\Models\ShipmentStatusUpdate;
+use App\Models\Transaction;
+use App\Models\TransactionHistory;
+use App\Models\User;
+use Carbon\CarbonImmutable;
 use Illuminate\Support\Collection;
 
 class ShipmentStageService
@@ -75,6 +80,10 @@ class ShipmentStageService
         if ($target->stage_name === $current->stage_name || ($correction && $role !== 'admin')) {
             return false;
         }
+        // Cancelling a shipment is an administrator decision (same as the Cancel shipment action)
+        if ($target->stage_name === 'Cancelled' && $role !== 'admin') {
+            return false;
+        }
         if ($correction) {
             return true;
         }
@@ -91,6 +100,159 @@ class ShipmentStageService
         return in_array($this->groupKey((string) $stage->stage_group), ['hold', 'cancelled'], true);
     }
 
+    /**
+     * Saves a stage change: timeline entry, shipment status, transaction status and history,
+     * activity log and notifications. The caller has already checked that the change is allowed
+     * and should run this inside a DB transaction with the shipment row locked.
+     */
+    public function applyChange(Shipment $shipment, ShipmentStage $current, ShipmentStage $target, User $actor, CarbonImmutable $at, string $timelineRemarks, string $remarks, bool $correction = false, ?string $holdReason = null): void
+    {
+        $update = new ShipmentStatusUpdate;
+        $update->shipment_id = $shipment->shipment_id;
+        $update->stage = $target->stage_name;
+        $update->status = $this->updateStatus($target, $correction);
+        $update->remarks = $timelineRemarks !== '' ? $timelineRemarks : null;
+        $update->updated_by = $actor->user_id;
+        $update->updated_at = $at->format('Y-m-d H:i:s');
+        $update->save();
+        $shipment->current_status = $target->stage_name;
+        $shipment->save();
+
+        $transaction = Transaction::query()->where('shipment_id', $shipment->shipment_id)->orderByDesc('transaction_id')->lockForUpdate()->first();
+        if (! $transaction) {
+            $transaction = Transaction::query()->create(['client_id' => $shipment->client_id, 'shipment_id' => $shipment->shipment_id, 'status' => 'pending']);
+        }
+        $transaction->billing_id ??= $this->firstBillId($shipment);
+        $transaction->status = $this->transactionStatus($target, (string) $transaction->status);
+        $transaction->completed_at = $transaction->status === 'completed' ? $at->format('Y-m-d H:i:s') : null;
+        $transaction->save();
+
+        $verb = $correction ? 'Stage corrected from ' : 'Moved from ';
+        TransactionHistory::query()->create([
+            'transaction_id' => $transaction->transaction_id, 'event_type' => 'Status update',
+            'description' => mb_substr($verb.$current->stage_name.' to '.$target->stage_name.($timelineRemarks !== '' ? ' — '.$timelineRemarks : ''), 0, 255),
+            'performed_by' => $actor->user_id,
+        ]);
+        app(ActivityLogger::class)->record($actor, 'Shipment Update', 'Status of '.$shipment->reference_no.($correction ? ' corrected from '.$current->stage_name.' to ' : ' updated to ').$target->stage_name.($target->stage_name === 'On Hold' ? ' ('.$holdReason.')' : ''));
+        app(NotificationService::class)->forShipment($shipment, $actor, 'status', 'Shipment status updated', $shipment->reference_no.' is now '.$target->stage_name.($remarks !== '' ? ': '.$remarks : ''));
+    }
+
+    /**
+     * Delivery "In Transit" → shipment "Trucking"; "Delivered" → "Delivered"; "Cancelled" → "Cancelled".
+     * An open shipment follows the Update Status modal rules (forward, or Cancelled at any time).
+     * A closed shipment (Delivered/Cancelled) changes only when an admin saves, recorded as a
+     * correction, the same as "Correct a previous stage". Archived shipments never change.
+     * Returns the new stage name when the shipment moved. Run inside a DB transaction.
+     */
+    public function syncFromDelivery(Shipment $shipment, string $deliveryStatus, User $actor): ?string
+    {
+        [$current, $target] = $this->deliveryTarget($shipment, $deliveryStatus);
+        if (! $current || ! $target) {
+            return null;
+        }
+        // Forward only: the delivery form never corrects a closed or later stage backwards
+        $stages = ShipmentStage::query()->orderBy('sort_order')->orderBy('stage_id')->get();
+        if (! $this->isAllowed($target, $current, $this->position($shipment, $current, $stages), (string) $actor->role, false)
+            || $this->deliveryBlocker($shipment, $deliveryStatus) !== null) {
+            return null;
+        }
+
+        $at = CarbonImmutable::now();
+        $lastAt = ShipmentStatusUpdate::query()->where('shipment_id', $shipment->shipment_id)->max('updated_at');
+        if ($lastAt && CarbonImmutable::parse($lastAt)->gt($at)) {
+            $at = CarbonImmutable::parse($lastAt);
+        }
+        $note = 'Set from delivery details.';
+        $this->applyChange($shipment, $current, $target, $actor, $at, $note, $note, false);
+
+        return $target->stage_name;
+    }
+
+    /**
+     * Saving Customs Details moves the shipment forward to the furthest customs stage those details
+     * support, under the same rules as Update Status. Green lane has no examination, so it goes from
+     * Duties paid straight to Released/cleared. Never backwards, never out of On Hold / Cancelled,
+     * closed or archived shipments. Returns [new stage or null, why it stopped short or null].
+     *
+     * @return array{0: ?string, 1: ?string}
+     */
+    public function syncFromCustoms(Shipment $shipment, User $actor): array
+    {
+        $consistency = app(ShipmentConsistencyService::class);
+        $customs = $consistency->customsFor($shipment);
+        $current = ShipmentStage::query()->where('stage_name', $shipment->current_status)->first();
+        if (! $customs || ! $current || $shipment->archived_at !== null || (bool) $current->is_closed || $this->isException($current)) {
+            return [null, null];
+        }
+        $targetName = $consistency->furthestSupportedStage($customs);
+        if ($targetName === 'Examination' && $customs->examination_lane === 'green') {
+            $targetName = 'Duties paid';   // green lane: no physical examination
+        }
+        $note = null;
+        // The cargo must have arrived to be examined or released
+        if (in_array($targetName, ['Examination', 'Released/cleared'], true) && ! $shipment->actual_arrival_date) {
+            $note = $targetName.' also needs the Actual Arrival date (set it with Update Status).';
+            $targetName = 'Duties paid';
+        }
+        if ($targetName === 'Released/cleared' && $consistency->releaseBlocked($targetName, $consistency->unpaidBalance($shipment))) {
+            $note = 'Released/cleared waits until the bills are paid.';
+            $targetName = $customs->examination_lane === 'green' ? 'Duties paid' : 'Examination';
+        }
+        $target = $targetName ? ShipmentStage::query()->where('stage_name', $targetName)->first() : null;
+        if (! $target || (int) $target->sort_order <= (int) $current->sort_order) {
+            return [null, $note];
+        }
+
+        $at = CarbonImmutable::now();
+        $lastAt = ShipmentStatusUpdate::query()->where('shipment_id', $shipment->shipment_id)->max('updated_at');
+        if ($lastAt && CarbonImmutable::parse($lastAt)->gt($at)) {
+            $at = CarbonImmutable::parse($lastAt);
+        }
+        $this->applyChange($shipment, $current, $target, $actor, $at, 'Set from customs details.', 'Set from customs details.', false);
+
+        return [$target->stage_name, $note];
+    }
+
+    /**
+     * The stage a delivery status asks for: In transit -> Trucking, Delivered -> Delivered.
+     * A cancelled delivery never cancels the shipment (only an administrator cancels shipments).
+     *
+     * @return array{0: ?ShipmentStage, 1: ?ShipmentStage}
+     */
+    private function deliveryTarget(Shipment $shipment, string $deliveryStatus): array
+    {
+        $targetName = match ($deliveryStatus) { 'in_transit' => 'Trucking', 'delivered' => 'Delivered', default => null };
+        if ($targetName === null || $shipment->archived_at !== null || $shipment->current_status === $targetName) {
+            return [null, null];
+        }
+
+        return [ShipmentStage::query()->where('stage_name', $shipment->current_status)->first(), ShipmentStage::query()->where('stage_name', $targetName)->first()];
+    }
+
+    /**
+     * Why a delivery status cannot move the shipment yet (the same rules as Update Status):
+     * customs release, the actual arrival, and paid bills when release requires payment.
+     * Null when the move is allowed, or when the delivery status moves nothing.
+     */
+    public function deliveryBlocker(Shipment $shipment, string $deliveryStatus): ?string
+    {
+        [$current, $target] = $this->deliveryTarget($shipment, $deliveryStatus);
+        if (! $current || ! $target || (bool) $current->is_closed || (int) $target->sort_order <= (int) $current->sort_order && ! $this->isException($current)) {
+            return null;
+        }
+        $consistency = app(ShipmentConsistencyService::class);
+        $needs = $consistency->missingFor($target->stage_name, $consistency->customsFor($shipment), (string) $shipment->mode);
+        if (! $shipment->actual_arrival_date && $consistency->arrivalRequiredFor($target)) {
+            $needs[] = 'the Actual Arrival date';
+        }
+        if ($consistency->releaseBlocked($target->stage_name, $consistency->unpaidBalance($shipment))) {
+            $needs[] = 'bills paid';
+        }
+        array_push($needs, ...$consistency->deliveryMissingFor($target->stage_name, $shipment));
+
+        return $needs === [] ? null : 'The shipment stays at '.$shipment->current_status.': '.$target->stage_name.' needs '.implode(', ', $needs).'.';
+    }
+
     public function updateStatus(ShipmentStage $stage, bool $correction): string
     {
         if ($correction) {
@@ -100,6 +262,18 @@ class ShipmentStageService
         return match ($this->groupKey((string) $stage->stage_group)) {
             'delivered' => 'Completed', 'hold' => 'On hold', 'cancelled' => 'Cancelled', default => 'In progress',
         };
+    }
+
+    /**
+     * The bill a shipment's transaction should point to: its first bill, matching how
+     * BillingController links the first bill created for a shipment. Null when it has none.
+     */
+    public function firstBillId(Shipment $shipment): ?int
+    {
+        $id = Billing::query()->where('shipment_id', $shipment->shipment_id)->where('client_id', $shipment->client_id)
+            ->orderBy('billing_id')->value('billing_id');
+
+        return $id === null ? null : (int) $id;
     }
 
     public function transactionStatus(?ShipmentStage $stage, string $current): string
@@ -120,12 +294,31 @@ class ShipmentStageService
         $current = $stages->firstWhere('stage_name', $shipment->current_status)
             ?? new ShipmentStage(['stage_name' => (string) $shipment->current_status, 'stage_group' => '', 'sort_order' => 0, 'is_closed' => 0]);
         $position = $this->position($shipment, $current, $stages);
-        $map = fn (ShipmentStage $stage): array => [
+        // Connection rules (ShipmentConsistencyService): customs stages need their Customs Details,
+        // and release stages show (or are blocked by) an unpaid balance. Corrections ignore "needs".
+        $consistency = app(ShipmentConsistencyService::class);
+        $customs = $consistency->customsFor($shipment);
+        $unpaid = $consistency->unpaidBalance($shipment);
+        $map = function (ShipmentStage $stage) use ($consistency, $customs, $unpaid, $shipment): array {
+            $customsNeeds = $consistency->missingFor($stage->stage_name, $customs, (string) $shipment->mode);
+            $deliveryNeeds = $consistency->deliveryMissingFor($stage->stage_name, $shipment);
+
+            return [
             'name' => $stage->stage_name, 'group' => $stage->stage_group,
             'exception' => $this->isException($stage),
             'confirm' => ! $this->isException($stage) && (bool) $stage->is_closed,
             'helper' => $stage->stage_name === 'Trucking' ? 'delivery' : ($this->groupKey((string) $stage->stage_group) === 'customs' ? 'customs' : ''),
-        ];
+            'needs' => [
+                ...$customsNeeds,
+                ...($consistency->releaseBlocked($stage->stage_name, $unpaid) ? ['bills paid (₱'.number_format($unpaid, 2).' unpaid)'] : []),
+                ...array_map(fn (string $item): string => $item.' in Delivery Information', $deliveryNeeds),
+            ],
+            // where the "needs" link points: customs first, then delivery
+            'needsLink' => $customsNeeds === [] && $deliveryNeeds !== [] ? 'delivery' : 'customs',
+            'warning' => $consistency->releaseWarning($stage->stage_name, $unpaid),
+            'arrival' => $consistency->arrivalRequiredFor($stage),
+            ];
+        };
         $allowed = fn (bool $correction): array => $stages->filter(fn (ShipmentStage $stage): bool => $this->isAllowed($stage, $current, $position, $role, $correction))->map($map)->values()->all();
         $label = $current->stage_name === 'Trucking' ? 'Trucking' : ($current->stage_group ?: $current->stage_name);
 
@@ -136,7 +329,7 @@ class ShipmentStageService
             'correctionStages' => $role === 'admin' ? $allowed(true) : [],
             'now' => now()->format('Y-m-d H:i:s'), 'lastAt' => $shipment->statusUpdates()->max('updated_at'),
             'actualArrival' => $shipment->actual_arrival_date?->format('Y-m-d'),
-            'links' => ['customs' => route('shipments.show', $shipment->shipment_id).'#customs', 'delivery' => route('shipments.show', $shipment->shipment_id).'#delivery'],
+            'links' => ['billing' => route('billing.index', ['q' => $shipment->reference_no]), 'customs' => route('shipments.show', $shipment->shipment_id).'#customs', 'delivery' => route('shipments.show', $shipment->shipment_id).'#delivery'],
         ];
     }
 
@@ -170,7 +363,7 @@ class ShipmentStageService
             'kind' => 'created', 'label' => 'Shipment Record Created', 'state' => 'done',
             'date' => $shipment->created_at?->format('M d, Y · g:i A') ?? '—',
             'short' => $shipment->created_at?->format('M d, Y') ?? '—',
-            'note' => 'Record created'.($shipment->assignedStaff?->full_name ? ' by '.$shipment->assignedStaff->full_name : '').'.', 'colour' => 'blue',
+            'note' => 'Record created'.(($creator = $shipment->statusUpdates()->with('updatedBy')->orderBy('updated_at')->orderBy('update_id')->first()?->updatedBy?->full_name) ? ' by '.$creator : '').'.', 'colour' => 'blue',
         ]];
         foreach ($groups as $index => $group) {
             $state = $index < $currentIndex || ($index === $currentIndex && $group['label'] === 'Delivered') ? 'done' : ($index === $currentIndex ? 'current' : 'upcoming');
@@ -179,7 +372,8 @@ class ShipmentStageService
                 'kind' => 'stage', 'label' => $group['label'], 'state' => $state,
                 'date' => $state === 'upcoming' ? 'Awaiting update' : ($update?->updated_at?->format('M d, Y · g:i A') ?? 'Date not recorded'),
                 'short' => $state === 'upcoming' ? 'Awaiting update' : ($update?->updated_at?->format('M d, Y') ?? 'Date not recorded'),
-                'note' => (string) ($update?->remarks ?? ''), 'colour' => 'blue',
+                // a stage not reached (or undone by a correction) shows no old remarks
+                'note' => $state === 'upcoming' ? '' : (string) ($update?->remarks ?? ''), 'colour' => 'blue',
             ];
         }
         if ($exceptionGroup) {

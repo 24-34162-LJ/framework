@@ -109,7 +109,6 @@ class DocumentWorkflowController extends Controller
             'ok' => true,
             'message' => $type.' uploaded. Our team will review it.',
             'document_id' => $document->document_id,
-            'check_url' => app(DocumentChecker::class)->supports($document) ? route('documents.ai-check', $document->document_id) : null,
         ]);
     }
 
@@ -227,6 +226,10 @@ class DocumentWorkflowController extends Controller
     /** POST /shipment-documents/{id}/ai-check — run (or re-run) the Gemini document check. */
     public function aiCheck(Request $request, int $documentId, DocumentChecker $checker): JsonResponse
     {
+        // Client uploads are a normal upload: only staff and admins run the automatic check.
+        if ($request->user()->role === 'client') {
+            return response()->json(['ok' => false, 'error' => 'Our team reviews your documents.'], 403);
+        }
         set_time_limit(180);
         $document = ShipmentDocument::query()->with('shipment')->find($documentId);
         if (! $document || ! $this->canSee($request, $document->shipment)) {
@@ -277,6 +280,7 @@ class DocumentWorkflowController extends Controller
         $user = $request->user();
         abort_unless(in_array($user->role, ['admin', 'staff'], true), 403);
         abort_if($user->role === 'staff' && $shipment->assigned_staff_id !== null && (int) $shipment->assigned_staff_id !== (int) $user->user_id, 404);
+        abort_if($shipment->needsClaimBy($user), 409, 'Assign this shipment to yourself (Assign to me) before making changes.');
 
         return $shipment;
     }

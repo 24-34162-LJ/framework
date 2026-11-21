@@ -13,6 +13,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\SaveUserRequest;
 use App\Models\Client;
+use App\Models\IdentityVerification;
 use App\Models\User;
 use App\Support\PhoneNumber;
 use Illuminate\Database\QueryException;
@@ -48,8 +49,15 @@ class UserManagementController extends Controller
             ]
             : null;
 
+        // Latest ID check per client user, for the "ID Check" column (links to the ID record).
+        $clientUserIds = $users->where('role', 'client')->pluck('user_id')->all();
+        $idChecks = $clientUserIds === [] ? collect() : rescue(fn () => IdentityVerification::query()
+            ->whereIn('user_id', $clientUserIds)->orderByDesc('verification_id')
+            ->get(['verification_id', 'user_id', 'status', 'created_at'])->unique('user_id')->keyBy('user_id'), collect(), false);
+
         return view('admin.users.index', [
             'users' => $users,
+            'idChecks' => $idChecks,
             'clients' => Client::query()->orderBy('client_name')->get(['client_id', 'client_name']),
             'total' => $total,
             'activeCount' => $users->where('status', 'active')->count(),

@@ -43,6 +43,9 @@ class BillingController extends Controller
         $clients = collect();
         $shipments = collect();
         $reviewRows = collect();
+        $reviewSelected = null;
+        $staffVerified = collect();
+        $prefill = null;
 
         if (in_array($view, ['detail', 'record', 'submit'], true)) {
             $bill = $this->billQuery($actor)->where('b.billing_id', $request->integer('id'))->first();
@@ -51,7 +54,7 @@ class BillingController extends Controller
                 $view = 'detail';
             }
             $items = BillingItem::query()->where('billing_id', $bill->billing_id)->orderBy('item_id')->get();
-            $payments = Payment::query()->with(['recordedBy', 'verifiedBy'])->where('billing_id', $bill->billing_id)->orderByDesc('payment_date')->orderByDesc('payment_id')->get();
+            $payments = Payment::query()->with(['recordedBy', 'verifiedBy', 'staffCheckedBy', 'reversedBy'])->where('billing_id', $bill->billing_id)->orderByDesc('payment_date')->orderByDesc('payment_id')->get();
         }
         if ($view === 'create') {
             if ($actor->role === 'admin') {
@@ -70,7 +73,20 @@ class BillingController extends Controller
             $reviewRows = DB::table('payments as p')->join('billings as b', 'b.billing_id', '=', 'p.billing_id')
                 ->join('clients as c', 'c.client_id', '=', 'b.client_id')->join('shipments as s', 's.shipment_id', '=', 'b.shipment_id')
                 ->where('p.verification_status', 'pending')->when($actor->role === 'staff', fn ($query) => $query->where('s.assigned_staff_id', $actor->user_id))
-                ->orderByDesc('p.payment_id')->limit(100)->get(['p.payment_id', 'p.amount', 'p.payment_date', 'p.payment_method', 'p.reference_no', 'b.billing_id', 'b.billing_no', 'c.client_name', 's.reference_no as shipment_reference']);
+                ->join('v_billing_balance as v', 'v.billing_id', '=', 'b.billing_id')->leftJoin('users as u', 'u.user_id', '=', 'p.recorded_by')
+                ->leftJoin('users as sc', 'sc.user_id', '=', 'p.staff_checked_by')
+                ->orderByDesc('p.payment_id')->limit(100)->get(['p.payment_id', 'p.amount', 'p.payment_date', 'p.payment_method', 'p.reference_no', 'p.proof_file_path', 'p.recorded_by',
+                    'b.billing_id', 'b.billing_no', 'b.total_amount', 'v.balance', 'c.client_name', 's.reference_no as shipment_reference', 'u.full_name as recorded_by_name', 'p.staff_checked_by', 'p.staff_checked_at', 'sc.full_name as staff_checked_name']);
+            // The review panel shows one payment: the one picked in the list, else the newest.
+            $reviewSelected = $reviewRows->firstWhere('payment_id', $request->integer('payment')) ?? $reviewRows->first();
+            // Admin spot check: payments that staff verified on their own in the last 7 days.
+            if ($actor->role === 'admin') {
+                $staffVerified = DB::table('payments as p')->join('billings as b', 'b.billing_id', '=', 'p.billing_id')
+                    ->join('clients as c', 'c.client_id', '=', 'b.client_id')->join('users as vu', 'vu.user_id', '=', 'p.verified_by')
+                    ->where('p.verification_status', 'verified')->where('vu.role', 'staff')->where('p.verified_at', '>=', now()->subDays(7))
+                    ->orderByDesc('p.verified_at')->limit(50)
+                    ->get(['p.payment_id', 'p.amount', 'p.verified_at', 'p.payment_method', 'b.billing_id', 'b.billing_no', 'c.client_name', 'vu.full_name as verified_by_name']);
+            }
         }
 
         $base = $this->billQuery($actor);
@@ -125,7 +141,22 @@ class BillingController extends Controller
             }
         }
 
-        return view('billing.index', compact('view', 'bill', 'items', 'payments', 'clients', 'shipments', 'reviewRows', 'stats', 'bills', 'totalBills', 'filters', 'clientsForFilter'));
+        // "Create duties bill" from a shipment: pre-fill the duties still unbilled (the user reviews and saves).
+        if ($view === 'create' && $request->boolean('duties') && $shipments->contains('shipment_id', $request->integer('shipment_id'))) {
+            $dutyShipment = Shipment::query()->find($request->integer('shipment_id'));
+            $consistency = app(\App\Services\ShipmentConsistencyService::class);
+            $customs = $dutyShipment ? $consistency->customsFor($dutyShipment) : null;
+            $unbilled = $dutyShipment ? $consistency->unbilledDuties($dutyShipment, $customs) : null;
+            if ($unbilled) {
+                $prefill = [
+                    'shipment_id' => (int) $dutyShipment->shipment_id, 'reference' => $dutyShipment->reference_no, 'entry_no' => $customs?->entry_no,
+                    'items' => [['charge_type' => 'Duties and taxes', 'amount' => number_format($unbilled['amount'], 2, '.', ''),
+                        'description' => mb_substr('Duties and taxes'.($customs?->entry_no ? ' · Entry No. '.$customs->entry_no : ''), 0, 255)]],
+                ];
+            }
+        }
+
+        return view('billing.index', compact('view', 'bill', 'items', 'payments', 'clients', 'shipments', 'reviewRows', 'reviewSelected', 'staffVerified', 'stats', 'bills', 'totalBills', 'filters', 'clientsForFilter', 'prefill'));
     }
 
     public function storeBill(Request $request): RedirectResponse
@@ -181,7 +212,14 @@ class BillingController extends Controller
             return back()->withInput()->withErrors(['billing' => $exception instanceof RuntimeException ? $exception->getMessage() : 'The bill could not be saved. No changes were applied.']);
         }
 
-        return redirect()->route('billing.index', ['view' => 'detail', 'id' => $newBill->billing_id])->with('success', 'Bill '.$newBill->billing_no.' was created.');
+        $this->notifyClient($request->user(), (int) $newBill->shipment_id, 'bill_created', 'New bill '.$newBill->billing_no,
+            'New bill '.$newBill->billing_no.' for '.$shipment->reference_no.': '.self::peso($newBill->total_amount)
+            .($newBill->due_date ? ', due '.\Illuminate\Support\Carbon::parse($newBill->due_date)->format('M d, Y') : '').'.');
+
+        $warnings = app(\App\Services\ShipmentConsistencyService::class)->billWarnings($shipment);
+
+        return redirect()->route('billing.index', ['view' => 'detail', 'id' => $newBill->billing_id])->with('success', 'Bill '.$newBill->billing_no.' was created.')
+            ->with('warnings', $warnings);
     }
 
     public function recordPayment(Request $request): RedirectResponse
@@ -238,35 +276,83 @@ class BillingController extends Controller
             return back()->withInput()->withErrors(['payment' => $exception instanceof RuntimeException ? $exception->getMessage() : 'Payment could not be saved.']);
         }
 
+        // A client submitting their own evidence already knows; tell them when the office records one.
+        if ($request->user()->role !== 'client') {
+            $this->notifyClient($request->user(), (int) $billInfo->shipment_id, 'payment_recorded', 'Payment recorded',
+                'We recorded your '.self::peso($data['amount']).' payment for '.$billInfo->billing_no.'. It counts toward the bill once verified.');
+        }
+
         return redirect()->route('billing.index', ['view' => 'detail', 'id' => $billInfo->billing_id])->with('success', 'Payment recorded as Pending Verification. The outstanding balance changes only after admin verification.');
     }
 
     public function reviewPayment(Request $request): RedirectResponse
     {
-        abort_unless($request->user()->role === 'admin', 403);
-        $data = $request->validate(['payment_id' => ['required', 'integer', 'exists:payments,payment_id'], 'decision' => ['required', Rule::in(['verified', 'rejected'])]]);
+        // Admins review any payment; staff review payments on shipments assigned to them.
+        abort_unless(in_array($request->user()->role, ['admin', 'staff'], true), 403);
+        $data = $request->validate([
+            'payment_id' => ['required', 'integer', 'exists:payments,payment_id'], 'decision' => ['required', Rule::in(['verified', 'rejected'])],
+            'reason' => ['nullable', 'string', 'max:150'],
+        ]);
+        $fromReview = $request->input('return') === 'review';
         try {
-            $billingId = DB::transaction(function () use ($request, $data): int {
+            [$billingId, $message, $notice] = DB::transaction(function () use ($request, $data): array {
+                $actor = $request->user();
                 $payment = Payment::query()->lockForUpdate()->find($data['payment_id']);
                 if (! $payment || $payment->verification_status !== 'pending') {
                     throw new RuntimeException('That payment is no longer pending review.');
                 }
                 $bill = Billing::query()->lockForUpdate()->findOrFail($payment->billing_id);
+                if ($actor->role === 'staff') {
+                    $shipment = Shipment::query()->find($bill->shipment_id);
+                    if (! $shipment || (int) $shipment->assigned_staff_id !== (int) $actor->user_id) {
+                        throw new RuntimeException('You can review payments only for shipments assigned to you.');
+                    }
+                    // Two-person rule: staff never approve money they entered themselves.
+                    if ((int) $payment->recorded_by === (int) $actor->user_id) {
+                        throw new RuntimeException('You recorded this payment, so another person must verify it.');
+                    }
+                    if ($payment->staff_checked_by) {
+                        throw new RuntimeException('This payment was already checked and is waiting for an administrator\'s final approval.');
+                    }
+                }
                 $paidCents = (int) round((float) Payment::query()->where('billing_id', $bill->billing_id)->where('verification_status', 'verified')->sum('amount') * 100);
                 $paymentCents = (int) round((float) $payment->amount * 100);
                 $totalCents = (int) round((float) $bill->total_amount * 100);
                 if ($data['decision'] === 'verified' && $paidCents + $paymentCents > $totalCents) {
                     throw new RuntimeException('This payment would exceed the bill total. Reject it and ask the submitter to correct the amount.');
                 }
+                $logger = app(\App\Services\ActivityLogger::class);
+
+                // Large payments: a staff "verify" is a first check only. The payment stays pending
+                // (the balance does not change) until an administrator gives the final approval.
+                if ($data['decision'] === 'verified' && $actor->role === 'staff' && Payment::needsAdminApproval($payment->amount)) {
+                    $payment->staff_checked_by = $actor->user_id;
+                    $payment->staff_checked_at = now();
+                    $payment->save();
+                    $logger->record($actor, 'Billing Change', 'Payment checked by staff for bill '.$bill->billing_no.'; awaiting admin approval', ['payment_id' => $payment->payment_id, 'amount' => (string) $payment->amount]);
+
+                    return [(int) $bill->billing_id, 'Payment checked. Because it is ₱'.number_format((float) config('billing.admin_approval_threshold'), 2).' or more, an administrator gives the final approval before the bill balance changes.',
+                        [(int) $bill->shipment_id, 'payment_escalated', 'Payment in final approval',
+                            'Your '.self::peso($payment->amount).' payment for '.$bill->billing_no.' passed the first check and is with an administrator for final approval.']];
+                }
+
                 $payment->verification_status = $data['decision'];
-                $payment->verified_by = $request->user()->user_id;
+                $payment->verified_by = $actor->user_id;
+                $payment->verified_at = now();
                 $payment->save();
                 $paidCents += $data['decision'] === 'verified' ? $paymentCents : 0;
                 $bill->payment_status = $paidCents <= 0 ? 'unpaid' : ($paidCents >= $totalCents ? 'paid' : 'partial');
                 $bill->save();
-                app(\App\Services\ActivityLogger::class)->record($request->user(), 'Billing Change', 'Payment '.$data['decision'].' for bill '.$bill->billing_no, ['payment_id' => $payment->payment_id, 'amount' => (string) $payment->amount, 'payment_status' => $bill->payment_status]);
+                $logger->record($actor, 'Billing Change', 'Payment '.$data['decision'].' for bill '.$bill->billing_no, ['payment_id' => $payment->payment_id, 'amount' => (string) $payment->amount, 'payment_status' => $bill->payment_status]);
 
-                return (int) $bill->billing_id;
+                $reason = trim((string) ($data['reason'] ?? ''));
+                $notice = $data['decision'] === 'verified'
+                    ? [(int) $bill->shipment_id, 'payment_verified', 'Payment confirmed',
+                        'Your '.self::peso($payment->amount).' payment for '.$bill->billing_no.' is confirmed. Balance: '.self::peso(max(0, $totalCents - $paidCents) / 100).'.']
+                    : [(int) $bill->shipment_id, 'payment_rejected', 'Payment not accepted',
+                        'Your '.self::peso($payment->amount).' payment for '.$bill->billing_no.' was not accepted'.($reason !== '' ? '. Reason: '.$reason : '').'. Please check it and submit again.'];
+
+                return [(int) $bill->billing_id, $data['decision'] === 'verified' ? 'Payment verified. Bill balance and status updated.' : 'Payment rejected. Bill balance is unchanged.', $notice];
             }, 3);
         } catch (Throwable $exception) {
             report($exception);
@@ -274,9 +360,55 @@ class BillingController extends Controller
             return back()->with('error', $exception instanceof RuntimeException ? $exception->getMessage() : 'Payment review failed. The bill balance was not changed.');
         }
 
-        $message = $data['decision'] === 'verified' ? 'Payment verified. Bill balance and status updated.' : 'Payment rejected. Bill balance is unchanged.';
+        if ($notice) {
+            $this->notifyClient($request->user(), ...$notice);
+        }
 
-        return redirect()->route('billing.index', ['view' => 'detail', 'id' => $billingId])->with('success', $message);
+        // From Payment Review, stay there so the next pending payment can be reviewed straight away.
+        return redirect()->route('billing.index', $fromReview ? ['view' => 'review'] : ['view' => 'detail', 'id' => $billingId])->with('success', $message);
+    }
+
+    /**
+     * Admin only: undo a verified payment (for example a bounced check or a mistake found later).
+     * The payment returns to "rejected" with who, when and why, so it stops reducing the bill.
+     */
+    public function reversePayment(Request $request): RedirectResponse
+    {
+        abort_unless($request->user()->role === 'admin', 403);
+        $data = $request->validate([
+            'payment_id' => ['required', 'integer', 'exists:payments,payment_id'],
+            'reason' => ['required', 'string', 'min:5', 'max:255'], 'confirm' => ['required', 'accepted'],
+        ]);
+        try {
+            [$billingId, $notice] = DB::transaction(function () use ($request, $data): array {
+                $payment = Payment::query()->lockForUpdate()->find($data['payment_id']);
+                if (! $payment || $payment->verification_status !== 'verified') {
+                    throw new RuntimeException('Only a verified payment can be reversed.');
+                }
+                $bill = Billing::query()->lockForUpdate()->findOrFail($payment->billing_id);
+                $payment->verification_status = 'rejected';
+                $payment->reversed_by = $request->user()->user_id;
+                $payment->reversed_at = now();
+                $payment->reversal_reason = trim($data['reason']);
+                $payment->save();
+                $paidCents = (int) round((float) Payment::query()->where('billing_id', $bill->billing_id)->where('verification_status', 'verified')->sum('amount') * 100);
+                $totalCents = (int) round((float) $bill->total_amount * 100);
+                $bill->payment_status = $paidCents <= 0 ? 'unpaid' : ($paidCents >= $totalCents ? 'paid' : 'partial');
+                $bill->save();
+                app(\App\Services\ActivityLogger::class)->record($request->user(), 'Billing Change', 'Verified payment reversed for bill '.$bill->billing_no, ['payment_id' => $payment->payment_id, 'amount' => (string) $payment->amount, 'reason' => $payment->reversal_reason, 'payment_status' => $bill->payment_status]);
+
+                return [(int) $bill->billing_id, [(int) $bill->shipment_id, 'payment_reversed', 'Payment reversed',
+                    'The '.self::peso($payment->amount).' payment for '.$bill->billing_no.' was reversed: '.mb_substr($payment->reversal_reason, 0, 100)
+                    .'. Balance due: '.self::peso(max(0, $totalCents - $paidCents) / 100).'.']];
+            }, 3);
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return back()->withInput()->with('error', $exception instanceof RuntimeException ? $exception->getMessage() : 'The payment could not be reversed. Nothing was changed.');
+        }
+        $this->notifyClient($request->user(), ...$notice);
+
+        return redirect()->route('billing.index', ['view' => 'detail', 'id' => $billingId])->with('success', 'Payment reversed. It no longer counts toward the bill, and the reason is saved in its history.');
     }
 
     public function evidence(Request $request, int $paymentId)
@@ -306,6 +438,27 @@ class BillingController extends Controller
             ->join('v_billing_balance as v', 'v.billing_id', '=', 'b.billing_id')
             ->when($actor->role === 'staff', fn ($query) => $query->where('s.assigned_staff_id', $actor->user_id))
             ->when($actor->role === 'client', fn ($query) => $query->where('b.client_id', $actor->client_id));
+    }
+
+    /**
+     * Tell the client's users about a bill or payment (in-app, plus email / WhatsApp per
+     * config/notifications.php). Runs after the change is saved; a failure never undoes it.
+     */
+    private function notifyClient(?User $actor, int $shipmentId, string $key, string $title, string $message): void
+    {
+        try {
+            $shipment = Shipment::query()->find($shipmentId);
+            if ($shipment) {
+                app(\App\Services\NotificationService::class)->forShipmentRoles($shipment, $actor, ['client'], 'billing', $title, mb_substr($message, 0, 255), $key);
+            }
+        } catch (Throwable $exception) {
+            report($exception);
+        }
+    }
+
+    private static function peso(float|int|string|null $amount): string
+    {
+        return '₱'.number_format((float) $amount, 2);
     }
 
     private function canSeeShipment(User $actor, ?Shipment $shipment): bool

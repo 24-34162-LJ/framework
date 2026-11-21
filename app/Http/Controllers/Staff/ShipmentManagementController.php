@@ -74,7 +74,7 @@ class ShipmentManagementController extends Controller
         $shipments->getCollection()->transform(function (Shipment $shipment) use ($today, $staffId, $stageService): Shipment {
             $shipment->dashboard_status = $stageService->statusInfo($shipment->current_status, $shipment->stage?->stage_group);
             $shipment->dashboard_edit_allowed = ! in_array(mb_strtolower(trim($shipment->current_status)), ['delivered', 'cancelled'], true)
-                && ($shipment->assigned_staff_id === null || (int) $shipment->assigned_staff_id === $staffId);
+                && $shipment->assigned_staff_id !== null && (int) $shipment->assigned_staff_id === $staffId;
             $shipment->dashboard_overdue = $shipment->delivery_due_date?->lt($today)
                 && ! in_array(mb_strtolower(trim($shipment->current_status)), ['delivered', 'cancelled'], true);
 

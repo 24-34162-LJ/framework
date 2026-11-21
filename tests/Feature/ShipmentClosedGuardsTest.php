@@ -89,7 +89,7 @@ class ShipmentClosedGuardsTest extends TestCase
 
     public function test_office_change_rule_matches_the_edit_page(): void
     {
-        $open = $this->shipment('Customs Processing');
+        $open = $this->shipment('Customs Processing', staffId: $this->staff->user_id);
         $closed = $this->shipment('Delivered');
         $archived = $this->shipment('Delivered', archived: true);
 
@@ -127,7 +127,7 @@ class ShipmentClosedGuardsTest extends TestCase
 
     public function test_open_and_admin_on_closed_still_reach_normal_validation(): void
     {
-        $open = $this->shipment('Customs Processing');
+        $open = $this->shipment('Customs Processing', staffId: $this->staff->user_id);
         $closed = $this->shipment('Delivered');
 
         $this->actingAs($this->staff)->post("/shipments/{$open->shipment_id}/customs", $this->invalidCustoms())

@@ -142,7 +142,7 @@ class ShipmentManagementController extends Controller
 
     private function filteredQuery(string $search, string $staffKey, string $dateKey, string $arrivalKey, string $scope): Builder
     {
-        $query = Shipment::query()->with(['client', 'assignedStaff', 'stage'])->withMax('statusUpdates', 'updated_at')
+        $query = Shipment::query()->with(['client', 'assignedStaff', 'stage'])->withMax('statusUpdates', 'updated_at')->withExists('billings')
             ->when($scope === 'archived', fn (Builder $builder) => $builder->whereNotNull('archived_at'), fn (Builder $builder) => $builder->whereNull('archived_at'));
         if ($search !== '') {
             $like = '%'.addcslashes($search, '%_\\').'%';

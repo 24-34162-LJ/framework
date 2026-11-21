@@ -327,6 +327,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         const chosen = selectedFile;
         const fd = new FormData(); fd.append("data", JSON.stringify(data)); if (chosen) fd.append("file", chosen);
+        if ($("f_assigned_staff")) fd.append("assigned_staff_id", $("f_assigned_staff").value);   // admins choose the owner
         if (requestPrefill) fd.append("shipment_request_id", requestPrefill.id);
         saveButton.disabled = true; saveButton.textContent = "Saving…"; setStatus("Saving shipment… Controls are locked to prevent duplicate submissions");
         try {

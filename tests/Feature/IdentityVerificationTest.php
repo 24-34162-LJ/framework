@@ -42,6 +42,7 @@ class IdentityVerificationTest extends TestCase
         $this->createNotificationTables();
         (require database_path('migrations/2026_11_16_000001_create_identity_verifications.php'))->up();
         (require database_path('migrations/2026_11_17_000001_add_docupass_to_identity_verifications.php'))->up();
+        (require database_path('migrations/2026_11_17_000002_add_digital_id_to_identity_verifications.php'))->up();
         Storage::fake('local');
         config(['services.identity.method' => 'upload']); // these tests cover the photo-upload flow
 

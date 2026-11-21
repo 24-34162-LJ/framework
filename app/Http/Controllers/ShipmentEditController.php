@@ -74,6 +74,18 @@ class ShipmentEditController extends Controller
             return back()->withInput()->withErrors(['bl_awb_no' => $validated['mode'] === 'air' ? 'AWB number is required for Air.' : 'B/L number is required for Sea.']);
         }
 
+        $arrivalDate = Shipment::query()->whereKey($shipmentId)->value('actual_arrival_date');
+        $arrivalDate = $arrivalDate ? substr((string) $arrivalDate, 0, 10) : null;
+        if ($arrivalDate && filled($validated['first_free_day'] ?? null) && $validated['first_free_day'] < $arrivalDate) {
+            return back()->withInput()->withErrors(['first_free_day' => 'First Free Day cannot be before the Actual Arrival ('.\Carbon\Carbon::parse($arrivalDate)->format('M d, Y').').']);
+        }
+        if ($arrivalDate && filled($validated['delivery_due_date'] ?? null) && $validated['delivery_due_date'] < $arrivalDate) {
+            return back()->withInput()->withErrors(['delivery_due_date' => 'Delivery Due Date cannot be before the Actual Arrival ('.\Carbon\Carbon::parse($arrivalDate)->format('M d, Y').').']);
+        }
+        if (filled($validated['eta_date'] ?? null) && filled($validated['delivery_due_date'] ?? null) && $validated['delivery_due_date'] < $validated['eta_date']) {
+            return back()->withInput()->withErrors(['delivery_due_date' => 'Delivery Due Date cannot be before the Estimated Arrival.']);
+        }
+
         $containers = collect($validated['containers'] ?? [])->map(fn (array $row): array => [
             'container_no' => trim((string) ($row['container_no'] ?? '')),
             'seal_no' => trim((string) ($row['seal_no'] ?? '')),
@@ -171,7 +183,8 @@ class ShipmentEditController extends Controller
             return false;
         }
 
-        return $shipment->assigned_staff_id === null || (int) $shipment->assigned_staff_id === (int) $request->user()->user_id;
+        // Staff edit only shipments assigned to them; an unassigned one must be claimed first.
+        return $shipment->assigned_staff_id !== null && (int) $shipment->assigned_staff_id === (int) $request->user()->user_id;
     }
 
     /** @param list<array{container_no: string, seal_no: string, size_type: string}> $containers

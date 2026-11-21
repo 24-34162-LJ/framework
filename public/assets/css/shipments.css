@@ -362,3 +362,18 @@ body.fig { background: #f0f3fa; color: #1e2f4d; }
     .table-wrap { overflow-x:auto; }
     .toolbar { gap:10px; }
 }
+
+/* Delete shipment (admin row menu + confirm dialog) */
+.more-menu button.menu-danger { color: #b42318; }
+.more-menu button.menu-danger:hover { background: #fdecec; }
+.more-menu button.menu-danger:disabled { color: #8a94a6; cursor: not-allowed; background: none; }
+.more-menu button.menu-danger small { display: block; color: #8a94a6; font-size: 11px; font-weight: 400; }
+.delete-dialog form { display: flex; flex-direction: column; min-height: 0; }
+.delete-body { display: flex; flex-direction: column; gap: 12px; padding: 4px 16px 14px; color: #465369; font-size: 13px; line-height: 19px; }
+.delete-body label { display: flex; flex-direction: column; gap: 6px; color: #1e2f4d; font-size: 12px; font-weight: 500; }
+.delete-body input { min-height: 40px; padding: 9px 11px; border: 1px solid #c9d4ea; border-radius: 9px; color: #1e2f4d; font: 400 13px/20px "Libre Franklin", sans-serif; }
+.delete-body input:focus { outline: 0; border-color: #b42318; box-shadow: 0 0 0 3px rgba(180,35,24, .12); }
+.delete-dialog .btn-danger { color: #fff; background: #b42318; border-color: #b42318; }
+.delete-dialog .btn-danger:hover:not(:disabled) { background: #912018; }
+.flash-success { background: #e3f4e8; color: #1e6b3a; }
+.page > .flash { margin-bottom: 14px; }

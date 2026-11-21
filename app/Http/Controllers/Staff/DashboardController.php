@@ -48,17 +48,21 @@ class DashboardController extends Controller
             ->whereRaw("LOWER(TRIM(current_status)) NOT IN ('delivered', 'cancelled')")
             ->where(function (Builder $query) use ($today, $weekEnd): void {
                 $query->whereBetween('eta_date', [$today->toDateString(), $weekEnd->toDateString()])
-                    ->orWhere('delivery_due_date', '<', $today->toDateString());
+                    ->orWhere('delivery_due_date', '<', $today->toDateString())
+                    // free storage ending soon (or over) while the cargo is still at the port
+                    ->orWhere(fn ($storage) => $storage->whereIn('current_status', \App\Services\ShipmentConsistencyService::AT_PORT_STAGES)
+                        ->where('first_free_day', '<=', $today->copy()->addDays((int) config('shipments.storage_warning_days', 2) - (int) config('shipments.free_days', 5))->toDateString()));
             })
             ->orderByRaw('CASE WHEN delivery_due_date < ? THEN 1 ELSE 0 END DESC', [$today->toDateString()])
             ->orderByRaw('COALESCE(delivery_due_date, eta_date) ASC')
-            ->limit(8)->get(['shipment_id', 'reference_no', 'current_status', 'eta_date', 'delivery_due_date'])
+            ->limit(8)->get(['shipment_id', 'reference_no', 'current_status', 'eta_date', 'delivery_due_date', 'first_free_day', 'archived_at'])
             ->map(fn (Shipment $shipment): array => [
                 'shipment_id' => $shipment->shipment_id,
                 'reference_no' => $shipment->reference_no,
                 'current_status' => $shipment->current_status,
                 'eta_label' => $shipment->eta_date?->format('M d, Y'),
                 'is_overdue' => $shipment->delivery_due_date?->lt($today) ?? false,
+                'storage' => app(\App\Services\ShipmentConsistencyService::class)->storageAlert($shipment),
             ]);
 
         $search = trim((string) $request->query('q', ''));

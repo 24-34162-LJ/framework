@@ -17,7 +17,10 @@
         $tabs = ['needs_review' => 'Needs review', 'verified' => 'Verified', 'rejected' => 'Rejected', 'all' => 'All'];
         $badges = ['verified' => 'badge-green', 'needs_review' => 'badge-amber', 'rejected' => 'badge-red', 'processing' => 'badge-blue'];
         $emptyText = [
-            'needs_review' => ['Nothing to review', 'Every uploaded ID has been decided. New IDs that need a manual check will appear here.'],
+            'needs_review' => [
+                'Nothing to review',
+                'Every uploaded ID has been decided. New IDs that need a manual check will appear here.',
+            ],
             'verified' => ['No verified IDs yet', 'IDs approved automatically or by an admin will appear here.'],
             'rejected' => ['No rejected IDs', 'IDs that were not accepted will appear here.'],
             'all' => ['No IDs uploaded yet', 'Clients upload their ID from the ID verification section of My Profile.'],
@@ -46,8 +49,11 @@
 
             <nav class="tabs" aria-label="Filter by status">
                 @foreach ($tabs as $key => $label)
-                    <a class="tab {{ $status === $key ? 'active' : '' }}" href="{{ route('admin.identity.index', ['status' => $key]) }}" @if ($status === $key) aria-current="page" @endif>
-                        {{ $label }}@if ($key !== 'all')<span class="tab-count">{{ (int) ($counts[$key] ?? 0) }}</span>@endif
+                    <a class="tab {{ $status === $key ? 'active' : '' }}" href="{{ route('admin.identity.index', ['status' => $key]) }}"
+                        @if ($status === $key) aria-current="page" @endif>
+                        {{ $label }}@if ($key !== 'all')
+                            <span class="tab-count">{{ (int) ($counts[$key] ?? 0) }}</span>
+                        @endif
                     </a>
                 @endforeach
             </nav>
@@ -58,23 +64,39 @@
                 <div class="report-table-wrap">
                     <table class="report-table">
                         <caption class="idv-sr">Client ID checks, {{ strtolower($tabs[$status]) }}</caption>
-                        <thead><tr><th scope="col">Client</th><th scope="col">ID type</th><th scope="col">Status</th><th scope="col">Reason</th><th scope="col">Uploaded</th><th scope="col"><span class="idv-sr">Action</span></th></tr></thead>
+                        <thead>
+                            <tr>
+                                <th scope="col">Client</th>
+                                <th scope="col">ID type</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Reason</th>
+                                <th scope="col">Uploaded</th>
+                                <th scope="col"><span class="idv-sr">Action</span></th>
+                            </tr>
+                        </thead>
                         <tbody>
                             @foreach ($verifications as $item)
                                 @php
                                     $reason = match (true) {
-                                        $item->status === 'processing' => $item->isStaleProcessing() ? 'Not read yet: the background reader has not run. Check that the queue worker is running, or review the image yourself.' : 'Being read now.',
+                                        $item->status === 'processing' => $item->isStaleProcessing()
+                                            ? 'Not read yet: the background reader has not run. Check that the queue worker is running, or review the image yourself.'
+                                            : 'Being read now.',
                                         (bool) $item->reader_error => 'Automatic reading failed. Check the image yourself.',
                                         default => implode(' ', $item->checks['reasons'] ?? []),
                                     };
                                 @endphp
                                 <tr>
-                                    <td class="idv-client-cell"><strong>{{ $item->client?->client_name ?? 'No company' }}</strong><span>{{ $item->user?->full_name ?? 'Unknown user' }}</span></td>
+                                    <td class="idv-client-cell">
+                                        <strong>{{ $item->client?->client_name ?? 'No company' }}</strong><span>{{ $item->user?->full_name ?? 'Unknown user' }}</span>
+                                    </td>
                                     <td>{{ \App\Services\Identity\PhIdRules::label($item->id_type) }}</td>
-                                    <td><span class="badge {{ $badges[$item->status] ?? 'badge-blue' }}">{{ $item->statusLabel() }}</span></td>
+                                    <td><span class="badge {{ $badges[$item->status] ?? 'badge-blue' }}">{{ $item->statusLabel() }}</span>
+                                    </td>
                                     <td class="idv-reason">{{ $reason !== '' ? \Illuminate\Support\Str::limit($reason, 120) : '—' }}</td>
                                     <td>{{ $item->created_at?->format('M d, Y · g:i A') }}</td>
-                                    <td><a href="{{ route('admin.identity.show', $item->verification_id) }}" aria-label="Review ID #{{ $item->verification_id }} from {{ $item->client?->client_name ?? $item->user?->full_name }}">{{ $item->status === 'needs_review' ? 'Review' : 'View' }}</a></td>
+                                    <td><a href="{{ route('admin.identity.show', $item->verification_id) }}"
+                                            aria-label="Review ID #{{ $item->verification_id }} from {{ $item->client?->client_name ?? $item->user?->full_name }}">{{ $item->status === 'needs_review' ? 'Review' : 'View' }}</a>
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -82,11 +104,16 @@
                 </div>
                 @if ($verifications->hasPages())
                     <footer class="report-pager">
-                        <span>Showing {{ $verifications->firstItem() }}–{{ $verifications->lastItem() }} of {{ number_format($verifications->total()) }}</span>
+                        <span>Showing {{ $verifications->firstItem() }}–{{ $verifications->lastItem() }} of
+                            {{ number_format($verifications->total()) }}</span>
                         <nav aria-label="ID check pages">
-                            @if ($verifications->currentPage() > 1)<a href="{{ $verifications->previousPageUrl() }}">Previous</a>@endif
+                            @if ($verifications->currentPage() > 1)
+                                <a href="{{ $verifications->previousPageUrl() }}">Previous</a>
+                            @endif
                             <span>Page {{ $verifications->currentPage() }} of {{ $verifications->lastPage() }}</span>
-                            @if ($verifications->hasMorePages())<a href="{{ $verifications->nextPageUrl() }}">Next</a>@endif
+                            @if ($verifications->hasMorePages())
+                                <a href="{{ $verifications->nextPageUrl() }}">Next</a>
+                            @endif
                         </nav>
                     </footer>
                 @endif

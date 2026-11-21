@@ -68,6 +68,36 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
+    /* Delete shipment (admin list): confirm by typing the reference exactly. */
+    const deleteDialog = document.getElementById("deleteShipmentDialog");
+    if (deleteDialog) {
+        const form = document.getElementById("deleteShipmentForm");
+        const confirmInput = document.getElementById("deleteShipmentConfirm");
+        const submit = document.getElementById("deleteShipmentSubmit");
+        let reference = "";
+        document.querySelectorAll("[data-delete-shipment]").forEach((btn) => {
+            btn.addEventListener("click", () => {
+                closeMenus();
+                reference = btn.dataset.reference || "";
+                form.action = btn.dataset.url;
+                document.getElementById("deleteShipmentSubtitle").textContent = reference;
+                document.getElementById("deleteShipmentReference").textContent = reference;
+                confirmInput.value = "";
+                submit.disabled = true;
+                submit.textContent = "Delete permanently";
+                deleteDialog.showModal();
+                confirmInput.focus();
+            });
+        });
+        confirmInput.addEventListener("input", () => { submit.disabled = confirmInput.value.trim() !== reference; });
+        deleteDialog.querySelectorAll("[data-delete-close]").forEach((btn) => btn.addEventListener("click", () => deleteDialog.close()));
+        form.addEventListener("submit", (e) => {
+            if (confirmInput.value.trim() !== reference) { e.preventDefault(); return; }
+            submit.disabled = true;
+            submit.textContent = "Deleting…";
+        });
+    }
+
     /* Assign one or more unassigned shipments to active staff (admin list). */
     const assignmentDialog = document.getElementById("assignmentDialog");
     if (assignmentDialog) {

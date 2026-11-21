@@ -9,7 +9,7 @@
     @push('styles')
         <link href="{{ asset('assets/css/client_dashbroad.css') }}?v=12" rel="stylesheet">
         <link href="{{ asset('assets/css/client_profile.css') }}?v=10" rel="stylesheet">
-        <link href="{{ asset('assets/css/identity.css') }}?v=3" rel="stylesheet">
+        <link href="{{ asset('assets/css/identity.css') }}?v=4" rel="stylesheet">
     @endpush
 
     <div class="profile-content client-profile-content idv-client">
@@ -18,7 +18,8 @@
                 <h2 id="{{ \Illuminate\Support\Str::slug($section) }}-heading">{{ $section }}</h2>
                 <div class="profile-grid">
                     @foreach ($fields as $label => $value)
-                        <div class="profile-field"><span>{{ $label }}</span><strong>{{ filled($value) ? $value : '—' }}</strong></div>
+                        <div class="profile-field"><span>{{ $label }}</span><strong>{{ filled($value) ? $value : '—' }}</strong>
+                        </div>
                     @endforeach
                 </div>
             </section>
@@ -31,7 +32,8 @@
         <section class="profile-card" aria-labelledby="sms-updates-heading">
             <div>
                 <h2 id="sms-updates-heading">SMS updates</h2>
-                <p class="profile-note">We text you when your shipment status changes, a document is requested or rejected, and when a shipment request is accepted or declined. Emails are sent to {{ auth()->user()->email }}.</p>
+                <p class="profile-note">We text you when your shipment status changes, a document is requested or rejected, and when a
+                    shipment request is accepted or declined. Emails are sent to {{ auth()->user()->email }}.</p>
             </div>
             @if (session('success') === 'Contact settings saved.')
                 <p class="profile-alert profile-alert-ok" role="status">Contact settings saved.</p>
@@ -40,8 +42,8 @@
                 @csrf
                 <div class="profile-form-field">
                     <label for="profilePhone">Mobile number</label>
-                    <input id="profilePhone" name="phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="20" placeholder="09171234567"
-                        value="{{ old('phone', $contact['phone'] ? '0'.substr($contact['phone'], 2) : '') }}"
+                    <input id="profilePhone" name="phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="20"
+                        placeholder="09171234567" value="{{ old('phone', $contact['phone'] ? '0' . substr($contact['phone'], 2) : '') }}"
                         @error('phone') aria-invalid="true" aria-describedby="profilePhoneError" @enderror>
                     @error('phone')
                         <small id="profilePhoneError" class="profile-error">{{ $message }}</small>

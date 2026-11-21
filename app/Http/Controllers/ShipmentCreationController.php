@@ -48,7 +48,12 @@ class ShipmentCreationController extends Controller
                 : ['form' => ['client_id' => $shipmentRequest->client_id, 'mode' => 'sea'], 'checks' => [], 'warnings' => ['Auto-read did not finish for this request. Enter the details from the attached PDF.']],
         ] : null;
 
-        return view('shipments.create', ['clients' => $clients, 'role' => request()->user()->role, 'prefill' => $prefill]);
+        // Admins must hand every new shipment to a staff member, so no shipment is left without an owner.
+        $staffList = request()->user()->role === 'admin'
+            ? \App\Models\User::query()->where('role', 'staff')->where('status', 'active')->orderBy('full_name')->get(['user_id', 'full_name'])
+            : collect();
+
+        return view('shipments.create', ['clients' => $clients, 'role' => request()->user()->role, 'prefill' => $prefill, 'staffList' => $staffList]);
     }
 
     public function checkBl(Request $request): JsonResponse
@@ -165,6 +170,12 @@ class ShipmentCreationController extends Controller
 
         $actor = $request->user();
         $staffId = $actor->role === 'staff' ? $actor->user_id : null;
+        if ($actor->role === 'admin') {
+            $staffId = \App\Models\User::query()->where('role', 'staff')->where('status', 'active')->whereKey($request->integer('assigned_staff_id'))->value('user_id');
+            if (! $staffId) {
+                return response()->json(['error' => 'Choose the staff member responsible for this shipment.'], 422);
+            }
+        }
         $storedPath = null;
         try {
             $shipment = DB::transaction(function () use ($data, $actor, $client, $staffId, $file, $shipmentRequest, &$storedPath): Shipment {

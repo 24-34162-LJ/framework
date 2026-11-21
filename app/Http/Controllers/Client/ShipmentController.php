@@ -112,9 +112,34 @@ class ShipmentController extends Controller
         $statusLabel = $shipment->current_status === 'Trucking' ? 'Trucking' : ($shipment->stage?->stage_group ?? $shipment->current_status);
         $lastUpdated = $shipment->statusUpdates->sortByDesc(fn (ShipmentStatusUpdate $update) => [$update->updated_at?->timestamp ?? 0, $update->update_id])->first()?->updated_at ?? $shipment->created_at;
 
+        // "Action needed from you": only what the client can act on (never internal office problems).
+        $consistency = app(\App\Services\ShipmentConsistencyService::class);
+        $clientActions = [];
+        $docsNeeded = collect($consistency->missingDocuments($shipment))
+            ->merge($documentRequests->pluck('doc_type'))->map(fn ($label) => trim((string) $label))->filter()->unique()->values();
+        if ($docsNeeded->isNotEmpty() && $canUpload) {
+            $clientActions[] = ['kind' => 'documents', 'title' => 'Upload '.($docsNeeded->count() === 1 ? 'a document' : $docsNeeded->count().' documents'),
+                'text' => 'We need: '.$docsNeeded->implode(', ').'.', 'action' => 'Upload documents', 'url' => '#documents'];
+        }
+        $unpaidBills = $bills->filter(fn ($bill) => (float) $bill->balance > 0);
+        if ($unpaidBills->isNotEmpty()) {
+            $nextDue = DB::table('billings')->whereIn('billing_id', $unpaidBills->pluck('billing_id'))->min('due_date');
+            $clientActions[] = ['kind' => 'billing', 'title' => 'Pay your '.($unpaidBills->count() === 1 ? 'bill' : 'bills'),
+                'text' => '₱'.number_format((float) $unpaidBills->sum('balance'), 2).' is unpaid'.($nextDue ? ', next due '.\Carbon\Carbon::parse($nextDue)->format('M d, Y') : '').'.',
+                'action' => $unpaidBills->count() === 1 ? 'Pay or submit proof' : 'View bills',
+                'url' => $unpaidBills->count() === 1 ? route('billing.index', ['view' => 'submit', 'id' => $unpaidBills->first()->billing_id]) : route('billing.index')];
+        }
+        if ($storage = $consistency->storageAlert($shipment)) {
+            $clientActions[] = ['kind' => 'storage', 'title' => $storage['started'] ? 'Storage charges are running' : 'Free storage ends soon',
+                'text' => $storage['started']
+                    ? 'Port storage charges have applied since '.$storage['starts']->format('M d, Y').'. Uploading missing documents and paying bills helps us release your cargo sooner.'
+                    : 'Free storage at the port ends '.$storage['starts']->format('M d, Y').'. Storage charges start after that if the cargo is not released.',
+                'action' => null, 'url' => null];
+        }
+
         return view('client.shipments.show', compact(
             'shipment', 'delivery', 'customs', 'documents', 'documentChecklist', 'progress', 'bills', 'totalDue', 'totalPaid', 'paymentStatus',
-            'statusClass', 'statusLabel', 'lastUpdated', 'acceptedCount', 'documentRequests', 'canUpload', 'documentCatalog'
+            'statusClass', 'statusLabel', 'lastUpdated', 'acceptedCount', 'documentRequests', 'canUpload', 'documentCatalog', 'clientActions'
         ));
     }
 

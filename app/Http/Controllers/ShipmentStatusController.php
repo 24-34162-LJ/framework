@@ -12,10 +12,6 @@ namespace App\Http\Controllers;
 use App\Models\Shipment;
 use App\Models\ShipmentStage;
 use App\Models\ShipmentStatusUpdate;
-use App\Models\Transaction;
-use App\Models\TransactionHistory;
-use App\Services\ActivityLogger;
-use App\Services\NotificationService;
 use App\Services\ShipmentStageService;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\JsonResponse;
@@ -51,17 +47,18 @@ class ShipmentStatusController extends Controller
         $arrival = $data['actual_arrival_date'] ?? null;
         $stageRequested = trim($data['stage']);
         $stageService = app(ShipmentStageService::class);
-        $activityLogger = app(ActivityLogger::class);
-        $notificationService = app(NotificationService::class);
 
         try {
-            $result = DB::transaction(function () use ($actor, $shipmentId, $data, $correction, $remarks, $at, $arrival, $stageRequested, $stageService, $activityLogger, $notificationService): array {
+            $result = DB::transaction(function () use ($actor, $shipmentId, $data, $correction, $remarks, $at, $arrival, $stageRequested, $stageService): array {
                 $shipment = Shipment::query()->lockForUpdate()->find($shipmentId);
                 if (! $shipment || ($actor->role === 'staff' && $shipment->assigned_staff_id !== null && (int) $shipment->assigned_staff_id !== (int) $actor->user_id)) {
                     return ['status' => 404, 'body' => ['error' => 'Shipment not found.']];
                 }
                 if ($shipment->archived_at !== null) {
                     return ['status' => 409, 'body' => ['error' => 'This shipment is archived. Reopen it before changing its status.']];
+                }
+                if ($shipment->needsClaimBy($actor)) {
+                    return ['status' => 409, 'body' => ['error' => 'Assign this shipment to yourself (Assign to me) before making changes.']];
                 }
 
                 $stages = ShipmentStage::query()->orderBy('sort_order')->orderBy('stage_id')->get();
@@ -90,7 +87,9 @@ class ShipmentStatusController extends Controller
                     $errors['occurred_at'] = 'The date and time cannot be earlier than the last update ('.CarbonImmutable::parse($lastAt)->format('M d, Y · g:i A').').';
                 }
                 $position = $stageService->position($shipment, $current, $stages);
-                if ($target->stage_name === $current->stage_name) {
+                if ($target->stage_name === 'Cancelled' && $actor->role !== 'admin') {
+                    $errors['stage'] = 'Only an administrator can cancel a shipment.';
+                } elseif ($target->stage_name === $current->stage_name) {
                     $errors['stage'] = 'The shipment is already at '.$target->stage_name.'.';
                 } elseif (! $stageService->isAllowed($target, $current, $position, $actor->role, $correction)) {
                     if (! $correction && (bool) $current->is_closed) {
@@ -101,6 +100,24 @@ class ShipmentStatusController extends Controller
                         $errors['stage'] = 'That stage is not available from '.$current->stage_name.'.';
                     }
                 }
+                // Connection rules: a customs stage needs its Customs Details; release may need paid bills.
+                // An admin correction (with remarks) can still override, to fix old records.
+                $consistency = app(\App\Services\ShipmentConsistencyService::class);
+                $unpaid = $consistency->unpaidBalance($shipment);
+                if (! $correction && ! isset($errors['stage'])) {
+                    if (! $arrival && ! $shipment->actual_arrival_date && $consistency->arrivalRequiredFor($target)) {
+                        $errors['actual_arrival_date'] = 'Enter the Actual Arrival date: the cargo must have arrived to be at '.$target->stage_name.'.';
+                    }
+                    $missing = $consistency->missingFor($target->stage_name, $consistency->customsFor($shipment), (string) $shipment->mode);
+                    $deliveryMissing = $consistency->deliveryMissingFor($target->stage_name, $shipment);
+                    if ($missing !== []) {
+                        $errors['stage'] = 'Before '.$target->stage_name.', add in Customs Details: '.implode(', ', $missing).'.';
+                    } elseif ($deliveryMissing !== []) {
+                        $errors['stage'] = 'Before '.$target->stage_name.', set up Delivery Information: '.implode(', ', $deliveryMissing).'.';
+                    } elseif ($consistency->releaseBlocked($target->stage_name, $unpaid)) {
+                        $errors['stage'] = 'Collect payment first: this shipment has ₱'.number_format($unpaid, 2).' unpaid on its bills.';
+                    }
+                }
                 if ($target->stage_name === 'On Hold' && ! in_array($data['reason'] ?? '', ['Missing documents', 'Client request', 'Payment issue', 'Customs issue', 'Other'], true)) {
                     $errors['reason'] = 'Select a reason for putting the shipment on hold.';
                 }
@@ -108,6 +125,9 @@ class ShipmentStatusController extends Controller
                     $errors['remarks'] = 'Remarks are required for every correction.';
                 } elseif ($remarks === '' && $stageService->groupKey((string) $target->stage_group) === 'cancelled') {
                     $errors['remarks'] = 'Remarks are required when setting status to '.$target->stage_name.'.';
+                } elseif (($correction || $stageService->groupKey((string) $target->stage_group) === 'cancelled') && mb_strlen($remarks) < 10) {
+                    // a correction or cancellation must explain itself in the audit trail
+                    $errors['remarks'] = 'Explain the reason in at least 10 characters (it is kept in the audit trail).';
                 }
                 if ($errors) {
                     return ['status' => 422, 'body' => ['error' => 'Please fix the highlighted fields.', 'errors' => $errors]];
@@ -118,36 +138,15 @@ class ShipmentStatusController extends Controller
                     return ['status' => 422, 'body' => ['error' => 'Please fix the highlighted fields.', 'errors' => ['remarks' => 'Reason and remarks together can be up to 255 characters.']]];
                 }
 
-                $update = new ShipmentStatusUpdate;
-                $update->shipment_id = $shipmentId;
-                $update->stage = $target->stage_name;
-                $update->status = $stageService->updateStatus($target, $correction);
-                $update->remarks = $timelineRemarks !== '' ? $timelineRemarks : null;
-                $update->updated_by = $actor->user_id;
-                $update->updated_at = $at->format('Y-m-d H:i:s');
-                $update->save();
-                $shipment->current_status = $target->stage_name;
                 $shipment->actual_arrival_date = $arrival;
-                $shipment->save();
-
-                $transaction = Transaction::query()->where('shipment_id', $shipmentId)->orderByDesc('transaction_id')->lockForUpdate()->first();
-                if (! $transaction) {
-                    $transaction = Transaction::query()->create(['client_id' => $shipment->client_id, 'shipment_id' => $shipmentId, 'status' => 'pending']);
+                // Free storage is counted from arrival: fill an empty First Free Day (it stays editable).
+                if ($arrival && ! $shipment->first_free_day) {
+                    $shipment->first_free_day = $arrival;
                 }
-                $transaction->status = $stageService->transactionStatus($target, (string) $transaction->status);
-                $transaction->completed_at = $transaction->status === 'completed' ? $at->format('Y-m-d H:i:s') : null;
-                $transaction->save();
+                $stageService->applyChange($shipment, $current, $target, $actor, $at, $timelineRemarks, $remarks, $correction, $data['reason'] ?? null);
 
-                $verb = $correction ? 'Stage corrected from ' : 'Moved from ';
-                TransactionHistory::query()->create([
-                    'transaction_id' => $transaction->transaction_id, 'event_type' => 'Status update',
-                    'description' => mb_substr($verb.$current->stage_name.' to '.$target->stage_name.($timelineRemarks !== '' ? ' — '.$timelineRemarks : ''), 0, 255),
-                    'performed_by' => $actor->user_id,
-                ]);
-                $activityLogger->record($actor, 'Shipment Update', 'Status of '.$shipment->reference_no.($correction ? ' corrected from '.$current->stage_name.' to ' : ' updated to ').$target->stage_name.($target->stage_name === 'On Hold' ? ' ('.$data['reason'].')' : ''));
-                $notificationService->forShipment($shipment, $actor, 'status', 'Shipment status updated', $shipment->reference_no.' is now '.$target->stage_name.($remarks !== '' ? ': '.$remarks : ''));
-
-                return ['status' => 200, 'body' => ['ok' => true, 'message' => $correction ? 'Status corrected' : 'Status updated', 'detail' => $shipment->reference_no.' is now '.$target->stage_name]];
+                return ['status' => 200, 'body' => ['ok' => true, 'message' => $correction ? 'Status corrected' : 'Status updated', 'detail' => $shipment->reference_no.' is now '.$target->stage_name
+                    .(($releaseNote = $consistency->releaseWarning($target->stage_name, $unpaid)) ? '. '.$releaseNote : '')]];
             }, 3);
         } catch (Throwable $exception) {
             report($exception);

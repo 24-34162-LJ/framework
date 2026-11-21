@@ -94,9 +94,101 @@
         note.textContent = 'Saving delivery details. Please wait.';
     });
 
+    setupAddressSuggestions(field('delivery_address'));
+
     if (dialog.dataset.autoOpen === '1') {
         title.textContent = field('delivery_id').value ? 'Edit Delivery Details' : 'Schedule Delivery';
         syncStatusFields();
         dialog.showModal();
+    }
+
+    /*
+     * Delivery Address suggestions from the app's own PH place list (PSGC); no maps service.
+     * Only the part after the last comma is searched, so "Blk 5 Lot 12, santol" suggests barangays
+     * named Santol and picking one keeps "Blk 5 Lot 12, " in front.
+     */
+    function setupAddressSuggestions(input) {
+        const url = input?.dataset.suggestUrl;
+        if (!input || !url) return;
+        const list = document.createElement('ul');
+        list.className = 'address-suggest';
+        list.id = 'deliveryAddressSuggest';
+        list.setAttribute('role', 'listbox');
+        list.hidden = true;
+        input.insertAdjacentElement('afterend', list);
+        input.setAttribute('aria-controls', list.id);
+        input.setAttribute('aria-autocomplete', 'list');
+        input.setAttribute('autocomplete', 'off');
+
+        let items = [];
+        let active = -1;
+        let timer = null;
+        let request = null;
+        const cache = new Map();
+
+        const typedPart = () => {
+            const value = input.value;
+            const comma = value.lastIndexOf(',');
+            return { before: comma >= 0 ? value.slice(0, comma + 1) : '', term: (comma >= 0 ? value.slice(comma + 1) : value).trim() };
+        };
+        const close = () => { list.hidden = true; items = []; active = -1; input.removeAttribute('aria-activedescendant'); };
+        const highlight = index => {
+            active = index;
+            Array.from(list.children).forEach((li, i) => li.setAttribute('aria-selected', String(i === index)));
+            if (index >= 0) { input.setAttribute('aria-activedescendant', list.children[index].id); list.children[index].scrollIntoView({ block: 'nearest' }); }
+        };
+        const pick = index => {
+            const item = items[index];
+            if (!item) return;
+            const { before } = typedPart();
+            input.value = (before ? before.trimEnd() + ' ' : '') + item.label;
+            close();
+            input.focus();
+            input.setSelectionRange(input.value.length, input.value.length);
+        };
+        const render = results => {
+            items = results;
+            list.replaceChildren(...results.map((item, i) => {
+                const li = document.createElement('li');
+                li.id = 'deliveryAddressOption' + i;
+                li.setAttribute('role', 'option');
+                const name = document.createElement('span');
+                name.textContent = item.label;
+                const kind = document.createElement('small');
+                kind.textContent = { barangay: 'Barangay', city: 'City', municipality: 'Town', province: 'Province' }[item.type] || '';
+                li.append(name, kind);
+                li.addEventListener('mousedown', event => { event.preventDefault(); pick(i); });
+                return li;
+            }));
+            list.hidden = results.length === 0;
+            highlight(-1);
+        };
+        const search = () => {
+            const { term } = typedPart();
+            if (term.replace(/[^a-z0-9]/gi, '').length < 2) { close(); return; }
+            const key = term.toLowerCase();
+            if (cache.has(key)) { render(cache.get(key)); return; }
+            request?.abort();
+            request = new AbortController();
+            fetch(url + '?q=' + encodeURIComponent(term), { headers: { Accept: 'application/json' }, signal: request.signal })
+                .then(response => (response.ok ? response.json() : { items: [] }))
+                .then(data => {
+                    const results = Array.isArray(data.items) ? data.items : [];
+                    cache.set(key, results);
+                    if (typedPart().term.toLowerCase() === key) render(results);
+                })
+                .catch(() => {});
+        };
+
+        input.addEventListener('input', () => { clearTimeout(timer); timer = setTimeout(search, 200); });
+        input.addEventListener('keydown', event => {
+            if (list.hidden) return;
+            if (event.key === 'ArrowDown') { event.preventDefault(); highlight((active + 1) % items.length); }
+            else if (event.key === 'ArrowUp') { event.preventDefault(); highlight(active <= 0 ? items.length - 1 : active - 1); }
+            else if ((event.key === 'Enter' || event.key === 'Tab') && active >= 0) { event.preventDefault(); pick(active); }
+            else if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); close(); }
+        });
+        input.addEventListener('blur', () => setTimeout(close, 120));
+        dialog.addEventListener('close', close);
     }
 })();

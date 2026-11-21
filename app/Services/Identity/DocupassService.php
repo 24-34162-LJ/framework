@@ -39,25 +39,34 @@ class DocupassService
         return config('services.identity.method') === 'docupass';
     }
 
-    /** Create the DocuPass session; returns the verification row with provider_url set. */
-    public function start(User $user, ?string $ip): IdentityVerification
+    /**
+     * Create the DocuPass session; returns the verification row with provider_url set.
+     * With $digitalId (a screenshot of an eGovPH / ePhilID digital ID, uploaded on our own page) the image is sent
+     * as referenceDocument: DocuPass then skips the ID step and only takes the live selfie, matched against it.
+     */
+    public function start(User $user, ?string $ip, ?string $digitalId = null, ?string $digitalMime = null): IdentityVerification
     {
         $verification = IdentityVerification::query()->create([
             'user_id' => $user->user_id,
             'client_id' => $user->client_id,
             'status' => IdentityVerification::STATUS_PENDING,
             'reader' => 'docupass',
+            'document_source' => $digitalId !== null ? 'digital' : 'card',
             'consent_version' => IdentityVerification::CONSENT_VERSION,
             'consent_at' => now(),
             'consent_ip' => $ip,
         ]);
 
-        $result = $this->client->post('/docupass', [
+        $body = [
             'version' => 3,
             'mode' => 0,
             'profile' => (string) config('services.idanalyzer.profile'),
             'customData' => self::CUSTOM_DATA_PREFIX.$verification->verification_id,
-        ], 60);
+        ];
+        if ($digitalId !== null) {
+            $body['referenceDocument'] = base64_encode($digitalId);
+        }
+        $result = $this->client->post('/docupass', $body, 60);
 
         $reference = $result['data']['reference'] ?? null;
         $url = $result['data']['url'] ?? null;
@@ -66,10 +75,36 @@ class DocupassService
             throw new RuntimeException($result['error'] ?? 'ID Analyzer did not return a verification link.');
         }
 
-        $verification->forceFill(['provider_reference' => mb_substr($reference, 0, 64), 'provider_url' => mb_substr($url, 0, 500)])->save();
-        $this->activity->record($user, 'ID Verification', 'Live ID check started', ['verification_id' => $verification->verification_id]);
+        $verification->forceFill([
+            'provider_reference' => mb_substr($reference, 0, 64),
+            'provider_url' => mb_substr($url, 0, 500),
+            'provider_qr' => $this->qrImage($result['data']['qrCode'] ?? null),
+            // The uploaded digital ID is the ID photo admins see (DocuPass does not capture one).
+            'file_path' => $digitalId !== null ? $this->verifications->storeImage($verification, $digitalId) : null,
+            'file_mime' => $digitalId !== null ? $digitalMime : null,
+            'original_name' => $digitalId !== null ? 'digital-id' : null,
+        ])->save();
+        $this->activity->record($user, 'ID Verification', $digitalId !== null ? 'Digital ID uploaded, selfie check started' : 'Live ID check started', [
+            'verification_id' => $verification->verification_id,
+        ]);
 
         return $verification;
+    }
+
+    /** ID Analyzer's qrCode is a base64 image; keep it only if it really is a PNG/JPEG/GIF. */
+    private function qrImage(mixed $qr): ?string
+    {
+        if (! is_string($qr) || $qr === '') {
+            return null;
+        }
+        $base64 = preg_replace('#^data:image/[a-z]+;base64,#i', '', trim($qr));
+        $bytes = base64_decode((string) $base64, true);
+        if ($bytes === false || strlen($bytes) > 2_000_000) {
+            return null;
+        }
+        $mime = (string) (new \finfo(FILEINFO_MIME_TYPE))->buffer($bytes);
+
+        return in_array($mime, ['image/png', 'image/jpeg', 'image/gif'], true) ? 'data:'.$mime.';base64,'.base64_encode($bytes) : null;
     }
 
     /**
@@ -133,18 +168,19 @@ class DocupassService
 
         // Once claimed, the check must always leave "processing": any failure sends it to admin review.
         try {
+            $digital = $verification->document_source === 'digital';
             $images = is_array($transaction['outputImage'] ?? null) ? $transaction['outputImage'] : [];
-            $front = is_string($images['front'] ?? null) ? $this->client->image($images['front']) : null;
+            // A digital ID was uploaded on our page and is already stored; only a scanned card is downloaded.
+            $front = ! $digital && is_string($images['front'] ?? null) ? $this->client->image($images['front']) : null;
             $selfie = is_string($images['face'] ?? null) ? $this->client->image($images['face']) : null;
-            $verification->forceFill([
+            $verification->forceFill(array_filter([
                 'provider_transaction_id' => is_string($transaction['transactionId'] ?? null) ? mb_substr($transaction['transactionId'], 0, 64) : null,
                 'file_path' => $front !== null ? $this->verifications->storeImage($verification, $front) : null,
                 'file_mime' => $front !== null ? $this->mime($front) : null,
                 'selfie_path' => $selfie !== null ? $this->verifications->storeImage($verification, $selfie) : null,
-                'provider_url' => null,
-            ])->save();
+            ], fn ($value) => $value !== null) + ['provider_url' => null, 'provider_qr' => null])->save();
 
-            $this->verifications->applyReading($verification, $this->reader->map($transaction));
+            $this->verifications->applyReading($verification, $this->reader->map($transaction) + ['digital_id' => $digital, 'face_expected' => true]);
         } catch (\Throwable $exception) {
             report($exception);
             $verification->refresh();

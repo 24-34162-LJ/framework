@@ -28,15 +28,23 @@
 .cm-table td { padding: 15px 14px; color: #343d4d; border-bottom: 1px solid #ebeff8; vertical-align: middle; }
 .cm-table tr:last-child td { border-bottom: 0; }
 .cm-company { color: var(--blue); font-weight: 600; }
-.cm-company:hover,.cm-actions a:hover,.cm-actions button:hover,.cm-table td > a:not(.cm-company):hover { text-decoration: underline; }
+.cm-company:hover,.cm-table td > a:not(.cm-company):not(.cm-btn):hover { text-decoration: underline; }
 .cm-status { display: inline-flex; align-items: center; gap: 6px; padding: 4px 11px; border-radius: 999px; font-size: 12px; font-weight: 600; white-space: nowrap; }
 .cm-status::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
 .cm-status-active { background: #e2f3e9; color: #287a49; }
 .cm-status-inactive { background: #e5eaf6; color: #4f5f78; }
-.cm-actions { display: flex; align-items: center; gap: 10px; white-space: nowrap; }
-.cm-actions a,.cm-actions button,.cm-table td > a:not(.cm-company) { color: var(--blue); font: inherit; }
-.cm-actions form { display: inline; }
-.cm-actions button { border: 0; padding: 0; background: transparent; }
+.cm-actions { display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+.cm-table td > a:not(.cm-company):not(.cm-btn) { color: var(--blue); font: inherit; }
+.cm-actions form { display: inline-flex; margin: 0; }
+/* Row action buttons: same outlined style as the shipment list's View / Edit. */
+.cm-btn { display: inline-flex; align-items: center; justify-content: center; min-height: 32px; padding: 6px 14px; border: 1.5px solid #c9d4ea; border-radius: 8px; color: #1e2f4d; background: #fff; font: 500 13px/18px "Libre Franklin", sans-serif; text-decoration: none; cursor: pointer; transition: background-color .15s, border-color .15s, color .15s; }
+.cm-btn:hover { border-color: #395886; color: #395886; background: #eff3fb; }
+.cm-btn:focus-visible { outline: 2px solid #395886; outline-offset: 2px; }
+.cm-btn-view { border-color: #395886; color: #395886; }
+.cm-btn-danger { border-color: #f0b8b4; color: #b42318; }
+.cm-btn-danger:hover { border-color: #b42318; color: #b42318; background: #fdecec; }
+.cm-btn-success { border-color: #b5dfc4; color: #287a49; }
+.cm-btn-success:hover { border-color: #287a49; color: #287a49; background: #e2f3e9; }
 .cm-empty { padding: 38px 20px !important; text-align: center; }
 .cm-empty strong,.cm-empty span { display: block; }
 .cm-empty strong { color: var(--navy); }
@@ -52,15 +60,26 @@
 .cm-flash-error { background: #fff0ef; color: #aa302b; }
 
 /* Company profile */
+.cm-back { display: inline-flex; align-items: center; gap: 6px; align-self: flex-start; min-height: 40px; padding: 0 14px 0 10px; border: 1px solid var(--line); border-radius: 10px; background: #fff; color: var(--navy); font-size: 14px; font-weight: 600; transition: background .15s, border-color .15s; }
+.cm-back:hover { background: #eef2fb; border-color: #c9d3ea; }
+.cm-back:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
 .cm-profile-head { display: flex; align-items: center; gap: 16px; }
 .cm-avatar { display: grid; width: 64px; height: 64px; place-items: center; border-radius: 13px; background: #e4e9f6; color: var(--navy); font-size: 24px; font-weight: 700; }
 .cm-profile-title { flex: 1; min-width: 0; }
 .cm-profile-title h1 { color: var(--navy); font-family: "Libre Franklin",sans-serif; font-size: 26px; font-weight: 600; }
 .cm-profile-title > div { display: flex; align-items: center; gap: 12px; margin-top: 4px; color: var(--muted); }
-.cm-profile-head > .btn { display: inline-flex; align-items: center; min-height: 44px; }
+.cm-head-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 10px; }
+.cm-head-actions .cm-back { align-self: auto; min-height: 44px; }
+.cm-head-actions > .btn { display: inline-flex; align-items: center; min-height: 44px; }
 .cm-tabs { display: flex; gap: 28px; border-bottom: 1px solid var(--line); }
 .cm-tabs a { padding: 12px 3px; color: var(--muted); border-bottom: 2px solid transparent; }
 .cm-tabs a.active { border-color: var(--blue); color: var(--blue); font-weight: 600; }
+/* Tabs with the Back button on the right: the row carries the divider line, and the active
+   tab's underline sits on top of it */
+.cm-tabs-row { display: flex; align-items: center; gap: 16px; border-bottom: 1px solid var(--line); }
+.cm-tabs-row .cm-tabs { flex: 1; min-width: 0; align-self: flex-end; border-bottom: 0; }
+.cm-tabs-row .cm-tabs a { margin-bottom: -1px; }
+.cm-tabs-row .cm-back { flex: none; align-self: center; min-height: 44px; }
 .cm-info-card { padding: 22px; }
 .cm-info-card h2,.cm-record-card h2 { color: var(--navy); font-size: 19px; font-weight: 600; }
 .cm-info-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 22px; margin-top: 22px; }
@@ -109,9 +128,13 @@
     .cm-filters select { flex: 1; min-width: 0; }
     .cm-filters .btn { flex: 0 0 auto; }
     .cm-profile-head { flex-wrap: wrap; }
-    .cm-profile-head > .btn { width: 100%; justify-content: center; }
+    .cm-head-actions { width: 100%; }
+    .cm-head-actions > * { flex: 1 1 auto; justify-content: center; }
     .cm-profile-title h1 { font-size: 21px; }
     .cm-tabs { gap: 18px; overflow-x: auto; }
+    /* Phones: Back goes full width above the tabs; the divider stays under the tabs */
+    .cm-tabs-row { flex-wrap: wrap; row-gap: 8px; }
+    .cm-tabs-row .cm-back { order: -1; width: 100%; justify-content: center; }
     .cm-info-grid { grid-template-columns: 1fr; gap: 16px; }
     .cm-record-card > header { align-items: flex-start; flex-direction: column; padding: 18px; }
     .cm-record-card .cm-filters { padding: 0 14px 14px; }

@@ -135,3 +135,5 @@
 @media (max-width: 860px) {
     .sdlg { left: 50%; }
 }
+/* Actual Arrival becomes required for Examination and later stages */
+.sf-label .hint.is-required { color: #a3323a; font-weight: 600; }

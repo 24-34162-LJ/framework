@@ -281,7 +281,7 @@ class IdentityVerificationService
     {
         $fields = [];
         foreach (['full_name', 'first_name', 'middle_name', 'last_name', 'birth_date', 'expiry_date', 'has_face_photo', 'confidence', 'quality_issues', 'tamper_signs', 'provider_decision', 'provider_warnings',
-            'face_checked', 'face_score', 'face_failures', 'face_issues'] as $key) {
+            'face_checked', 'face_score', 'face_failures', 'face_issues', 'digital_id'] as $key) {
             if (array_key_exists($key, $data)) {
                 $fields[$key] = is_string($data[$key]) ? mb_substr($data[$key], 0, 150) : $data[$key];
             }

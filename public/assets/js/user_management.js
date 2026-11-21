@@ -65,18 +65,29 @@ document.addEventListener("DOMContentLoaded", () => {
     const formDlg = $("formDialog"), form = $("userForm");
     const f = { full_name: $("fName"), email: $("fEmail"), password: $("fPassword"), role: $("fRole"), status: $("fStatus"), client_id: $("fClient"), phone: $("fPhone") };
     const box = (name) => form.querySelector(`[data-field="${name}"]`);
+    const control = (el) => el.querySelector("input, select");
+
+    // Link each field to its hint, so screen readers read the hint (or the error that replaces it)
+    form.querySelectorAll(".field[data-field]").forEach((el) => {
+        const h = el.querySelector(".hint"), c = control(el);
+        if (!h || !c) return;
+        h.id = "hint-" + el.dataset.field;
+        c.setAttribute("aria-describedby", h.id);
+    });
 
     function clearErrors() {
         form.querySelectorAll(".field").forEach((el) => {
             el.classList.remove("invalid");
+            control(el)?.removeAttribute("aria-invalid");
             const h = el.querySelector(".hint");
-            h.textContent = h.dataset.hint;
+            if (h) h.textContent = h.dataset.hint;
         });
         $("formAlert").hidden = true;
     }
     function setError(name, msg) {
         const el = box(name);
         el.classList.add("invalid");
+        control(el)?.setAttribute("aria-invalid", "true");
         el.querySelector(".hint").textContent = msg;
     }
     function showAlert(mode) {
@@ -268,4 +279,64 @@ document.addEventListener("DOMContentLoaded", () => {
         const u = { id: s.id, name: s.origName, code: "USR-" + String(s.id).padStart(4, "0") };
         openForm(s.mode, u, s.values, s.errors);
     }
+});
+/* Row "⋮" menu (Deactivate/Activate, Delete). Fixed position so the table's scroll box can't clip it;
+   the menu's buttons keep data-do, so the row click handler above runs them. */
+document.addEventListener("DOMContentLoaded", () => {
+    const table = document.getElementById("usersTable");
+    if (!table) return;
+    let open = null;
+    const close = (focusButton = false) => {
+        if (!open) return;
+        open.menu.hidden = true;
+        open.button.setAttribute("aria-expanded", "false");
+        if (focusButton) open.button.focus();
+        open = null;
+    };
+    const items = (menu) => [...menu.querySelectorAll('[role="menuitem"]:not(:disabled)')];
+    table.addEventListener("click", (e) => {
+        const button = e.target.closest("[data-row-menu]");
+        if (button) {
+            e.stopPropagation();
+            const menu = button.nextElementSibling;
+            const wasOpen = open && open.menu === menu;
+            close();
+            if (wasOpen) return;
+            menu.hidden = false;
+            const r = button.getBoundingClientRect();
+            const below = r.bottom + 6 + menu.offsetHeight <= window.innerHeight;
+            menu.style.top = (below ? r.bottom + 6 : r.top - 6 - menu.offsetHeight) + "px";
+            menu.style.left = Math.max(8, r.right - menu.offsetWidth) + "px";
+            button.setAttribute("aria-expanded", "true");
+            open = { button, menu };
+            items(menu)[0]?.focus();
+            return;
+        }
+        if (e.target.closest('[role="menuitem"]')) close();
+    });
+    document.addEventListener("click", (e) => { if (open && !open.menu.contains(e.target)) close(); });
+    document.addEventListener("keydown", (e) => {
+        if (!open) return;
+        if (e.key === "Escape") { e.preventDefault(); close(true); return; }
+        if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+            e.preventDefault();
+            const list = items(open.menu);
+            const i = list.indexOf(document.activeElement);
+            list[(i + (e.key === "ArrowDown" ? 1 : list.length - 1)) % list.length]?.focus();
+        }
+        if (e.key === "Tab") close();
+    });
+    window.addEventListener("scroll", () => close(), true);
+    window.addEventListener("resize", () => close());
+});
+
+/* ?user=<id> (e.g. from an ID check): open that user's details panel. */
+document.addEventListener("DOMContentLoaded", () => {
+    const id = new URLSearchParams(window.location.search).get("user");
+    if (!id || !/^\d+$/.test(id)) return;
+    const row = document.querySelector('#usersTable tr[data-id="' + id + '"]');
+    const view = row?.querySelector('[data-do="view"]');
+    if (!view) return;
+    row.scrollIntoView({ block: "center" });
+    view.click();
 });

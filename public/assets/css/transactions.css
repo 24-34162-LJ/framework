@@ -86,3 +86,47 @@
     .txn-filters > .sr-only { width: 1px !important; }
 }
 @media(max-width:640px) { .txn-stats,.txn-stats.three { grid-template-columns: 1fr 1fr; } .txn-overview dl { grid-template-columns: repeat(2,minmax(0,1fr)); } .txn-filters > * { width: 100% !important; } .txn-pager { align-items: flex-start; flex-direction: column; } .txn-form footer { flex-direction: column-reverse; } }
+/* Bills for the transaction's shipment (one transaction covers every bill of its shipment) */
+.txn-bills { gap: 12px; min-width: 0; }
+.txn-bills > .txn-table-scroll { min-width: 0; }
+.txn-bills-table .num { text-align: right; font-variant-numeric: tabular-nums; }
+.txn-bills-table tfoot th { background: #f6f8fc; color: #1e2f4d; font-size: 13px; font-weight: 700; padding: 12px; text-align: left; }
+.txn-bill-cell { display: inline-flex; align-items: center; }
+/* Tablet and desktop. The shared table rules in sidebar.css are prefixed with body.fig #mainContent,
+   so these use the same prefix; otherwise the shared left-aligned headings and padding win. */
+@media (min-width: 641px) {
+    /* The Action column (heading and buttons) sits on the right edge, like the money columns */
+    body.fig #mainContent .txn-table thead th.txn-action,
+    body.fig #mainContent .txn-table tbody td.txn-action { text-align: right; }
+    /* The total row uses the same cell padding as the header and bill rows, so its figures line up */
+    body.fig #mainContent .txn-bills-table tfoot th { padding: 12px; }
+    body.fig #mainContent .txn-bills-table tfoot th:first-child { padding-left: 16px; }
+    body.fig #mainContent .txn-bills-table tfoot th:last-child { padding-right: 16px; }
+    body.fig #mainContent .txn-bills-table tfoot th.num { text-align: right; }
+}
+.txn-more-bills { display: inline-block; margin-left: 6px; padding: 1px 7px; border-radius: 99px; background: #e7ecf8; color: #2e476b; font-size: 12px; font-weight: 600; }
+.txn-table a.txn-view-bills { display: inline-block; padding: 4px 12px; border: 1px solid #c9d4ec; border-radius: 8px; background: #fff; color: #395886; font-size: 13px; font-weight: 600; }
+.txn-table a.txn-view-bills:hover { background: #eef2fb; }
+@media (pointer: coarse) {
+    /* sidebar.css enlarges inline table links with padding plus a negative margin. On this bordered
+       button that made it taller than its row, so it gets a real 44px touch height instead. */
+    body.fig .txn-table a.txn-view-bills { display: inline-flex; align-items: center; min-height: 44px; padding: 0 14px; margin-block: 0; }
+}
+.txn-head-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.txn-pay { display: inline-block; border-radius: 99px; padding: 4px 10px; font-size: 12px; font-weight: 600; }
+.txn-pay-unpaid { color: #a3323a; background: #fde8ea; }
+.txn-pay-partial { color: #94640a; background: #fff3d8; }
+.txn-pay-paid { color: #26734a; background: #e4f4e9; }
+@media(max-width:640px) {
+    .txn-bills-table .num { text-align: left; }
+    /* Phones show the per-bill cards; the shipment total is already in the overview */
+    .txn-bills-table tfoot { display: none; }
+    .txn-head-actions { width: 100%; }
+    .txn-head-actions .btn { flex: 1 1 auto; text-align: center; }
+}
+/* Payment state next to the progress status (detail overview) and the "No bills" payment badge */
+.txn-pay-none { color: #4f5f78; background: #eef1f6; }
+.txn-states { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; }
+.txn-state { display: inline-flex; align-items: center; gap: 8px; }
+.txn-state-label { color: #4f5f78; font-size: 12px; }
+@media(max-width:640px) { .txn-overview-head { flex-wrap: wrap; } }

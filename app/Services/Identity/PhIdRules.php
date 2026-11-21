@@ -195,7 +195,14 @@ class PhIdRules
         }
 
         // 6b. Selfie vs the face on the ID, and liveness (only when a selfie was taken, e.g. DocuPass).
-        if (($data['face_checked'] ?? false) === true) {
+        // A live check always expects a face-match score; without one (e.g. face matching is off in the
+        // ID Analyzer KYC profile) the selfie proves nothing, so an admin compares the faces.
+        $faceExpected = ($data['face_expected'] ?? false) === true;
+        $faceMissing = $faceExpected && ! is_numeric($data['face_score'] ?? null) && $this->list($data['face_failures'] ?? []) === [];
+        if ($faceMissing) {
+            $add('face', 'Selfie check', 'warn', 'Face match did not run');
+            $review[] = 'The selfie was not compared with the ID photo automatically. An admin compares the faces.';
+        } elseif (($data['face_checked'] ?? false) === true) {
             $failures = $this->list($data['face_failures'] ?? []);
             $issues = $this->list($data['face_issues'] ?? []);
             $score = is_numeric($data['face_score'] ?? null) ? ' ('.number_format((float) $data['face_score'] * 100).'% match)' : '';
@@ -226,6 +233,12 @@ class PhIdRules
         if ($usedByAnotherClient) {
             $add('duplicate', 'Duplicate ID', 'warn', 'Already used by another client account');
             $review[] = 'This ID number is already linked to another client account.';
+        }
+
+        // 7b. A digital ID (eGovPH / ePhilID screenshot) cannot be checked as a physical card: an admin confirms it.
+        if (($data['digital_id'] ?? false) === true) {
+            $add('digital', 'Digital ID', 'warn', 'Screenshot of a digital ID (eGovPH / ePhilID)');
+            $review[] = 'A digital ID screenshot was used. An admin confirms it against the selfie.';
         }
 
         // 8. A dedicated ID provider (e.g. ID Analyzer) has its own verdict: never auto-verify over it.

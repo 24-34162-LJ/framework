@@ -9,22 +9,32 @@
     @push('styles')
         <link href="{{ asset('assets/css/staff.css') }}?v=10" rel="stylesheet">
         <link href="{{ asset('assets/css/shipments.css') }}?v=10" rel="stylesheet">
-        <link href="{{ asset('assets/css/client_management.css') }}?v=10" rel="stylesheet">
+        <link href="{{ asset('assets/css/client_management.css') }}?v=14" rel="stylesheet">
     @endpush
-    @push('scripts')<script src="{{ asset('assets/js/client_management.js') }}" defer></script>@endpush
+    @push('scripts')
+        <script src="{{ asset('assets/js/client_management.js') }}" defer></script>
+    @endpush
 
     @php($validationErrors = session('errors')?->getBag('default'))
     <div class="page cm-page">
-        @if (session('success'))<div class="cm-flash cm-flash-success" role="status">{{ session('success') }}</div>@endif
-        @if (session('error'))<div class="cm-flash cm-flash-error" role="alert">{{ session('error') }}</div>@endif
-        @if ($validationErrors?->any())<div class="cm-flash cm-flash-error" role="alert">{{ $validationErrors->first() }}</div>@endif
+        @if (session('success'))
+            <div class="cm-flash cm-flash-success" role="status">{{ session('success') }}</div>
+        @endif
+        @if (session('error'))
+            <div class="cm-flash cm-flash-error" role="alert">{{ session('error') }}</div>
+        @endif
+        @if ($validationErrors?->any())
+            <div class="cm-flash cm-flash-error" role="alert">{{ $validationErrors->first() }}</div>
+        @endif
 
-        @if (! $client)
+        @if (!$client)
             <header class="page-head cm-head">
                 <div>
                     <h1>Client Management</h1>
                 </div>
-                @if (auth()->user()->role === 'admin')<a class="btn btn-primary cm-add" href="{{ route('admin.clients', ['add' => 1]) }}">＋ Add Client</a>@endif
+                @if (auth()->user()->role === 'admin')
+                    <a class="btn btn-primary cm-add" href="{{ route('admin.clients', ['add' => 1]) }}">＋ Add Client</a>
+                @endif
             </header>
 
             <section class="cm-stats" aria-label="Client totals">
@@ -60,67 +70,84 @@
                 </form>
                 <div class="table-wrap cm-table-wrap">
                     <table class="cm-table">
-                    <thead>
-                        <tr>
-                            <th>Client ID</th>
-                            <th>Company Name</th>
-                            <th>Contact Person</th>
-                            <th>Email</th>
-                            <th>Phone</th>
-                            <th>Active Shipments</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($clientList as $row)
-                            @php($code = 'CL-'.str_pad((string) $row->client_id, 4, '0', STR_PAD_LEFT))
+                        <thead>
                             <tr>
-                                <td>{{ $code }}</td>
-                                <td>
-                                    <a class="cm-company" href="{{ route('admin.clients', ['id' => $row->client_id]) }}">{{ $row->client_name }}</a>
-                                </td>
-                                <td>{{ $row->contact_person ?: '—' }}</td>
-                                <td>{{ $row->email ?: '—' }}</td>
-                                <td>{{ $row->phone ?: '—' }}</td>
-                                <td>{{ number_format($row->active_shipments) }}</td>
-                                <td>
-                                    <span class="cm-status cm-status-{{ $row->status }}">{{ ucfirst($row->status) }}</span>
-                                </td>
-                                <td>
-                                    <div class="cm-actions">
-                                        <a href="{{ route('admin.clients', ['id' => $row->client_id]) }}">View</a>@if (auth()->user()->role === 'admin')<a href="{{ route('admin.clients', ['id' => $row->client_id, 'edit' => 1]) }}">Edit</a>
-                                    <form method="post" action="{{ route('admin.clients.save') }}">@csrf
-                                        <input type="hidden" name="action" value="set_status">
-                                        <input type="hidden" name="client_id" value="{{ $row->client_id }}">
-                                        <input type="hidden" name="return_tab" value="overview">
-                                        <input type="hidden" name="status" value="{{ $row->status === 'active' ? 'inactive' : 'active' }}">
-                                        <button type="submit" data-confirm="{{ $row->status === 'active' ? 'Deactivate' : 'Reactivate' }} {{ $row->client_name }}? Linked records will be retained.">{{ $row->status === 'active' ? 'Deactivate' : 'Activate' }}</button></form>
-                                @endif</div></td>
+                                <th>Client ID</th>
+                                <th>Company Name</th>
+                                <th>Contact Person</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Active Shipments</th>
+                                <th>Status</th>
+                                <th>Actions</th>
                             </tr>
-                        @empty
-                            <tr>
-                                <td class="cm-empty" colspan="8">
-                                    <strong>{{ $search || $statusFilter ? 'No matching clients' : 'No client companies yet' }}</strong>
-                                    <span>{{ $search || $statusFilter ? 'Try changing your search or status filter.' : 'Add a company to organize client accounts and shipments.' }}</span>
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
+                        </thead>
+                        <tbody>
+                            @forelse ($clientList as $row)
+                                @php($code = 'CL-' . str_pad((string) $row->client_id, 4, '0', STR_PAD_LEFT))
+                                <tr>
+                                    <td>{{ $code }}</td>
+                                    <td>
+                                        <a class="cm-company"
+                                            href="{{ route('admin.clients', ['id' => $row->client_id]) }}">{{ $row->client_name }}</a>
+                                    </td>
+                                    <td>{{ $row->contact_person ?: '—' }}</td>
+                                    <td>{{ $row->email ?: '—' }}</td>
+                                    <td>{{ $row->phone ?: '—' }}</td>
+                                    <td>{{ number_format($row->active_shipments) }}</td>
+                                    <td>
+                                        <span class="cm-status cm-status-{{ $row->status }}">{{ ucfirst($row->status) }}</span>
+                                    </td>
+                                    <td>
+                                        <div class="cm-actions">
+                                            <a class="cm-btn cm-btn-view"
+                                                href="{{ route('admin.clients', ['id' => $row->client_id]) }}">View</a>
+                                            @if (auth()->user()->role === 'admin')
+                                                <a class="cm-btn"
+                                                    href="{{ route('admin.clients', ['id' => $row->client_id, 'edit' => 1]) }}">Edit</a>
+                                                <form method="post" action="{{ route('admin.clients.save') }}">@csrf
+                                                    <input type="hidden" name="action" value="set_status">
+                                                    <input type="hidden" name="client_id" value="{{ $row->client_id }}">
+                                                    <input type="hidden" name="return_tab" value="overview">
+                                                    <input type="hidden" name="status"
+                                                        value="{{ $row->status === 'active' ? 'inactive' : 'active' }}">
+                                                    <button type="submit"
+                                                        class="cm-btn {{ $row->status === 'active' ? 'cm-btn-danger' : 'cm-btn-success' }}"
+                                                        data-confirm="{{ $row->status === 'active' ? 'Deactivate' : 'Reactivate' }} {{ $row->client_name }}? Linked records will be retained.">{{ $row->status === 'active' ? 'Deactivate' : 'Activate' }}</button>
+                                                </form>
+                                            @endif
+                                        </div>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td class="cm-empty" colspan="8">
+                                        <strong>{{ $search || $statusFilter ? 'No matching clients' : 'No client companies yet' }}</strong>
+                                        <span>{{ $search || $statusFilter ? 'Try changing your search or status filter.' : 'Add a company to organize client accounts and shipments.' }}</span>
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
                 <footer class="cm-table-foot">
-                    <span>Showing {{ $clientList->firstItem() ?? 0 }}–{{ $clientList->lastItem() ?? 0 }} of {{ $clientList->total() }} client{{ $clientList->total() === 1 ? '' : 's' }}</span>
-                    <nav class="cm-pager" aria-label="Client pages">@if ($clientList->onFirstPage() === false)
-                        <a href="{{ $clientList->previousPageUrl() }}">Previous</a>@endif @foreach ($clientList->getUrlRange(max(1, $clientList->currentPage() - 2), min($clientList->lastPage(), $clientList->currentPage() + 2)) as $page => $url)
-                        <a class="{{ $page === $clientList->currentPage() ? 'current' : '' }}" href="{{ $url }}" @if ($page === $clientList->currentPage()) aria-current="page" @endif>{{ $page }}</a>@endforeach @if ($clientList->hasMorePages())
-                        <a href="{{ $clientList->nextPageUrl() }}">Next</a>@endif
+                    <span>Showing {{ $clientList->firstItem() ?? 0 }}–{{ $clientList->lastItem() ?? 0 }} of {{ $clientList->total() }}
+                        client{{ $clientList->total() === 1 ? '' : 's' }}</span>
+                    <nav class="cm-pager" aria-label="Client pages">
+                        @if ($clientList->onFirstPage() === false)
+                            <a href="{{ $clientList->previousPageUrl() }}">Previous</a>
+                            @endif @foreach ($clientList->getUrlRange(max(1, $clientList->currentPage() - 2), min($clientList->lastPage(), $clientList->currentPage() + 2)) as $page => $url)
+                                <a class="{{ $page === $clientList->currentPage() ? 'current' : '' }}" href="{{ $url }}"
+                                    @if ($page === $clientList->currentPage()) aria-current="page" @endif>{{ $page }}</a>
+                                @endforeach @if ($clientList->hasMorePages())
+                                    <a href="{{ $clientList->nextPageUrl() }}">Next</a>
+                                @endif
                     </nav>
                 </footer>
             </section>
             <p class="cm-footnote">Client accounts are managed in User Management.</p>
         @else
-            @php($code = 'CL-'.str_pad((string) $client->client_id, 4, '0', STR_PAD_LEFT))
+            @php($code = 'CL-' . str_pad((string) $client->client_id, 4, '0', STR_PAD_LEFT))
             <header class="cm-profile-head">
                 <div class="cm-avatar">{{ mb_strtoupper(mb_substr($client->client_name, 0, 1)) }}</div>
                 <div class="cm-profile-title">
@@ -129,15 +156,30 @@
                         <span>Client ID: {{ $code }}</span>
                         <span class="cm-status cm-status-{{ $client->status }}">{{ ucfirst($client->status) }}</span>
                     </div>
-                </div>@if (auth()->user()->role === 'admin')
-                <a class="btn btn-primary" href="{{ route('admin.clients', ['id' => $client->client_id, 'tab' => $tab, 'edit' => 1]) }}">Edit Client</a>
+                </div>
+                @if (auth()->user()->role === 'admin')
+                    <div class="cm-head-actions">
+                        <a class="btn btn-primary"
+                            href="{{ route('admin.clients', ['id' => $client->client_id, 'tab' => $tab, 'edit' => 1]) }}">Edit Client</a>
+                    </div>
                 @endif
             </header>
+            {{-- The Back button shares the tab row, on its right edge --}}
+            <div class="cm-tabs-row">
             <nav class="cm-tabs" aria-label="Client profile sections">
-                <a class="{{ $tab === 'overview' ? 'active' : '' }}" href="{{ route('admin.clients', ['id' => $client->client_id, 'tab' => 'overview']) }}">Overview</a>
-                <a class="{{ $tab === 'accounts' ? 'active' : '' }}" href="{{ route('admin.clients', ['id' => $client->client_id, 'tab' => 'accounts']) }}">Client Accounts</a>
-                <a class="{{ $tab === 'shipments' ? 'active' : '' }}" href="{{ route('admin.clients', ['id' => $client->client_id, 'tab' => 'shipments']) }}">Shipments</a>
+                <a class="{{ $tab === 'overview' ? 'active' : '' }}"
+                    href="{{ route('admin.clients', ['id' => $client->client_id, 'tab' => 'overview']) }}">Overview</a>
+                <a class="{{ $tab === 'accounts' ? 'active' : '' }}"
+                    href="{{ route('admin.clients', ['id' => $client->client_id, 'tab' => 'accounts']) }}">Client Accounts</a>
+                <a class="{{ $tab === 'shipments' ? 'active' : '' }}"
+                    href="{{ route('admin.clients', ['id' => $client->client_id, 'tab' => 'shipments']) }}">Shipments</a>
             </nav>
+                <a class="cm-back" href="{{ route('admin.clients') }}">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+                    Back to Client Management
+                </a>
+            </div>
 
             @if ($tab === 'overview')
                 <section class="cm-stats cm-profile-stats">
@@ -180,13 +222,15 @@
                         </div>
                         <div>
                             <dt>Date Added</dt>
-                            <dd>{{ $client->created_at ? \Illuminate\Support\Carbon::parse($client->created_at)->format('M d, Y') : '—' }}</dd>
+                            <dd>{{ $client->created_at ? \Illuminate\Support\Carbon::parse($client->created_at)->format('M d, Y') : '—' }}
+                            </dd>
                         </div>
                     </dl>
                 </section>
                 <aside class="cm-callout">
                     <strong>One company. Connected records.</strong>
-                    <p>This profile connects {{ $client->client_name }} to its client accounts and shipment history. Manage accounts in User Management; linked records remain available if this company becomes inactive.</p>
+                    <p>This profile connects {{ $client->client_name }} to its client accounts and shipment history. Manage accounts in
+                        User Management; linked records remain available if this company becomes inactive.</p>
                 </aside>
             @elseif ($tab === 'accounts')
                 <section class="fcard cm-record-card">
@@ -194,8 +238,10 @@
                         <div>
                             <h2>Linked Client Accounts</h2>
                             <p>{{ $accountCount }} account{{ $accountCount === 1 ? '' : 's' }} linked to {{ $client->client_name }}.</p>
-                        </div>@if (auth()->user()->role === 'admin')
-                        <a class="btn btn-secondary" href="{{ route('admin.users') }}">Manage Accounts in User Management</a>@endif
+                        </div>
+                        @if (auth()->user()->role === 'admin')
+                            <a class="btn btn-secondary" href="{{ route('admin.users') }}">Manage Accounts in User Management</a>
+                        @endif
                     </header>
                     <div class="table-wrap">
                         <table class="cm-table">
@@ -209,33 +255,40 @@
                                 </tr>
                             </thead>
                             <tbody>
-                    @forelse ($accounts as $account)
-                    <tr>
-                        <td>{{ $account->full_name }}</td>
-                        <td>{{ $account->email }}</td>
-                        <td>
-                            <span class="cm-status cm-status-{{ $account->status }}">{{ ucfirst($account->status) }}</span>
-                        </td>
-                        <td>{{ $account->created_at ? \Illuminate\Support\Carbon::parse($account->created_at)->format('M d, Y') : '—' }}</td>
-                        <td>@if (auth()->user()->role === 'admin')
-                            <a href="{{ route('admin.users') }}">Manage account</a>@else
-                            <span class="cm-muted">Read-only</span>@endif
-                        </td>
-                    </tr>@empty
-                    <tr>
-                        <td colspan="5" class="cm-empty">
-                            <strong>No client accounts linked yet</strong>
-                            <span>An administrator can link accounts in User Management.</span>
-                        </td>
-                    </tr>@endforelse
-                </tbody>
-            </table>
-        </div>
-    </section>
-    <aside class="cm-callout">
-        <strong>Account access stays in User Management</strong>
-        <p>Only admins and authorized staff can access Client Management. Client users see only their own company records in the client portal.</p>
-    </aside>
+                                @forelse ($accounts as $account)
+                                    <tr>
+                                        <td>{{ $account->full_name }}</td>
+                                        <td>{{ $account->email }}</td>
+                                        <td>
+                                            <span
+                                                class="cm-status cm-status-{{ $account->status }}">{{ ucfirst($account->status) }}</span>
+                                        </td>
+                                        <td>{{ $account->created_at ? \Illuminate\Support\Carbon::parse($account->created_at)->format('M d, Y') : '—' }}
+                                        </td>
+                                        <td>
+                                            @if (auth()->user()->role === 'admin')
+                                                <a href="{{ route('admin.users') }}">Manage account</a>
+                                            @else
+                                                <span class="cm-muted">Read-only</span>
+                                            @endif
+                                        </td>
+                                </tr>@empty
+                                    <tr>
+                                        <td colspan="5" class="cm-empty">
+                                            <strong>No client accounts linked yet</strong>
+                                            <span>An administrator can link accounts in User Management.</span>
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+                <aside class="cm-callout">
+                    <strong>Account access stays in User Management</strong>
+                    <p>Only admins and authorized staff can access Client Management. Client users see only their own company records in the
+                        client portal.</p>
+                </aside>
             @else
                 <section class="fcard cm-record-card">
                     <header>
@@ -249,12 +302,15 @@
                         <input type="hidden" name="tab" value="shipments">
                         <label class="cm-search">
                             <span class="sr-only">Search this company's shipments</span>
-                            <input name="sq" value="{{ $shipmentSearch }}" placeholder="Search this company's shipments by reference">
+                            <input name="sq" value="{{ $shipmentSearch }}"
+                                placeholder="Search this company's shipments by reference">
                         </label>
                         <label class="sr-only" for="shipmentStatus">Filter shipment status</label>
                         <select id="shipmentStatus" name="ss">
-                            <option value="">All statuses</option>@foreach ($stages as $stage)
-                            <option value="{{ $stage->stage_name }}" @selected($shipmentStatus === $stage->stage_name)>{{ $stage->stage_name }}</option>@endforeach
+                            <option value="">All statuses</option>
+                            @foreach ($stages as $stage)
+                                <option value="{{ $stage->stage_name }}" @selected($shipmentStatus === $stage->stage_name)>{{ $stage->stage_name }}</option>
+                            @endforeach
                         </select>
                         <button class="btn btn-secondary" type="submit">Search</button>
                     </form>
@@ -272,44 +328,61 @@
                                 </tr>
                             </thead>
                             <tbody>
-                        @forelse ($shipmentRows as $shipment)
-                            @php($badgeClass = match (mb_strtolower((string) ($shipment->stage?->stage_group ?? ''))) {'delivered' => 'green', 'customs processing' => 'blue', 'in transit' => 'teal', 'pending documents' => 'amber', default => 'blue'})
-                            <tr>
-                                <td>
-                                    <a class="cm-company" href="{{ route('shipments.show', $shipment->shipment_id) }}">{{ $shipment->reference_no }}</a>@if ($shipment->archived_at)
-                                    <small class="cm-muted">Archived {{ $shipment->archived_at->format('M d, Y') }}</small>@endif
-                                </td>
-                                <td>{{ $shipment->created_at?->format('M d, Y') ?? '—' }}</td>
-                                <td>{{ ucfirst((string) $shipment->transaction_type) }}</td>
-                                <td>{{ ucfirst((string) $shipment->mode) }}</td>
-                                <td>
-                                    <span class="badge badge-{{ $badgeClass }}">{{ $shipment->current_status }}</span>
-                                </td>
-                                <td>{{ $shipment->status_updates_max_updated_at ? \Illuminate\Support\Carbon::parse($shipment->status_updates_max_updated_at)->format('M d, Y · g:i A') : ($shipment->created_at?->format('M d, Y · g:i A') ?? '—') }}</td>
-                                <td>
-                                    <a href="{{ route('shipments.show', $shipment->shipment_id) }}">View</a>
-                                </td>
-                            </tr>
-                        @empty
-                        <tr>
-                            <td colspan="7" class="cm-empty">
-                                <strong>No shipments linked yet</strong>
-                                <span>Shipments linked to this company will appear here.</span>
-                            </td>
-                        </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
+                                @forelse ($shipmentRows as $shipment)
+                                    @php(
+    $badgeClass = match (mb_strtolower((string) ($shipment->stage?->stage_group ?? ''))) {
+        'delivered' => 'green',
+        'customs processing' => 'blue',
+        'in transit' => 'teal',
+        'pending documents' => 'amber',
+        default => 'blue'
+    }
+)
+                                    <tr>
+                                        <td>
+                                            <a class="cm-company"
+                                                href="{{ route('shipments.show', $shipment->shipment_id) }}">{{ $shipment->reference_no }}</a>
+                                            @if ($shipment->archived_at)
+                                                <small class="cm-muted">Archived {{ $shipment->archived_at->format('M d, Y') }}</small>
+                                            @endif
+                                        </td>
+                                        <td>{{ $shipment->created_at?->format('M d, Y') ?? '—' }}</td>
+                                        <td>{{ ucfirst((string) $shipment->transaction_type) }}</td>
+                                        <td>{{ ucfirst((string) $shipment->mode) }}</td>
+                                        <td>
+                                            <span class="badge badge-{{ $badgeClass }}">{{ $shipment->current_status }}</span>
+                                        </td>
+                                        <td>{{ $shipment->status_updates_max_updated_at ? \Illuminate\Support\Carbon::parse($shipment->status_updates_max_updated_at)->format('M d, Y · g:i A') : $shipment->created_at?->format('M d, Y · g:i A') ?? '—' }}
+                                        </td>
+                                        <td>
+                                            <a href="{{ route('shipments.show', $shipment->shipment_id) }}">View</a>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="7" class="cm-empty">
+                                            <strong>No shipments linked yet</strong>
+                                            <span>Shipments linked to this company will appear here.</span>
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
                     <footer class="cm-table-foot">
-                        <span>Showing {{ $shipmentRows->firstItem() ?? 0 }}–{{ $shipmentRows->lastItem() ?? 0 }} of {{ $shipmentRows->total() }} shipment{{ $shipmentRows->total() === 1 ? '' : 's' }}</span>
-                        <nav class="cm-pager" aria-label="Shipment pages">@if ($shipmentRows->onFirstPage() === false)
-                            <a href="{{ $shipmentRows->previousPageUrl() }}">Previous</a>@endif @if ($shipmentRows->hasMorePages())
-                            <a href="{{ $shipmentRows->nextPageUrl() }}">Next</a>@endif
+                        <span>Showing {{ $shipmentRows->firstItem() ?? 0 }}–{{ $shipmentRows->lastItem() ?? 0 }} of
+                            {{ $shipmentRows->total() }} shipment{{ $shipmentRows->total() === 1 ? '' : 's' }}</span>
+                        <nav class="cm-pager" aria-label="Shipment pages">
+                            @if ($shipmentRows->onFirstPage() === false)
+                                <a href="{{ $shipmentRows->previousPageUrl() }}">Previous</a>
+                                @endif @if ($shipmentRows->hasMorePages())
+                                    <a href="{{ $shipmentRows->nextPageUrl() }}">Next</a>
+                                @endif
                         </nav>
                     </footer>
                 </section>
-                <p class="cm-footnote">Only this company's shipments are shown. Shipment history remains available if the client becomes inactive.</p>
+                <p class="cm-footnote">Only this company's shipments are shown. Shipment history remains available if the client becomes
+                    inactive.</p>
             @endif
         @endif
     </div>
@@ -317,56 +390,67 @@
     @if ($showForm)
         <dialog class="cm-dialog" id="clientDialog" open>
             <form method="post" action="{{ route('admin.clients.save') }}" class="cm-dialog-form">@csrf
-            <input type="hidden" name="action" value="save_client">
-            <input type="hidden" name="client_id" value="{{ $client?->client_id ?? '' }}">
-            <input type="hidden" name="return_tab" value="{{ $tab }}">
-            <header>
-                <div>
-                    <h2>{{ $client ? 'Edit Client' : 'Add Client' }}</h2>
-                    <p>{{ $client ? 'Update company details for '.$client->client_name.' · '.$code : 'Create a company record to organize contacts and shipments.' }}</p>
-                </div>
-                <a href="{{ $client ? route('admin.clients', ['id' => $client->client_id, 'tab' => $tab]) : route('admin.clients') }}" aria-label="Close">×</a>
-            </header>
-            <div class="cm-dialog-grid">
-                <label>Company Name *
-                    <input name="client_name" required maxlength="150" value="{{ $formValues['client_name'] ?? '' }}" placeholder="Enter company name">@if ($validationErrors?->has('client_name'))
-                    <small class="cm-validation">{{ $validationErrors->first('client_name') }}</small>@endif
-                </label>
-                <label>Contact Person
-                    <input name="contact_person" maxlength="100" value="{{ $formValues['contact_person'] ?? '' }}">
-                </label>
-                <label>Email
-                    <input name="email" type="email" maxlength="120" value="{{ $formValues['email'] ?? '' }}">@if ($validationErrors?->has('email'))
-                    <small class="cm-validation">{{ $validationErrors->first('email') }}</small>
+                <input type="hidden" name="action" value="save_client">
+                <input type="hidden" name="client_id" value="{{ $client?->client_id ?? '' }}">
+                <input type="hidden" name="return_tab" value="{{ $tab }}">
+                <header>
+                    <div>
+                        <h2>{{ $client ? 'Edit Client' : 'Add Client' }}</h2>
+                        <p>{{ $client ? 'Update company details for ' . $client->client_name . ' · ' . $code : 'Create a company record to organize contacts and shipments.' }}
+                        </p>
+                    </div>
+                    <a href="{{ $client ? route('admin.clients', ['id' => $client->client_id, 'tab' => $tab]) : route('admin.clients') }}"
+                        aria-label="Close">×</a>
+                </header>
+                <div class="cm-dialog-grid">
+                    <label>Company Name *
+                        <input name="client_name" required maxlength="150" value="{{ $formValues['client_name'] ?? '' }}"
+                            placeholder="Enter company name">
+                        @if ($validationErrors?->has('client_name'))
+                            <small class="cm-validation">{{ $validationErrors->first('client_name') }}</small>
+                        @endif
+                    </label>
+                    <label>Contact Person
+                        <input name="contact_person" maxlength="100" value="{{ $formValues['contact_person'] ?? '' }}">
+                    </label>
+                    <label>Email
+                        <input name="email" type="email" maxlength="120" value="{{ $formValues['email'] ?? '' }}">
+                        @if ($validationErrors?->has('email'))
+                            <small class="cm-validation">{{ $validationErrors->first('email') }}</small>
+                        @endif
+                    </label>
+                    <label>Phone
+                        <input name="phone" maxlength="30" value="{{ $formValues['phone'] ?? '' }}" aria-describedby="cmPhoneHint">
+                        <small id="cmPhoneHint" class="cm-field-hint">Use a mobile number (09XX…) to receive SMS updates.</small>
+                    </label>
+                    <label>Address
+                        <input name="address" maxlength="255" value="{{ $formValues['address'] ?? '' }}">
+                    </label>
+                    <label>TIN
+                        <input name="tin" maxlength="30" value="{{ $formValues['tin'] ?? '' }}">
+                    </label>
+                    @if ($client)
+                        <label>Status
+                            <select name="status">
+                                <option value="active" @selected(($formValues['status'] ?? $client->status) === 'active')>Active</option>
+                                <option value="inactive" @selected(($formValues['status'] ?? $client->status) === 'inactive')>Inactive</option>
+                            </select>
+                        </label>
+                    @else
+                        <input type="hidden" name="status" value="active">
                     @endif
-                </label>
-                <label>Phone
-                    <input name="phone" maxlength="30" value="{{ $formValues['phone'] ?? '' }}" aria-describedby="cmPhoneHint">
-                    <small id="cmPhoneHint" class="cm-field-hint">Use a mobile number (09XX…) to receive SMS updates.</small>
-                </label>
-                <label>Address
-                    <input name="address" maxlength="255" value="{{ $formValues['address'] ?? '' }}">
-                </label>
-                <label>TIN
-                    <input name="tin" maxlength="30" value="{{ $formValues['tin'] ?? '' }}">
-                </label>@if ($client)
-                <label>Status
-                    <select name="status">
-                        <option value="active" @selected(($formValues['status'] ?? $client->status) === 'active')>Active</option>
-                        <option value="inactive" @selected(($formValues['status'] ?? $client->status) === 'inactive')>Inactive</option>
-                    </select>
-                </label>@else
-                <input type="hidden" name="status" value="active">@endif
-            </div>
-            <aside class="cm-callout">
-                <strong>{{ $client ? 'Linked records stay unchanged' : 'Active by default' }}</strong>
-                <p>{{ $client ? 'Editing company details does not alter linked accounts, shipments, billing, transactions, or history. Historical records are retained when a client becomes inactive.' : 'Client accounts are managed in User Management and can be linked to this company there.' }}</p>
-            </aside>
-            <footer>
-                <a class="btn btn-secondary" href="{{ $client ? route('admin.clients', ['id' => $client->client_id, 'tab' => $tab]) : route('admin.clients') }}">Cancel</a>
-                <button class="btn btn-primary" type="submit">{{ $client ? 'Save Changes' : 'Save Client' }}</button>
-            </footer>
-        </form>
-    </dialog>
+                </div>
+                <aside class="cm-callout">
+                    <strong>{{ $client ? 'Linked records stay unchanged' : 'Active by default' }}</strong>
+                    <p>{{ $client ? 'Editing company details does not alter linked accounts, shipments, billing, transactions, or history. Historical records are retained when a client becomes inactive.' : 'Client accounts are managed in User Management and can be linked to this company there.' }}
+                    </p>
+                </aside>
+                <footer>
+                    <a class="btn btn-secondary"
+                        href="{{ $client ? route('admin.clients', ['id' => $client->client_id, 'tab' => $tab]) : route('admin.clients') }}">Cancel</a>
+                    <button class="btn btn-primary" type="submit">{{ $client ? 'Save Changes' : 'Save Client' }}</button>
+                </footer>
+            </form>
+        </dialog>
     @endif
 </x-app-layout>

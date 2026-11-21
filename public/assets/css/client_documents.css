@@ -168,3 +168,35 @@ li.cd-row-rejected { background: var(--cd-danger-bg-soft); }
     .sr-table tbody td.sr-actions::before { content: none; }
     .sr-table .link, .sr-table .cd-reject-btn, .sr-table .btn-sm { min-height: 40px; }
 }
+
+/* Shipment Requests: "Create shipment" and "Decline" as one matched pair (same width, height, type size) */
+.sr-table td.sr-actions { display: table-cell; vertical-align: middle; }
+.sr-action-group { display: grid; gap: 8px; width: 168px; }
+.sr-action-group .cd-reject { display: block; }
+.sr-action-btn { display: flex; align-items: center; justify-content: center; width: 100%; min-height: 40px; padding: 0 14px; border-radius: 10px; font-size: 14px; font-weight: 600; line-height: 1.2; white-space: nowrap; box-sizing: border-box; }
+.sr-decline-btn { list-style: none; cursor: pointer; border: 1px solid #e3b4b7; background: #fff; color: #a3323a; }
+.sr-decline-btn::-webkit-details-marker { display: none; }
+.sr-decline-btn:hover, .cd-reject[open] .sr-decline-btn { background: #fdf1f2; border-color: #d48d93; }
+.sr-decline-btn:focus-visible { outline: 2px solid #395886; outline-offset: 2px; }
+@media (pointer: coarse) { .sr-action-btn { min-height: 44px; } }
+@media (max-width: 640px) {
+    .sr-table tbody td.sr-actions { display: block; }
+    .sr-action-group { width: 100%; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+    .sr-action-btn { padding: 0 8px; }
+}
+
+/* Upload dialog shell: the client page does not load shipments.css, so the dialog styles itself */
+dialog.cd-upload-dialog { margin: auto; border: 0; border-radius: 16px; padding: 0; color: #1e2f4d; background: #fff; box-shadow: 0 20px 48px rgba(29,46,76,.28); max-height: calc(100dvh - 28px); overflow: auto; }
+dialog.cd-upload-dialog::backdrop { background: rgba(29,46,76,.45); }
+.cd-upload-dialog .assign-detail-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 0; }
+.cd-upload-dialog .assign-detail-head h2 { margin: 0; color: #1e2f4d; font: 600 20px/28px "Libre Franklin", sans-serif; }
+.cd-upload-dialog .assign-detail-head p { margin: 2px 0 0; color: #4f5f78; font-size: 13px; }
+.cd-upload-dialog .assign-detail-head > button { flex: none; width: 36px; height: 36px; border: 0; border-radius: 8px; color: #4f5f78; background: #f0f3fa; font-size: 22px; line-height: 1; cursor: pointer; }
+.cd-upload-dialog .assign-detail-head > button:hover { background: #e2e8f4; color: #1e2f4d; }
+.cd-upload-dialog .assign-detail-head > button:focus-visible { outline: 2px solid #395886; outline-offset: 2px; }
+.cd-upload-dialog .optional-mark { font-weight: 400; color: var(--cd-text-soft); }
+.cd-upload-dialog .dlg-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 4px; }
+@media (max-width: 480px) {
+    .cd-file-pick { grid-template-columns: 1fr; }
+    .cd-upload-dialog .dlg-actions .btn { flex: 1 1 0; justify-content: center; }
+}

@@ -22,6 +22,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Trust the HTTPS tunnel (VS Code Dev Tunnels / ngrok) so links use https and the public host.
+        // Apache only listens on 127.0.0.1, so only a local tunnel can reach the app with these headers.
+        $middleware->trustProxies(at: '*');
         $middleware->prependToGroup('web', LegacyCsrfToken::class);
         $middleware->encryptCookies(except: ['ASTRASESSID']);
         $middleware->alias([

@@ -13,6 +13,7 @@ use App\Models\IdentityVerification;
 use App\Models\User;
 use App\Services\Identity\IdentityVerificationService;
 use Illuminate\Http\Client\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
@@ -36,6 +37,7 @@ class DocupassTest extends TestCase
         $this->createNotificationTables();
         (require database_path('migrations/2026_11_16_000001_create_identity_verifications.php'))->up();
         (require database_path('migrations/2026_11_17_000001_add_docupass_to_identity_verifications.php'))->up();
+        (require database_path('migrations/2026_11_17_000002_add_digital_id_to_identity_verifications.php'))->up();
         Storage::fake('local');
         config([
             'services.identity.method' => 'docupass',
@@ -55,7 +57,7 @@ class DocupassTest extends TestCase
             $url = $request->url();
 
             return match (true) {
-                $url === 'https://api2.idanalyzer.com/docupass' => Http::response(['reference' => 'REF123', 'url' => 'https://docupass.app/REF123', 'qrCode' => 'x']),
+                $url === 'https://api2.idanalyzer.com/docupass' => Http::response(['reference' => 'REF123', 'url' => 'https://docupass.app/REF123', 'qrCode' => base64_encode($this->png(40, 40))]),
                 str_starts_with($url, 'https://api2.idanalyzer.com/transaction?') => Http::response([
                     'transactions' => $this->transaction ? [['transactionId' => 'TX1']] : [], 'total' => $this->transaction ? 1 : 0,
                 ]),
@@ -226,5 +228,24 @@ class DocupassTest extends TestCase
 
         $this->start()->assertNotFound();
         $this->actingAs($this->client)->get(route('client.profile'))->assertOk()->assertDontSee('Start live ID check');
+    }
+
+    /** A real PNG built without GD (GD is not installed on this PHP). */
+    private function png(int $width, int $height): string
+    {
+        $chunk = fn (string $type, string $data) => pack('N', strlen($data)).$type.$data.pack('N', crc32($type.$data));
+        $rows = str_repeat("\0".str_repeat("\xcc", $width * 3), $height);
+
+        return "\x89PNG\r\n\x1a\n"
+            .$chunk('IHDR', pack('NNCCCCC', $width, $height, 8, 2, 0, 0, 0))
+            .$chunk('IDAT', (string) gzcompress($rows))
+            .$chunk('IEND', '');
+    }
+
+    public function test_start_keeps_the_qr_code_for_the_phone(): void
+    {
+        $this->start();
+
+        $this->assertStringStartsWith('data:image/png;base64,', (string) IdentityVerification::query()->sole()->provider_qr);
     }
 }

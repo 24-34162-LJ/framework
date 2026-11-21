@@ -5,3 +5,21 @@
  * Purpose: Navbar styles. Empty for now, but still loaded by the app layout.
  */
 
+
+/* Top-right name button + menu (components/user-menu.blade.php) */
+.user-menu { position: relative; }
+.user-menu > summary { list-style: none; cursor: pointer; user-select: none; transition: border-color .15s, background-color .15s; }
+.user-menu > summary::-webkit-details-marker { display: none; }
+.user-menu > summary:hover { border-color: #a9bad8; background: #f5f7fc; }
+.user-menu > summary:focus-visible { outline: 2px solid #395886; outline-offset: 3px; }
+.user-menu .user-menu-chevron { transition: transform .15s; }
+.user-menu[open] .user-menu-chevron { transform: rotate(180deg); }
+.user-menu-panel { position: absolute; top: calc(100% + 8px); right: 0; z-index: 60; width: 240px; padding: 6px; border: 1px solid #e7ecf7; border-radius: 12px; background: #fff; box-shadow: 0 12px 32px rgba(29,46,76, .16); }
+.user-menu-who { padding: 8px 10px 10px; margin-bottom: 4px; border-bottom: 1px solid #eef1f8; }
+.user-menu-who strong { display: block; overflow: hidden; color: #1e2f4d; font-size: 13px; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
+.user-menu-who small { display: block; overflow: hidden; color: #4f5f78; font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
+.user-menu-panel form { margin: 0; }
+.user-menu-item { display: flex; align-items: center; gap: 10px; width: 100%; padding: 9px 10px; border: 0; border-radius: 8px; color: #1e2f4d; background: none; font: 500 13px/18px "Libre Franklin", sans-serif; text-align: left; text-decoration: none; cursor: pointer; }
+.user-menu-item .icon { width: 18px; height: 18px; flex: none; color: #4f5f78; }
+.user-menu-item:hover, .user-menu-item:focus-visible { outline: 0; background: #f0f3fa; }
+@media (prefers-reduced-motion: reduce) { .user-menu .user-menu-chevron, .user-menu > summary { transition: none; } }

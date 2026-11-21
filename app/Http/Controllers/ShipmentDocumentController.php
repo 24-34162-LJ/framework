@@ -235,6 +235,7 @@ class ShipmentDocumentController extends Controller
         $shipment = Shipment::query()->findOrFail($shipmentId);
         $this->assertShipmentAccess($request, $shipment);
         abort_if($write && $request->user()->role === 'client', 403);
+        abort_if($write && $shipment->needsClaimBy($request->user()), 409, 'Assign this shipment to yourself (Assign to me) before making changes.');
 
         return $shipment;
     }
